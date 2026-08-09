@@ -250,6 +250,19 @@
         }
       ],
       "links": []
+    },
+    {
+      "id": "my-tribute",
+      "title": "My Tribute",
+      "composer": "",
+      "tags": [
+        "Slot 4",
+        "Thanksgiving"
+      ],
+      "notes": "",
+      "tracks": [],
+      "sheetMusic": [],
+      "links": []
     }
   ]
 }
