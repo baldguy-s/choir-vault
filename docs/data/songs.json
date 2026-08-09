@@ -94,7 +94,12 @@
           "file": "audio/how-great-thou-art/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/how-great-thou-art/page-1-1786251172010.pdf"
+        }
+      ],
       "links": []
     }
   ]
