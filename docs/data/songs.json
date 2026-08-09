@@ -4,32 +4,70 @@
       "id": "amazing-grace",
       "title": "Amazing Grace",
       "composer": "John Newton, arr. Choir",
-      "tags": ["Hymn", "Sunday Service"],
+      "tags": [
+        "Hymn",
+        "Sunday Service"
+      ],
       "notes": "Verse 3 slows down. Watch the director for the ritardando.",
       "tracks": [
-        { "part": "Demo", "file": "audio/amazing-grace/full-mix.mp3" },
-        { "part": "Soprano", "file": "audio/amazing-grace/soprano.mp3" },
-        { "part": "Alto", "file": "audio/amazing-grace/alto.mp3" },
-        { "part": "Tenor", "file": "audio/amazing-grace/tenor.mp3" },
-        { "part": "Bass", "file": "audio/amazing-grace/bass.mp3" }
+        {
+          "part": "Demo",
+          "file": "audio/amazing-grace/full-mix.mp3"
+        },
+        {
+          "part": "Soprano",
+          "file": "audio/amazing-grace/soprano.mp3"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/amazing-grace/alto.mp3"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/amazing-grace/tenor.mp3"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/amazing-grace/bass.mp3"
+        }
       ],
       "sheetMusic": [
-        { "label": "Page 1", "file": "images/amazing-grace/page-1.jpg" },
-        { "label": "Page 2", "file": "images/amazing-grace/page-2.jpg" }
+        {
+          "label": "Page 1",
+          "file": "images/amazing-grace/page-1.jpg"
+        },
+        {
+          "label": "Page 2",
+          "file": "images/amazing-grace/page-2.jpg"
+        }
       ],
       "links": [
-        { "label": "Reference recording", "url": "https://www.youtube.com/" }
+        {
+          "label": "Reference recording",
+          "url": "https://www.youtube.com/"
+        }
       ]
     },
     {
       "id": "bought-by-the-blood",
       "title": "Bought By The Blood",
       "tracks": [
-        { "part": "Demo", "file": "audio/bought-by-the-blood/demo.mp3" },
-        { "part": "Bass", "file": "audio/bought-by-the-blood/bass.mp3" }
+        {
+          "part": "Demo",
+          "file": "audio/bought-by-the-blood/demo.mp3"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/bought-by-the-blood/bass.mp3"
+        }
       ],
       "sheetMusic": [],
-      "links": []
+      "links": [],
+      "composer": "",
+      "tags": [
+        "Slot 4"
+      ],
+      "notes": ""
     }
   ]
 }
