@@ -355,7 +355,12 @@
           "file": "audio/sinner-saved-by-grace/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/sinner-saved-by-grace/page-1-1786252812732.pdf"
+        }
+      ],
       "links": []
     }
   ]
