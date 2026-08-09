@@ -194,7 +194,12 @@
         "Slot 1"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/look-unto-jesus/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
