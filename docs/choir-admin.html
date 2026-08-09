@@ -222,6 +222,7 @@ input, textarea, select { font-family: inherit; }
 }
 .sheet-item:last-child { border-bottom: none; }
 .sheet-item img { width: 44px; height: 58px; object-fit: cover; border: 1px solid var(--line); border-radius: 3px; }
+.sheet-pdf-thumb { width: 44px; height: 58px; border: 1px solid var(--line); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; color: var(--red); background: var(--offwhite); letter-spacing: 0.05em; flex-shrink: 0; }
 .sheet-item .label-input { flex: 1; }
 .sheet-item .reorder-btns { display: flex; flex-direction: column; gap: 2px; }
 .sheet-item .reorder-btns button { padding: 0.1rem 0.4rem; font-size: 0.7rem; }
@@ -698,7 +699,9 @@ function renderSheets(song) {
   } else {
     listEl.innerHTML = song.sheetMusic.map((s, i) => `
       <div class="sheet-item" data-index="${i}">
-        <img src="https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/docs/${s.file}" alt="">
+        ${isPdf(s.file)
+          ? `<div class="sheet-pdf-thumb">PDF</div>`
+          : `<img src="https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/docs/${s.file}" alt="">`}
         <input type="text" class="label-input sheet-label-input" value="${escapeAttr(s.label || '')}" placeholder="Label">
         <div class="reorder-btns">
           <button class="btn plain sheet-up" ${i === 0 ? 'disabled' : ''}>&uarr;</button>
@@ -860,6 +863,10 @@ async function deleteSongFiles(song) {
 }
 
 /* ---------------- Utilities ---------------- */
+
+function isPdf(file) {
+  return (file || '').toLowerCase().endsWith('.pdf');
+}
 
 function slugify(str) {
   return String(str).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
