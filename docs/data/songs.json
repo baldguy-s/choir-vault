@@ -200,7 +200,12 @@
           "file": "audio/look-unto-jesus/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/look-unto-jesus/page-1-1786252220094.pdf"
+        }
+      ],
       "links": []
     }
   ]
