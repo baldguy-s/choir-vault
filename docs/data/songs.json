@@ -237,7 +237,12 @@
         "Christmas"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/mary-did-you-know/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
