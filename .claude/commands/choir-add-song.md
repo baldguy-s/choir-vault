@@ -22,9 +22,9 @@ Claude will prompt for the required inputs and then handle everything.
 2. Slugify the title to generate the song `id` (lowercase, hyphens, no special chars). Check `docs/data/songs.json` for a collision — if the slug already exists, append `-2` (or `-3`, etc.) and inform the user.
 
 3. For each audio file in the source folder:
-   - Run `/choir-compress-audio` on it to produce a 128kbps MP3 in a temp location
-   - Determine the voice part from the filename (match against: `full-mix`, `soprano`, `alto`, `tenor`, `bass` — case-insensitive, partial match ok, e.g. `Soprano Take 2.wav` → soprano)
-   - Upload via GitHub Contents API PUT to `docs/audio/<id>/<part-slug>.mp3`
+   - Upload the original file as-is — do NOT compress, normalize, or convert it. Preserve the original format and extension (.mp3, .m4a, .wav, etc.)
+   - Determine the voice part from the filename (match against: `full-mix`, `soprano`, `alto`, `tenor`, `bass`, `demo` — case-insensitive, partial match ok, e.g. `Soprano Take 2.wav` → soprano)
+   - Upload via GitHub Contents API PUT to `docs/audio/<id>/<part-slug>.<original-ext>`
 
 4. For each image file in the source folder:
    - Run `/choir-resize-sheet-music` on it to produce a properly-sized JPEG
