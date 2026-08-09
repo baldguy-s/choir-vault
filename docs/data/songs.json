@@ -393,7 +393,12 @@
         "Slot 1"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/the-glory-land-way/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
