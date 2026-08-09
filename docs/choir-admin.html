@@ -435,8 +435,20 @@ async function loadSongs() {
 
 async function saveSongs(message) {
   const contentStr = JSON.stringify({ songs: STATE.songs }, null, 2) + '\n';
-  const result = await ghPutText(SONGS_PATH, contentStr, message, STATE.sha);
-  STATE.sha = result.content.sha;
+  try {
+    const result = await ghPutText(SONGS_PATH, contentStr, message, STATE.sha);
+    STATE.sha = result.content.sha;
+  } catch (err) {
+    if (/\b(422|409)\b/.test(err.message)) {
+      // SHA is stale (repo was updated outside this session) — refresh and retry once
+      const fresh = await ghGetFile(SONGS_PATH);
+      if (fresh) STATE.sha = fresh.sha;
+      const result = await ghPutText(SONGS_PATH, contentStr, message, STATE.sha);
+      STATE.sha = result.content.sha;
+    } else {
+      throw err;
+    }
+  }
 }
 
 /* ---------------- List view ---------------- */
@@ -589,6 +601,7 @@ function renderDetail(id) {
         <div class="field-row"><label>Label</label><input type="text" id="new-link-label" placeholder="Reference recording"></div>
         <div class="field-row"><label>URL</label><input type="url" id="new-link-url" placeholder="https://"></div>
         <button class="btn secondary small" id="add-link-btn">+ Add link</button>
+        <div class="save-status" id="link-status"></div>
       </div>
     </div>
 
@@ -817,14 +830,24 @@ async function removeLink(song, i) {
 async function addLink(song) {
   const label = document.getElementById('new-link-label').value.trim();
   const url = document.getElementById('new-link-url').value.trim();
-  if (!url) return;
+  const statusEl = document.getElementById('link-status');
+  if (!url) { statusEl.textContent = 'Please enter a URL.'; return; }
+  const btn = document.getElementById('add-link-btn');
+  btn.disabled = true;
+  statusEl.textContent = 'Saving…';
   song.links.push({ label: label || url, url });
   try {
     await saveSongs(`Add link: ${song.title}`);
     document.getElementById('new-link-label').value = '';
     document.getElementById('new-link-url').value = '';
+    statusEl.textContent = 'Link saved.';
     renderLinks(song);
-  } catch (err) { showToast(err.message, true); }
+  } catch (err) {
+    song.links.pop();
+    statusEl.textContent = 'Save failed: ' + err.message;
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 /* ---- Delete song ---- */
