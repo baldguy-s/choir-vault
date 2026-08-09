@@ -411,7 +411,12 @@
         "Solo"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Demo",
+          "file": "audio/then-came-the-morning/demo.mp3"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
