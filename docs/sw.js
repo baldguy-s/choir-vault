@@ -7,7 +7,7 @@
    Bump both version strings whenever app-shell files change.
 */
 
-const SHELL_CACHE = 'choir-materials-shell-v6';
+const SHELL_CACHE = 'choir-materials-shell-v7';
 const MEDIA_CACHE = 'choir-materials-media-v2';
 
 const SHELL_FILES = [
@@ -57,10 +57,11 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (isSongsJson(url)) {
-    // Network-first: always try to get the latest song list;
-    // fall back to cache only when offline.
+    // Always bypass CDN and HTTP cache so song list is never stale.
+    // cache:'reload' sends Cache-Control:no-cache to intermediate caches.
+    const freshReq = new Request(req.url, { cache: 'reload' });
     event.respondWith(
-      fetch(req).then(res => {
+      fetch(freshReq).then(res => {
         if (res && res.ok) {
           const clone = res.clone();
           caches.open(MEDIA_CACHE).then(cache => cache.put(req, clone));

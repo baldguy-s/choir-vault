@@ -3,8 +3,7 @@
    Data comes from data/songs.json. Files come from audio/ and images/.
 */
 
-const APP_CACHE = 'choir-materials-shell-v1';
-const MEDIA_CACHE = 'choir-materials-media-v1';
+const MEDIA_CACHE = 'choir-materials-media-v2';
 
 let SONGS = [];
 let activeTag = null;
@@ -24,7 +23,7 @@ async function init() {
   window.addEventListener('offline', updateOnlinePill);
 
   try {
-    const res = await fetch('data/songs.json');
+    const res = await fetch('data/songs.json', { cache: 'reload' });
     const data = await res.json();
     SONGS = data.songs || [];
   } catch (err) {
