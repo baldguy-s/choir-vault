@@ -1,19 +1,20 @@
 /* Choir Materials — service worker
    Two caches:
-   - shell cache: the app itself (HTML/CSS/JS/icons/manifest/data), precached on install
-   - media cache: audio + sheet music images, cached on demand as songs are viewed
-     or explicitly saved via the "Save this song for offline" button
+   - shell cache: the app itself (HTML/CSS/JS/icons/manifest), precached on install
+   - media cache: audio + sheet music images, cached on demand
+
+   songs.json uses network-first so the song list is always current.
+   Bump both version strings whenever app-shell files change.
 */
 
-const SHELL_CACHE = 'choir-materials-shell-v1';
-const MEDIA_CACHE = 'choir-materials-media-v1';
+const SHELL_CACHE = 'choir-materials-shell-v2';
+const MEDIA_CACHE = 'choir-materials-media-v2';
 
 const SHELL_FILES = [
   './',
   'index.html',
   'css/style.css',
   'js/app.js',
-  'data/songs.json',
   'manifest.json',
   'icons/icon-180.png',
   'icons/icon-192.png',
@@ -41,9 +42,11 @@ self.addEventListener('activate', (event) => {
 });
 
 function isMediaRequest(url) {
-  return url.pathname.includes('/audio/') ||
-         url.pathname.includes('/images/') ||
-         url.pathname.endsWith('songs.json');
+  return url.pathname.includes('/audio/') || url.pathname.includes('/images/');
+}
+
+function isSongsJson(url) {
+  return url.pathname.endsWith('songs.json');
 }
 
 self.addEventListener('fetch', (event) => {
@@ -52,6 +55,21 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+
+  if (isSongsJson(url)) {
+    // Network-first: always try to get the latest song list;
+    // fall back to cache only when offline.
+    event.respondWith(
+      fetch(req).then(res => {
+        if (res && res.ok) {
+          const clone = res.clone();
+          caches.open(MEDIA_CACHE).then(cache => cache.put(req, clone));
+        }
+        return res;
+      }).catch(() => caches.match(req))
+    );
+    return;
+  }
 
   const cacheName = isMediaRequest(url) ? MEDIA_CACHE : SHELL_CACHE;
 
