@@ -330,17 +330,16 @@ function openLightbox(sheets, index) {
 
   function render() {
     const s = sheets[index];
-    const nav = sheets.length < 2 ? '' : `
-      <div class="lightbox-nav">
-        <button id="lb-prev">&larr; Prev</button>
-        <button id="lb-next">Next &rarr;</button>
-      </div>`;
+    const hide = sheets.length < 2 ? 'style="visibility:hidden"' : '';
     overlay.innerHTML = `
       <button class="lightbox-close" aria-label="Close">&times;</button>
       ${isPdf(s.file)
         ? `<iframe class="pdf-viewer" src="${escapeAttr(s.file)}" title="${escapeAttr(s.label || 'Sheet music')}"></iframe>`
         : `<img src="${escapeAttr(s.file)}" alt="${escapeAttr(s.label || '')}" />`}
-      ${nav}`;
+      <div class="lightbox-nav">
+        <button id="lb-prev" ${hide}>&larr; Prev</button>
+        <button id="lb-next" ${hide}>Next &rarr;</button>
+      </div>`;
     overlay.querySelector('.lightbox-close').addEventListener('click', close);
     overlay.querySelector('#lb-prev').addEventListener('click', () => { index = (index - 1 + sheets.length) % sheets.length; render(); });
     overlay.querySelector('#lb-next').addEventListener('click', () => { index = (index + 1) % sheets.length; render(); });

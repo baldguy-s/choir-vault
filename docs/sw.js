@@ -7,7 +7,7 @@
    Bump both version strings whenever app-shell files change.
 */
 
-const SHELL_CACHE = 'choir-materials-shell-v5';
+const SHELL_CACHE = 'choir-materials-shell-v6';
 const MEDIA_CACHE = 'choir-materials-media-v2';
 
 const SHELL_FILES = [
