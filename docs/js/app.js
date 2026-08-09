@@ -124,6 +124,7 @@ async function renderFilteredList(query) {
       (s.composer || '').toLowerCase().includes(q)
     );
   }
+  filtered.sort((a, b) => a.title.localeCompare(b.title));
 
   if (!filtered.length) {
     listEl.innerHTML = `<div class="empty-state"><div class="big">No matches</div><div>Try a different search.</div></div>`;

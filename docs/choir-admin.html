@@ -449,6 +449,7 @@ function renderList() {
     const q = STATE.searchQuery.toLowerCase();
     filtered = filtered.filter(s => s.title.toLowerCase().includes(q) || (s.composer || '').toLowerCase().includes(q));
   }
+  filtered = filtered.slice().sort((a, b) => a.title.localeCompare(b.title));
 
   let html = `
     <div class="toolbar">
