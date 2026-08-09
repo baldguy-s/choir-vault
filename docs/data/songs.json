@@ -332,7 +332,12 @@
           "file": "audio/oh-to-see-the-dawn/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/oh-to-see-the-dawn/page-1-1786252710464.pdf"
+        }
+      ],
       "links": []
     }
   ]
