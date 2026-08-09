@@ -71,7 +71,12 @@
         "Slot 4"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/heaven-will-surely-be-worth-it-all/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
