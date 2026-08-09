@@ -243,7 +243,12 @@
           "file": "audio/mary-did-you-know/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/mary-did-you-know/page-1-1786252384319.pdf"
+        }
+      ],
       "links": []
     }
   ]
