@@ -227,6 +227,19 @@
         }
       ],
       "links": []
+    },
+    {
+      "id": "mary-did-you-know",
+      "title": "Mary, Did You Know",
+      "composer": "",
+      "tags": [
+        "Slot 4",
+        "Christmas"
+      ],
+      "notes": "",
+      "tracks": [],
+      "sheetMusic": [],
+      "links": []
     }
   ]
 }
