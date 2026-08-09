@@ -371,7 +371,12 @@
         "Solo"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/statue-of-liberty/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
