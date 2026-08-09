@@ -49,7 +49,12 @@
       "composer": "",
       "tags": [],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/heaven-came-down/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
