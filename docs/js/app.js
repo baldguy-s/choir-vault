@@ -192,8 +192,10 @@ function renderSongDetail(song) {
     html += `<div class="section-label">Sheet music</div>
       <div class="sheet-grid" id="sheet-grid">
         ${sheets.map((s, i) => `
-          <a class="sheet-thumb" href="#" data-index="${i}">
-            <img src="${escapeAttr(s.file)}" alt="${escapeAttr(s.label || ('Page ' + (i + 1)))}" loading="lazy" />
+          <a class="sheet-thumb${isPdf(s.file) ? ' sheet-thumb-pdf' : ''}" href="#" data-index="${i}">
+            ${isPdf(s.file)
+              ? `<div class="pdf-badge">PDF</div>`
+              : `<img src="${escapeAttr(s.file)}" alt="${escapeAttr(s.label || ('Page ' + (i + 1)))}" loading="lazy" />`}
             <div class="label">${escapeHtml(s.label || ('Page ' + (i + 1)))}</div>
           </a>`).join('')}
       </div>`;
@@ -328,13 +330,17 @@ function openLightbox(sheets, index) {
 
   function render() {
     const s = sheets[index];
+    const nav = sheets.length < 2 ? '' : `
+      <div class="lightbox-nav">
+        <button id="lb-prev">&larr; Prev</button>
+        <button id="lb-next">Next &rarr;</button>
+      </div>`;
     overlay.innerHTML = `
       <button class="lightbox-close" aria-label="Close">&times;</button>
-      <img src="${escapeAttr(s.file)}" alt="${escapeAttr(s.label || '')}" />
-      <div class="lightbox-nav">
-        <button id="lb-prev" ${sheets.length < 2 ? 'style="visibility:hidden"' : ''}>&larr; Prev</button>
-        <button id="lb-next" ${sheets.length < 2 ? 'style="visibility:hidden"' : ''}>Next &rarr;</button>
-      </div>`;
+      ${isPdf(s.file)
+        ? `<iframe class="pdf-viewer" src="${escapeAttr(s.file)}" title="${escapeAttr(s.label || 'Sheet music')}"></iframe>`
+        : `<img src="${escapeAttr(s.file)}" alt="${escapeAttr(s.label || '')}" />`}
+      ${nav}`;
     overlay.querySelector('.lightbox-close').addEventListener('click', close);
     overlay.querySelector('#lb-prev').addEventListener('click', () => { index = (index - 1 + sheets.length) % sheets.length; render(); });
     overlay.querySelector('#lb-next').addEventListener('click', () => { index = (index + 1) % sheets.length; render(); });
@@ -432,6 +438,10 @@ function setupOfflineButton(song) {
 }
 
 /* ---------- Utilities ---------- */
+
+function isPdf(file) {
+  return (file || '').toLowerCase().endsWith('.pdf');
+}
 
 function formatTime(sec) {
   if (!isFinite(sec)) return '0:00';
