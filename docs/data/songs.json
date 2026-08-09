@@ -173,7 +173,12 @@
       ],
       "notes": "",
       "tracks": [],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/joy-to-the-world/page-1-1786252127976.pdf"
+        }
+      ],
       "links": []
     }
   ]
