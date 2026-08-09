@@ -306,7 +306,12 @@
         "Christmas"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/o-holy-night/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
