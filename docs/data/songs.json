@@ -283,7 +283,12 @@
         "Christmas"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/o-come-all-ye-faithful/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
