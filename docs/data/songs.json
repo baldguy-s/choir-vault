@@ -132,7 +132,12 @@
         "Slot 1"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/jesus-hold-my-hand/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
