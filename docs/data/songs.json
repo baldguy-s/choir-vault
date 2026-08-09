@@ -437,6 +437,10 @@
         {
           "part": "Demo",
           "file": "audio/we-are-the-reason/demo.m4a"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/we-are-the-reason/bass.m4a"
         }
       ],
       "sheetMusic": [],
