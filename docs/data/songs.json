@@ -266,7 +266,12 @@
           "file": "audio/my-tribute/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/my-tribute/page-1-1786252467625.pdf"
+        }
+      ],
       "links": []
     }
   ]
