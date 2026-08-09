@@ -138,7 +138,12 @@
           "file": "audio/jesus-hold-my-hand/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/jesus-hold-my-hand/page-1-1786283216166.jpg"
+        }
+      ],
       "links": []
     },
     {
