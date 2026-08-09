@@ -260,7 +260,12 @@
         "Thanksgiving"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/my-tribute/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
