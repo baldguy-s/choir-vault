@@ -88,7 +88,12 @@
         "Slot 4"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/how-great-thou-art/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
