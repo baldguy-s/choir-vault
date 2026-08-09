@@ -462,7 +462,12 @@
       "notes": "",
       "tracks": [],
       "sheetMusic": [],
-      "links": []
+      "links": [
+        {
+          "label": "Demo",
+          "url": "https://youtu.be/7M7fe2GzauY"
+        }
+      ]
     }
   ]
 }
