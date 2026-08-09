@@ -21,20 +21,18 @@ files manually.
 
 **One-time setup:**
 
-1. Open `choir-admin.html` in a text editor and set the three config values
-   near the top of the `<script>` block:
-   ```js
-   const GH_OWNER = 'your-github-username';
-   const GH_REPO  = 'your-repo-name';
-   const GH_BRANCH = 'main';
-   ```
-2. Create a fine-grained GitHub personal access token at
-   github.com → Settings → Developer settings → Personal access tokens →
-   Fine-grained tokens. Scope it to this one repo, with **Contents:
-   Read and write** permission. Nothing else is needed.
-3. Push `choir-admin.html` to the repo and open it on GitHub Pages. On
-   first load it asks for the token — paste it in. It's stored only in
-   that browser's local storage, on that device, never in the repo.
+1. Create a fine-grained GitHub personal access token:
+   - Go to github.com → your profile photo → **Settings** →
+     **Developer settings** → **Personal access tokens** →
+     **Fine-grained tokens** → **Generate new token**
+   - Under **Repository access**, select **Only select repositories**
+     and choose `choir-vault`
+   - Under **Permissions → Repository permissions**, set
+     **Contents** to **Read and write** — nothing else is needed
+   - Copy the token (you only see it once)
+2. Open `choir-admin.html` on GitHub Pages. On first load it asks for
+   the token — paste it in. It's stored only in that browser's local
+   storage, on that device, never in the repo.
 
 **Using it:** Add song, upload a track per voice part, upload sheet music
 pages (drag to reorder, editable labels), add reference links — all saved
@@ -93,9 +91,10 @@ functional before you replace it with real files.
 
 ## Hosting on GitHub Pages
 
-Push this whole folder to a repo and turn on GitHub Pages (Settings → Pages →
-deploy from your main branch). No configuration needed beyond that — it's a
-static site.
+The app files live in the `docs/` folder of the `choir-vault` repo. GitHub
+Pages is already configured to serve from `docs/` on the `main` branch —
+just push and it deploys automatically. Public URL:
+`https://baldguy-s.github.io/choir-vault/`
 
 ## Installing on iPhone
 

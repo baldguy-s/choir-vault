@@ -274,8 +274,8 @@ input, textarea, select { font-family: inherit; }
 /* ================================================================
    CONFIG — set these three values for your repo
    ================================================================ */
-const GH_OWNER = 'owner';   // <-- your GitHub username or org
-const GH_REPO  = 'repo';    // <-- the repo name
+const GH_OWNER = 'baldguy-s';
+const GH_REPO  = 'choir-vault';
 const GH_BRANCH = 'main';   // <-- branch to write to
 
 const GH_PLACEHOLDERS = (GH_OWNER === 'owner' || GH_REPO === 'repo');
@@ -650,6 +650,9 @@ function renderTracks(song) {
 
 async function handleTrackUpload(song, part, file) {
   if (!file) return;
+  if (file.size > 15 * 1024 * 1024) {
+    if (!confirm(`This file is ${(file.size / 1024 / 1024).toFixed(1)} MB — larger than the recommended 15 MB limit. Upload anyway?`)) return;
+  }
   const statusEl = document.getElementById(`status-${slugify(part)}`);
   statusEl.textContent = 'Uploading…';
   statusEl.classList.add('uploading');
@@ -745,6 +748,9 @@ async function removeSheet(song, index) {
 
 async function handleSheetUpload(song, file) {
   if (!file) return;
+  if (file.size > 15 * 1024 * 1024) {
+    if (!confirm(`This file is ${(file.size / 1024 / 1024).toFixed(1)} MB — larger than the recommended 15 MB limit. Upload anyway?`)) return;
+  }
   const input = document.getElementById('add-sheet-input');
   input.disabled = true;
   try {
