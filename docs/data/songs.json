@@ -154,7 +154,12 @@
         "Slot 4"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/jesus-is-coming-again/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
