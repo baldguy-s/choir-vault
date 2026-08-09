@@ -35,7 +35,12 @@
           "file": "audio/he-looked-beyond-my-fault/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/he-looked-beyond-my-fault/page-1-1786250405038.pdf"
+        }
+      ],
       "links": []
     }
   ]
