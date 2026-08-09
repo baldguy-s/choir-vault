@@ -289,7 +289,12 @@
           "file": "audio/o-come-all-ye-faithful/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/o-come-all-ye-faithful/page-1-1786252553762.pdf"
+        }
+      ],
       "links": []
     }
   ]
