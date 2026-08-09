@@ -110,7 +110,12 @@
         "Slot 1"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/i-ve-got-that-old-time-religion-in-my-heart/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
