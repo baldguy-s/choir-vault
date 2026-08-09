@@ -172,7 +172,12 @@
         "Christmas"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/joy-to-the-world/bass.m4a"
+        }
+      ],
       "sheetMusic": [
         {
           "label": "Music - Joy To The World",
