@@ -220,7 +220,12 @@
           "file": "audio/mansion-over-the-hilltop/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/mansion-over-the-hilltop/page-1-1786252302574.pdf"
+        }
+      ],
       "links": []
     }
   ]
