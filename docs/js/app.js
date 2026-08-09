@@ -138,8 +138,6 @@ async function renderFilteredList(query) {
         ${song.composer ? `<div class="composer">${escapeHtml(song.composer)}</div>` : ''}
         <div class="meta-row">
           ${(song.tags || []).map(t => `<span class="mini-tag">${escapeHtml(t)}</span>`).join('')}
-          ${song.tracks && song.tracks.length ? `<span class="mini-tag">${song.tracks.length} track${song.tracks.length > 1 ? 's' : ''}</span>` : ''}
-          ${song.sheetMusic && song.sheetMusic.length ? `<span class="mini-tag">${song.sheetMusic.length} page${song.sheetMusic.length > 1 ? 's' : ''}</span>` : ''}
         </div>
       </a>
     </li>`;
