@@ -7,7 +7,7 @@
       "tags": ["Hymn", "Sunday Service"],
       "notes": "Verse 3 slows down. Watch the director for the ritardando.",
       "tracks": [
-        { "part": "Full Mix", "file": "audio/amazing-grace/full-mix.mp3" },
+        { "part": "Demo", "file": "audio/amazing-grace/full-mix.mp3" },
         { "part": "Soprano", "file": "audio/amazing-grace/soprano.mp3" },
         { "part": "Alto", "file": "audio/amazing-grace/alto.mp3" },
         { "part": "Tenor", "file": "audio/amazing-grace/tenor.mp3" },
@@ -20,6 +20,16 @@
       "links": [
         { "label": "Reference recording", "url": "https://www.youtube.com/" }
       ]
+    },
+    {
+      "id": "bought-by-the-blood",
+      "title": "Bought By The Blood",
+      "tracks": [
+        { "part": "Demo", "file": "audio/bought-by-the-blood/demo.mp3" },
+        { "part": "Bass", "file": "audio/bought-by-the-blood/bass.mp3" }
+      ],
+      "sheetMusic": [],
+      "links": []
     }
   ]
 }
