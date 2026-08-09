@@ -349,7 +349,12 @@
         "Solo"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/sinner-saved-by-grace/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
