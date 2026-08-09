@@ -29,7 +29,12 @@
         "Slot 4"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/he-looked-beyond-my-fault/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
