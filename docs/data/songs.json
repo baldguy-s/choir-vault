@@ -326,7 +326,12 @@
       "composer": "",
       "tags": [],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Bass",
+          "file": "audio/oh-to-see-the-dawn/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
