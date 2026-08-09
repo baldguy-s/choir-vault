@@ -55,7 +55,12 @@
           "file": "audio/heaven-came-down/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/heaven-came-down/page-1-1786251026175.pdf"
+        }
+      ],
       "links": []
     }
   ]
