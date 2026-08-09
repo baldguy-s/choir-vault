@@ -63,7 +63,7 @@ button {
   top: 0;
   z-index: 20;
   background: var(--banner-gray);
-  color: #fff;
+  color: var(--ink);
   padding: 0.9rem 1rem;
   display: flex;
   align-items: center;
@@ -80,17 +80,17 @@ button {
   display: flex;
   align-items: baseline;
   gap: 0.4rem;
-  color: #fff;
+  color: var(--ink);
 }
 
 .app-header .brand .mark {
-  color: rgba(255,255,255,0.75);
+  color: var(--red);
 }
 
 .back-btn {
   background: none;
   border: none;
-  color: #fff;
+  color: var(--ink);
   font-size: 1.5rem;
   line-height: 1;
   padding: 0.2rem 0.5rem 0.2rem 0;
@@ -103,13 +103,13 @@ button {
   text-transform: uppercase;
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.4);
-  color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(0,0,0,0.25);
+  color: var(--ink-soft);
 }
 
 .online-pill.offline {
-  border-color: var(--red);
-  color: #F4B8BB;
+  border-color: var(--red-deep);
+  color: var(--red-deep);
 }
 
 /* ---------- Search / list page ---------- */
