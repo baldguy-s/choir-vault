@@ -283,7 +283,7 @@ button {
   border-bottom: 3px solid transparent;
 }
 
-.part-tab[data-part="Full Mix"] { border-bottom-color: var(--brass); }
+.part-tab[data-part="Demo"] { border-bottom-color: var(--brass); }
 .part-tab[data-part="Soprano"] { border-bottom-color: var(--soprano); }
 .part-tab[data-part="Alto"] { border-bottom-color: var(--alto); }
 .part-tab[data-part="Tenor"] { border-bottom-color: var(--tenor); }
