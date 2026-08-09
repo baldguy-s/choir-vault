@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choir Materials — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   Config — edit these three lines for your repo, then remove
+   this comment. Everything else in the file is generic.
+   ================================================================ */
+:root {
+  --paper: #FAFAFA;
+  --red: #A3313B;
+  --red-deep: #7E2530;
+  --banner-gray: #B5B5B5;
+  --offwhite: #F7F7F7;
+  --ink: #1A1A1A;
+  --slate: #6B6B6B;
+  --line: rgba(0,0,0,0.10);
+  --ok: #2F6B3A;
+  --ok-bg: #E7F3E9;
+  --warn-bg: #FBEAEA;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); }
+body { padding-bottom: 4rem; }
+a { color: var(--red-deep); }
+button { font-family: inherit; cursor: pointer; }
+input, textarea, select { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--red-deep); outline-offset: 2px; }
+
+.banner {
+  background: var(--banner-gray);
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.banner h1 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  flex: 1;
+}
+.conn-pill {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+.conn-pill.connected { background: var(--ok); }
+
+.config-warning {
+  background: var(--warn-bg);
+  color: var(--red-deep);
+  border-bottom: 1px solid var(--red);
+  padding: 0.85rem 1.25rem;
+  font-size: 0.9rem;
+}
+.config-warning code { background: rgba(0,0,0,0.06); padding: 0.1rem 0.3rem; border-radius: 3px; }
+
+.wrap {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+/* PAT gate */
+.gate-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+.gate-card h2 { font-family: var(--font-display); margin-top: 0; }
+.gate-card p { color: var(--slate); font-size: 0.92rem; line-height: 1.5; }
+.field-row { margin-bottom: 1rem; }
+.field-row label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--slate);
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.field-row input[type="text"],
+.field-row input[type="password"],
+.field-row input[type="url"],
+.field-row textarea,
+.field-row select {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: var(--ink);
+}
+.field-row textarea { resize: vertical; min-height: 4rem; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--red);
+  background: var(--red);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+.btn:hover { background: var(--red-deep); border-color: var(--red-deep); }
+.btn.secondary { background: #fff; color: var(--red-deep); border-color: var(--red); }
+.btn.secondary:hover { background: var(--warn-bg); }
+.btn.plain { background: none; border-color: var(--line); color: var(--ink); }
+.btn.danger { background: #fff; color: var(--red-deep); border-color: var(--red-deep); }
+.btn.danger:hover { background: var(--red-deep); color: #fff; }
+.btn:disabled { opacity: 0.55; cursor: default; }
+.btn.small { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+
+/* List view */
+.toolbar { display: flex; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.toolbar input[type="search"] {
+  flex: 1;
+  min-width: 160px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.tag-row { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.tag-chip {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  background: var(--offwhite);
+  border: 1px solid var(--line);
+  color: var(--slate);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}
+.tag-chip.active { background: var(--red); border-color: var(--red-deep); color: #fff; }
+
+.song-row {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--banner-gray);
+  border-radius: 4px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.55rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+.song-row:hover { border-left-color: var(--red); }
+.song-row .info { flex: 1; }
+.song-row .title { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
+.song-row .composer { color: var(--slate); font-size: 0.85rem; }
+.song-row .counts { font-family: var(--font-mono); font-size: 0.72rem; color: var(--slate); margin-top: 0.2rem; }
+.song-row .missing-flag { color: var(--red-deep); font-weight: 600; }
+
+.empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--slate); }
+.empty-state .big { font-family: var(--font-display); font-size: 1.2rem; color: var(--ink); margin-bottom: 0.3rem; }
+
+/* Detail view */
+.detail-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+.detail-header h2 { font-family: var(--font-display); margin: 0; flex: 1; }
+
+.section-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 1rem;
+}
+.section-card h3 {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--red-deep);
+  margin: 0 0 0.85rem;
+}
+
+.track-slot {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.track-slot:last-child { border-bottom: none; }
+.track-slot .part-name { width: 90px; font-weight: 600; font-size: 0.9rem; flex-shrink: 0; }
+.track-slot .status { flex: 1; font-size: 0.82rem; color: var(--slate); }
+.track-slot .status.present { color: var(--ok); }
+.track-slot .status.uploading { color: var(--red-deep); }
+.track-slot input[type="file"] { max-width: 160px; font-size: 0.78rem; }
+
+.sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.sheet-item:last-child { border-bottom: none; }
+.sheet-item img { width: 44px; height: 58px; object-fit: cover; border: 1px solid var(--line); border-radius: 3px; }
+.sheet-item .label-input { flex: 1; }
+.sheet-item .reorder-btns { display: flex; flex-direction: column; gap: 2px; }
+.sheet-item .reorder-btns button { padding: 0.1rem 0.4rem; font-size: 0.7rem; }
+
+.link-item { display: flex; gap: 0.5rem; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid var(--line); }
+.link-item:last-child { border-bottom: none; }
+.link-item input { flex: 1; }
+
+.add-row { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--line); }
+
+.save-status { font-size: 0.8rem; color: var(--slate); margin-top: 0.5rem; }
+
+.toast {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #fff;
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  z-index: 100;
+  max-width: 90vw;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+.toast.error { background: var(--red-deep); }
+
+.checkbox-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; color: var(--slate); margin: 0.6rem 0; }
+
+.danger-zone { border: 1px solid var(--red-deep); background: var(--warn-bg); }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <h1>Choir Materials — Admin</h1>
+  <span class="conn-pill" id="conn-pill">Checking&hellip;</span>
+</div>
+
+<div id="config-warning" class="config-warning" style="display:none">
+  Repo not configured. Open this file and set <code>GH_OWNER</code> and
+  <code>GH_REPO</code> near the top of the <code>&lt;script&gt;</code> block
+  before using this page.
+</div>
+
+<div class="wrap" id="app-root"></div>
+
+<script>
+/* ================================================================
+   CONFIG — set these three values for your repo
+   ================================================================ */
+const GH_OWNER = 'owner';   // <-- your GitHub username or org
+const GH_REPO  = 'repo';    // <-- the repo name
+const GH_BRANCH = 'main';   // <-- branch to write to
+
+const GH_PLACEHOLDERS = (GH_OWNER === 'owner' || GH_REPO === 'repo');
+const PAT_STORAGE_KEY = 'gh_pat_choir_music';
+const SONGS_PATH = 'data/songs.json';
+const TRACK_PARTS = ['Full Mix', 'Soprano', 'Alto', 'Tenor', 'Bass'];
+const GH_API = 'https://api.github.com';
+
+let STATE = {
+  songs: [],
+  sha: null,
+  activeTag: null,
+  searchQuery: '',
+};
+
+const root = document.getElementById('app-root');
+const connPill = document.getElementById('conn-pill');
+
+init();
+
+async function init() {
+  if (GH_PLACEHOLDERS) {
+    document.getElementById('config-warning').style.display = 'block';
+    connPill.textContent = 'Not configured';
+    return;
+  }
+
+  const token = localStorage.getItem(PAT_STORAGE_KEY);
+  if (!token) {
+    renderPatGate();
+    return;
+  }
+
+  connPill.textContent = 'Connecting…';
+  try {
+    await loadSongs();
+    connPill.textContent = 'Connected';
+    connPill.classList.add('connected');
+    renderList();
+  } catch (err) {
+    console.error(err);
+    connPill.textContent = 'Connection failed';
+    renderPatGate(err.message);
+  }
+}
+
+/* ---------------- PAT gate ---------------- */
+
+function renderPatGate(errorMsg) {
+  root.innerHTML = `
+    <div class="gate-card">
+      <h2>Connect to GitHub</h2>
+      <p>Paste a fine-grained personal access token with read/write access to
+      <strong>${escapeHtml(GH_OWNER)}/${escapeHtml(GH_REPO)}</strong> (Contents
+      permission: Read and write). It's stored only in this browser's local
+      storage, never sent anywhere but GitHub.</p>
+      ${errorMsg ? `<p style="color:var(--red-deep)">${escapeHtml(errorMsg)}</p>` : ''}
+      <div class="field-row">
+        <label for="pat-input">Personal access token</label>
+        <input type="password" id="pat-input" placeholder="github_pat_..." autocomplete="off">
+      </div>
+      <button class="btn" id="pat-save-btn">Connect</button>
+    </div>`;
+
+  document.getElementById('pat-save-btn').addEventListener('click', async () => {
+    const val = document.getElementById('pat-input').value.trim();
+    if (!val) return;
+    localStorage.setItem(PAT_STORAGE_KEY, val);
+    connPill.textContent = 'Connecting…';
+    try {
+      await loadSongs();
+      connPill.textContent = 'Connected';
+      connPill.classList.add('connected');
+      renderList();
+    } catch (err) {
+      localStorage.removeItem(PAT_STORAGE_KEY);
+      renderPatGate('Could not connect — check the token and repo permissions, then try again.');
+    }
+  });
+}
+
+/* ---------------- GitHub Contents API ---------------- */
+
+function ghHeaders() {
+  const token = localStorage.getItem(PAT_STORAGE_KEY);
+  return {
+    'Authorization': `Bearer ${token}`,
+    'Accept': 'application/vnd.github+json',
+  };
+}
+
+async function ghGetFile(path) {
+  const res = await fetch(`${GH_API}/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`, {
+    headers: ghHeaders(),
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`GitHub GET ${path} failed (${res.status})`);
+  const data = await res.json();
+  return { sha: data.sha, content: b64DecodeUnicode(data.content) };
+}
+
+async function ghPutText(path, contentStr, message, sha) {
+  const body = {
+    message,
+    content: b64EncodeUnicode(contentStr),
+    branch: GH_BRANCH,
+  };
+  if (sha) body.sha = sha;
+  const res = await fetch(`${GH_API}/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+    method: 'PUT',
+    headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`Save failed (${res.status}): ${err.message || 'unknown error'}`);
+  }
+  return res.json();
+}
+
+async function ghPutBase64(path, base64Content, message, sha) {
+  const body = { message, content: base64Content, branch: GH_BRANCH };
+  if (sha) body.sha = sha;
+  const res = await fetch(`${GH_API}/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+    method: 'PUT',
+    headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`Upload failed (${res.status}): ${err.message || 'unknown error'}`);
+  }
+  return res.json();
+}
+
+async function ghDeleteFile(path, sha, message) {
+  const res = await fetch(`${GH_API}/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+    method: 'DELETE',
+    headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, sha, branch: GH_BRANCH }),
+  });
+  return res.ok;
+}
+
+async function loadSongs() {
+  const file = await ghGetFile(SONGS_PATH);
+  if (!file) {
+    STATE.songs = [];
+    STATE.sha = null;
+    return;
+  }
+  const parsed = JSON.parse(file.content);
+  STATE.songs = parsed.songs || [];
+  STATE.sha = file.sha;
+}
+
+async function saveSongs(message) {
+  const contentStr = JSON.stringify({ songs: STATE.songs }, null, 2) + '\n';
+  const result = await ghPutText(SONGS_PATH, contentStr, message, STATE.sha);
+  STATE.sha = result.content.sha;
+}
+
+/* ---------------- List view ---------------- */
+
+function renderList() {
+  const allTags = Array.from(new Set(STATE.songs.flatMap(s => s.tags || []))).sort();
+  let filtered = STATE.songs;
+  if (STATE.activeTag) filtered = filtered.filter(s => (s.tags || []).includes(STATE.activeTag));
+  if (STATE.searchQuery) {
+    const q = STATE.searchQuery.toLowerCase();
+    filtered = filtered.filter(s => s.title.toLowerCase().includes(q) || (s.composer || '').toLowerCase().includes(q));
+  }
+
+  let html = `
+    <div class="toolbar">
+      <input type="search" id="search-input" placeholder="Search songs or composers…" value="${escapeAttr(STATE.searchQuery)}">
+      <button class="btn" id="add-song-btn">+ Add song</button>
+    </div>`;
+
+  if (allTags.length) {
+    html += `<div class="tag-row">
+      <button class="tag-chip ${!STATE.activeTag ? 'active' : ''}" data-tag="">All</button>
+      ${allTags.map(t => `<button class="tag-chip ${STATE.activeTag === t ? 'active' : ''}" data-tag="${escapeAttr(t)}">${escapeHtml(t)}</button>`).join('')}
+    </div>`;
+  }
+
+  if (!filtered.length) {
+    html += `<div class="empty-state"><div class="big">No songs</div><div>Add one to get started.</div></div>`;
+  } else {
+    html += filtered.map(song => `
+      <div class="song-row" data-id="${escapeAttr(song.id)}">
+        <div class="info">
+          <div class="title">${escapeHtml(song.title)}</div>
+          ${song.composer ? `<div class="composer">${escapeHtml(song.composer)}</div>` : ''}
+          <div class="counts">${(song.tracks || []).length} track(s) &middot; ${(song.sheetMusic || []).length} page(s) &middot; ${(song.links || []).length} link(s)</div>
+        </div>
+      </div>`).join('');
+  }
+
+  root.innerHTML = html;
+
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    STATE.searchQuery = e.target.value;
+    renderList();
+    document.getElementById('search-input').focus();
+    const el = document.getElementById('search-input');
+    el.selectionStart = el.selectionEnd = el.value.length;
+  });
+  document.getElementById('add-song-btn').addEventListener('click', () => renderAddSongForm());
+  document.querySelectorAll('.tag-chip').forEach(chip => {
+    chip.addEventListener('click', () => { STATE.activeTag = chip.dataset.tag || null; renderList(); });
+  });
+  document.querySelectorAll('.song-row').forEach(row => {
+    row.addEventListener('click', () => renderDetail(row.dataset.id));
+  });
+}
+
+function renderAddSongForm() {
+  root.innerHTML = `
+    <div class="detail-header">
+      <button class="btn plain" id="back-btn">&larr; Back</button>
+      <h2>Add song</h2>
+    </div>
+    <div class="section-card">
+      <div class="field-row"><label for="new-title">Title</label><input type="text" id="new-title"></div>
+      <div class="field-row"><label for="new-composer">Composer</label><input type="text" id="new-composer"></div>
+      <div class="field-row"><label for="new-tags">Tags (comma separated)</label><input type="text" id="new-tags" placeholder="Hymn, Sunday Service"></div>
+      <div class="field-row"><label for="new-notes">Notes</label><textarea id="new-notes"></textarea></div>
+      <button class="btn" id="create-song-btn">Create song</button>
+      <div class="save-status" id="create-status"></div>
+    </div>`;
+
+  document.getElementById('back-btn').addEventListener('click', renderList);
+  document.getElementById('create-song-btn').addEventListener('click', async () => {
+    const title = document.getElementById('new-title').value.trim();
+    if (!title) { document.getElementById('create-status').textContent = 'Title is required.'; return; }
+    const id = slugify(title);
+    if (STATE.songs.some(s => s.id === id)) {
+      document.getElementById('create-status').textContent = `A song with id "${id}" already exists — use a different title or edit that song instead.`;
+      return;
+    }
+    const composer = document.getElementById('new-composer').value.trim();
+    const tags = document.getElementById('new-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+    const notes = document.getElementById('new-notes').value.trim();
+
+    const newSong = { id, title, composer, tags, notes, tracks: [], sheetMusic: [], links: [] };
+    STATE.songs.push(newSong);
+
+    const statusEl = document.getElementById('create-status');
+    statusEl.textContent = 'Saving…';
+    try {
+      await saveSongs(`Add song: ${title}`);
+      renderDetail(id);
+    } catch (err) {
+      STATE.songs.pop();
+      statusEl.textContent = err.message;
+    }
+  });
+}
+
+/* ---------------- Detail view ---------------- */
+
+function findSong(id) { return STATE.songs.find(s => s.id === id); }
+
+function renderDetail(id) {
+  const song = findSong(id);
+  if (!song) { renderList(); return; }
+
+  song.tracks = song.tracks || [];
+  song.sheetMusic = song.sheetMusic || [];
+  song.links = song.links || [];
+
+  root.innerHTML = `
+    <div class="detail-header">
+      <button class="btn plain" id="back-btn">&larr; Back</button>
+      <h2>${escapeHtml(song.title)}</h2>
+    </div>
+
+    <div class="section-card">
+      <h3>Song info</h3>
+      <div class="field-row"><label>Title</label><input type="text" id="edit-title" value="${escapeAttr(song.title)}"></div>
+      <div class="field-row"><label>Composer</label><input type="text" id="edit-composer" value="${escapeAttr(song.composer || '')}"></div>
+      <div class="field-row"><label>Tags (comma separated)</label><input type="text" id="edit-tags" value="${escapeAttr((song.tags || []).join(', '))}"></div>
+      <div class="field-row"><label>Notes</label><textarea id="edit-notes">${escapeHtml(song.notes || '')}</textarea></div>
+      <button class="btn" id="save-info-btn">Save info</button>
+      <div class="save-status" id="info-status"></div>
+    </div>
+
+    <div class="section-card">
+      <h3>Practice tracks</h3>
+      <div id="tracks-list"></div>
+    </div>
+
+    <div class="section-card">
+      <h3>Sheet music</h3>
+      <div id="sheets-list"></div>
+      <div class="add-row">
+        <label class="field-row" style="margin-bottom:0.4rem">
+          <span style="display:block;font-size:0.8rem;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:0.3rem">Add a page</span>
+          <input type="file" id="add-sheet-input" accept="image/*">
+        </label>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h3>Reference links</h3>
+      <div id="links-list"></div>
+      <div class="add-row">
+        <div class="field-row"><label>Label</label><input type="text" id="new-link-label" placeholder="Reference recording"></div>
+        <div class="field-row"><label>URL</label><input type="url" id="new-link-url" placeholder="https://"></div>
+        <button class="btn secondary small" id="add-link-btn">+ Add link</button>
+      </div>
+    </div>
+
+    <div class="section-card danger-zone">
+      <h3 style="color:var(--red-deep)">Delete song</h3>
+      <p style="font-size:0.85rem;color:var(--slate);margin-top:0">Removes this song from the list. Files in the repo are kept by default.</p>
+      <label class="checkbox-row"><input type="checkbox" id="delete-files-checkbox"> Also delete this song's audio and image files from the repo</label>
+      <button class="btn danger" id="delete-song-btn">Delete song</button>
+    </div>
+  `;
+
+  document.getElementById('back-btn').addEventListener('click', renderList);
+  wireInfoSave(song);
+  renderTracks(song);
+  renderSheets(song);
+  renderLinks(song);
+  wireDeleteSong(song);
+}
+
+function wireInfoSave(song) {
+  document.getElementById('save-info-btn').addEventListener('click', async () => {
+    const statusEl = document.getElementById('info-status');
+    const prev = { title: song.title, composer: song.composer, tags: song.tags, notes: song.notes };
+    song.title = document.getElementById('edit-title').value.trim() || song.title;
+    song.composer = document.getElementById('edit-composer').value.trim();
+    song.tags = document.getElementById('edit-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+    song.notes = document.getElementById('edit-notes').value.trim();
+    statusEl.textContent = 'Saving…';
+    try {
+      await saveSongs(`Update info: ${song.title}`);
+      statusEl.textContent = 'Saved.';
+    } catch (err) {
+      Object.assign(song, prev);
+      statusEl.textContent = err.message;
+    }
+  });
+}
+
+/* ---- Tracks ---- */
+
+function renderTracks(song) {
+  const listEl = document.getElementById('tracks-list');
+  listEl.innerHTML = TRACK_PARTS.map(part => {
+    const existing = song.tracks.find(t => t.part === part);
+    return `
+      <div class="track-slot" data-part="${escapeAttr(part)}">
+        <div class="part-name">${escapeHtml(part)}</div>
+        <div class="status ${existing ? 'present' : ''}" id="status-${slugify(part)}">${existing ? 'Uploaded' : 'No file'}</div>
+        <input type="file" accept="audio/*" data-part="${escapeAttr(part)}" class="track-upload">
+        ${existing ? `<button class="btn plain small remove-track-btn" data-part="${escapeAttr(part)}">Remove</button>` : ''}
+      </div>`;
+  }).join('');
+
+  listEl.querySelectorAll('.track-upload').forEach(input => {
+    input.addEventListener('change', (e) => handleTrackUpload(song, input.dataset.part, e.target.files[0]));
+  });
+  listEl.querySelectorAll('.remove-track-btn').forEach(btn => {
+    btn.addEventListener('click', () => handleTrackRemove(song, btn.dataset.part));
+  });
+}
+
+async function handleTrackUpload(song, part, file) {
+  if (!file) return;
+  const statusEl = document.getElementById(`status-${slugify(part)}`);
+  statusEl.textContent = 'Uploading…';
+  statusEl.classList.add('uploading');
+  try {
+    const base64 = await fileToBase64(file);
+    const ext = (file.name.split('.').pop() || 'mp3').toLowerCase();
+    const path = `audio/${song.id}/${slugify(part)}.${ext}`;
+
+    const existingFile = await ghGetFile(path).catch(() => null);
+    await ghPutBase64(path, base64, `Upload ${part} track: ${song.title}`, existingFile ? existingFile.sha : undefined);
+
+    const trackIndex = song.tracks.findIndex(t => t.part === part);
+    const trackEntry = { part, file: path };
+    if (trackIndex >= 0) song.tracks[trackIndex] = trackEntry;
+    else song.tracks.push(trackEntry);
+
+    await saveSongs(`Update tracks: ${song.title}`);
+    renderTracks(song);
+  } catch (err) {
+    statusEl.textContent = err.message;
+    statusEl.classList.remove('uploading');
+  }
+}
+
+async function handleTrackRemove(song, part) {
+  if (!confirm(`Remove the ${part} track? This deletes the entry, not the file in the repo.`)) return;
+  song.tracks = song.tracks.filter(t => t.part !== part);
+  try {
+    await saveSongs(`Remove track: ${part} — ${song.title}`);
+    renderTracks(song);
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+/* ---- Sheet music ---- */
+
+function renderSheets(song) {
+  const listEl = document.getElementById('sheets-list');
+  if (!song.sheetMusic.length) {
+    listEl.innerHTML = `<div style="color:var(--slate);font-size:0.88rem">No pages yet.</div>`;
+  } else {
+    listEl.innerHTML = song.sheetMusic.map((s, i) => `
+      <div class="sheet-item" data-index="${i}">
+        <img src="https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${s.file}" alt="">
+        <input type="text" class="label-input sheet-label-input" value="${escapeAttr(s.label || '')}" placeholder="Label">
+        <div class="reorder-btns">
+          <button class="btn plain sheet-up" ${i === 0 ? 'disabled' : ''}>&uarr;</button>
+          <button class="btn plain sheet-down" ${i === song.sheetMusic.length - 1 ? 'disabled' : ''}>&darr;</button>
+        </div>
+        <button class="btn plain small sheet-remove">Remove</button>
+      </div>`).join('');
+  }
+
+  listEl.querySelectorAll('.sheet-label-input').forEach((input, i) => {
+    input.addEventListener('change', async () => {
+      song.sheetMusic[i].label = input.value.trim();
+      try { await saveSongs(`Update sheet label: ${song.title}`); }
+      catch (err) { showToast(err.message, true); }
+    });
+  });
+  listEl.querySelectorAll('.sheet-up').forEach((btn, i) => {
+    btn.addEventListener('click', () => moveSheet(song, i, i - 1));
+  });
+  listEl.querySelectorAll('.sheet-down').forEach((btn, i) => {
+    btn.addEventListener('click', () => moveSheet(song, i, i + 1));
+  });
+  listEl.querySelectorAll('.sheet-remove').forEach((btn, i) => {
+    btn.addEventListener('click', () => removeSheet(song, i));
+  });
+
+  document.getElementById('add-sheet-input').onchange = (e) => handleSheetUpload(song, e.target.files[0]);
+}
+
+async function moveSheet(song, from, to) {
+  if (to < 0 || to >= song.sheetMusic.length) return;
+  const [item] = song.sheetMusic.splice(from, 1);
+  song.sheetMusic.splice(to, 0, item);
+  try {
+    await saveSongs(`Reorder sheet music: ${song.title}`);
+    renderSheets(song);
+  } catch (err) { showToast(err.message, true); }
+}
+
+async function removeSheet(song, index) {
+  if (!confirm('Remove this page? This deletes the entry, not the file in the repo.')) return;
+  song.sheetMusic.splice(index, 1);
+  try {
+    await saveSongs(`Remove sheet page: ${song.title}`);
+    renderSheets(song);
+  } catch (err) { showToast(err.message, true); }
+}
+
+async function handleSheetUpload(song, file) {
+  if (!file) return;
+  const input = document.getElementById('add-sheet-input');
+  input.disabled = true;
+  try {
+    const base64 = await fileToBase64(file);
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const pageNum = song.sheetMusic.length + 1;
+    const path = `images/${song.id}/page-${pageNum}-${Date.now()}.${ext}`;
+
+    await ghPutBase64(path, base64, `Add sheet music page: ${song.title}`);
+    song.sheetMusic.push({ label: `Page ${pageNum}`, file: path });
+    await saveSongs(`Add sheet music page: ${song.title}`);
+    renderSheets(song);
+  } catch (err) {
+    showToast(err.message, true);
+  } finally {
+    input.disabled = false;
+  }
+}
+
+/* ---- Links ---- */
+
+function renderLinks(song) {
+  const listEl = document.getElementById('links-list');
+  if (!song.links.length) {
+    listEl.innerHTML = `<div style="color:var(--slate);font-size:0.88rem">No links yet.</div>`;
+  } else {
+    listEl.innerHTML = song.links.map((l, i) => `
+      <div class="link-item" data-index="${i}">
+        <input type="text" class="link-label-input" value="${escapeAttr(l.label || '')}" placeholder="Label">
+        <input type="url" class="link-url-input" value="${escapeAttr(l.url || '')}" placeholder="https://">
+        <button class="btn plain small link-remove">Remove</button>
+      </div>`).join('');
+  }
+
+  listEl.querySelectorAll('.link-item').forEach((row, i) => {
+    row.querySelector('.link-label-input').addEventListener('change', () => saveLinkEdit(song, i));
+    row.querySelector('.link-url-input').addEventListener('change', () => saveLinkEdit(song, i));
+    row.querySelector('.link-remove').addEventListener('click', () => removeLink(song, i));
+  });
+
+  document.getElementById('add-link-btn').onclick = () => addLink(song);
+}
+
+async function saveLinkEdit(song, i) {
+  const row = document.querySelectorAll('.link-item')[i];
+  song.links[i].label = row.querySelector('.link-label-input').value.trim();
+  song.links[i].url = row.querySelector('.link-url-input').value.trim();
+  try { await saveSongs(`Update link: ${song.title}`); }
+  catch (err) { showToast(err.message, true); }
+}
+
+async function removeLink(song, i) {
+  song.links.splice(i, 1);
+  try { await saveSongs(`Remove link: ${song.title}`); renderLinks(song); }
+  catch (err) { showToast(err.message, true); }
+}
+
+async function addLink(song) {
+  const label = document.getElementById('new-link-label').value.trim();
+  const url = document.getElementById('new-link-url').value.trim();
+  if (!url) return;
+  song.links.push({ label: label || url, url });
+  try {
+    await saveSongs(`Add link: ${song.title}`);
+    document.getElementById('new-link-label').value = '';
+    document.getElementById('new-link-url').value = '';
+    renderLinks(song);
+  } catch (err) { showToast(err.message, true); }
+}
+
+/* ---- Delete song ---- */
+
+function wireDeleteSong(song) {
+  document.getElementById('delete-song-btn').addEventListener('click', async () => {
+    if (!confirm(`Delete "${song.title}"? This cannot be undone from here.`)) return;
+    const deleteFiles = document.getElementById('delete-files-checkbox').checked;
+
+    STATE.songs = STATE.songs.filter(s => s.id !== song.id);
+    try {
+      await saveSongs(`Delete song: ${song.title}`);
+      if (deleteFiles) {
+        await deleteSongFiles(song);
+      }
+      renderList();
+    } catch (err) {
+      STATE.songs.push(song);
+      showToast(err.message, true);
+    }
+  });
+}
+
+async function deleteSongFiles(song) {
+  const paths = [
+    ...song.tracks.map(t => t.file),
+    ...song.sheetMusic.map(s => s.file),
+  ];
+  for (const path of paths) {
+    try {
+      const file = await ghGetFile(path);
+      if (file) await ghDeleteFile(path, file.sha, `Delete file for removed song: ${song.title}`);
+    } catch (err) {
+      console.error('Could not delete', path, err);
+    }
+  }
+}
+
+/* ---------------- Utilities ---------------- */
+
+function slugify(str) {
+  return String(str).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function b64EncodeUnicode(str) {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  return btoa(binary);
+}
+
+function b64DecodeUnicode(b64) {
+  const binary = atob(b64.replace(/\n/g, ''));
+  const bytes = new Uint8Array([...binary].map(c => c.charCodeAt(0)));
+  return new TextDecoder().decode(bytes);
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
+}
+function escapeAttr(str) { return escapeHtml(str); }
+
+function showToast(msg, isError) {
+  const toast = document.createElement('div');
+  toast.className = 'toast' + (isError ? ' error' : '');
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
+}
+</script>
+</body>
+</html>

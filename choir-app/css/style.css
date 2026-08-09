@@ -1,0 +1,548 @@
+/* ============================================================
+   Choir Materials — Design Tokens
+   Palette: aged hymnal paper + brass + SATB part colors
+   Fonts: system stacks only (must render fully offline, no CDN)
+   ============================================================ */
+
+:root {
+  --paper: #F1ECE0;
+  --paper-dim: #E6DFCC;
+  --paper-line: #D8CEB4;
+  --ink: #23241F;
+  --ink-soft: #5B594E;
+  --brass: #9C7A3C;
+  --brass-dim: #C7A868;
+  --brass-deep: #7A5E2C;
+
+  --soprano: #B5432F;
+  --alto: #2E6E86;
+  --tenor: #6B5188;
+  --bass: #46592F;
+
+  --danger: #A13A2E;
+  --radius: 3px;
+
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  padding-bottom: 3rem;
+}
+
+a { color: var(--brass-deep); }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brass-deep);
+  outline-offset: 2px;
+}
+
+/* ---------- Header ---------- */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.app-header .brand {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+  font-weight: 600;
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.app-header .brand .mark {
+  color: var(--brass-dim);
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--paper);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0.2rem 0.5rem 0.2rem 0;
+}
+
+.online-pill {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(241,236,224,0.35);
+  color: rgba(241,236,224,0.75);
+}
+
+.online-pill.offline {
+  border-color: var(--soprano);
+  color: #E8B7A8;
+}
+
+/* ---------- Search / list page ---------- */
+
+.search-wrap {
+  padding: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--ink);
+}
+
+.tag-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  padding: 0 1rem 0.75rem;
+}
+
+.tag-chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  background: var(--paper-dim);
+  border: 1px solid var(--paper-line);
+  color: var(--ink-soft);
+  padding: 0.28rem 0.6rem;
+  border-radius: 999px;
+}
+
+.tag-chip.active {
+  background: var(--brass);
+  border-color: var(--brass-deep);
+  color: var(--paper);
+}
+
+.song-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.song-card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-left: 4px solid var(--brass);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.song-card .title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.song-card .composer {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin-top: 0.15rem;
+}
+
+.song-card .meta-row {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mini-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+}
+
+.cached-badge {
+  font-size: 0.9rem;
+  color: var(--bass);
+}
+
+.empty-state {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.empty-state .big {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--ink);
+  margin-bottom: 0.35rem;
+}
+
+/* ---------- Song detail page ---------- */
+
+.song-detail {
+  padding: 1rem;
+}
+
+.song-title-block {
+  margin-bottom: 1.1rem;
+}
+
+.song-title-block h1 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  margin: 0 0 0.15rem;
+}
+
+.song-title-block .composer {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brass-deep);
+  margin: 1.6rem 0 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--paper-line);
+}
+
+/* Part tabs — signature element */
+
+.part-tabs {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.part-tab {
+  border: none;
+  background: var(--paper-dim);
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px 999px 0 0;
+  border-bottom: 3px solid transparent;
+}
+
+.part-tab[data-part="Full Mix"] { border-bottom-color: var(--brass); }
+.part-tab[data-part="Soprano"] { border-bottom-color: var(--soprano); }
+.part-tab[data-part="Alto"] { border-bottom-color: var(--alto); }
+.part-tab[data-part="Tenor"] { border-bottom-color: var(--tenor); }
+.part-tab[data-part="Bass"] { border-bottom-color: var(--bass); }
+
+.part-tab.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.player-card {
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.play-btn {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: none;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-track-name {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.3rem;
+}
+
+.seek-bar {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+  position: relative;
+  cursor: pointer;
+}
+
+.seek-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  border-radius: 999px;
+  background: var(--brass);
+  width: 0%;
+}
+
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  margin-top: 0.35rem;
+}
+
+.no-track-msg {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+
+/* Sheet music */
+
+.sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+}
+
+.sheet-thumb {
+  display: block;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fff;
+  aspect-ratio: 3/4;
+}
+
+.sheet-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sheet-thumb .label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-align: center;
+  padding: 0.3rem;
+  color: var(--ink-soft);
+  background: var(--paper-dim);
+}
+
+/* Lightbox */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(20,19,15,0.95);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox img {
+  max-width: 94vw;
+  max-height: 82vh;
+  object-fit: contain;
+  border-radius: var(--radius);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--paper);
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.lightbox-nav {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.lightbox-nav button {
+  background: none;
+  border: 1px solid rgba(241,236,224,0.4);
+  color: var(--paper);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+/* Links */
+
+.link-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.link-item a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.85rem;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+
+.link-item .arrow {
+  margin-left: auto;
+  color: var(--brass-deep);
+}
+
+/* Notes */
+
+.notes-box {
+  background: var(--paper-dim);
+  border-left: 3px solid var(--brass);
+  padding: 0.75rem 0.9rem;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+/* Offline save control */
+
+.offline-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.4rem;
+}
+
+.save-offline-btn {
+  flex: 1;
+  border: 1px solid var(--brass-deep);
+  background: var(--paper-dim);
+  color: var(--brass-deep);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius);
+}
+
+.save-offline-btn.saved {
+  background: var(--bass);
+  border-color: var(--bass);
+  color: var(--paper);
+}
+
+.save-offline-btn:disabled {
+  opacity: 0.6;
+}
+
+.save-status {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+  margin-top: 0.4rem;
+}
+
+/* Toast */
+
+.toast {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  z-index: 60;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+@media (min-width: 640px) {
+  .song-list, .search-wrap, .tag-row, .song-detail {
+    max-width: 640px;
+    margin: 0 auto;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .app-header .brand, .app-header > * {
+    max-width: 640px;
+  }
+}
