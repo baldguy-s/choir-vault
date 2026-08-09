@@ -312,7 +312,12 @@
           "file": "audio/o-holy-night/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/o-holy-night/page-1-1786252622835.pdf"
+        }
+      ],
       "links": []
     }
   ]
