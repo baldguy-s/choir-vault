@@ -321,6 +321,22 @@ button {
   justify-content: center;
 }
 
+.skip-btn {
+  width: 2.6rem;
+  height: 2.6rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .player-track-name {
   font-family: var(--font-mono);
   font-size: 0.72rem;

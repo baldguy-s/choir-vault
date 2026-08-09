@@ -177,7 +177,9 @@ function renderSongDetail(song) {
       <div class="player-card">
         <div class="player-track-name" id="player-track-name">${escapeHtml(tracks[0].part)}</div>
         <div class="player-row">
+          <button class="skip-btn" id="rewind-btn" aria-label="Skip back 10 seconds">−10s</button>
           <button class="play-btn" id="play-btn" aria-label="Play">&#9658;</button>
+          <button class="skip-btn" id="forward-btn" aria-label="Skip forward 10 seconds">+10s</button>
           <div style="flex:1">
             <div class="seek-bar" id="seek-bar"><div class="seek-fill" id="seek-fill"></div></div>
             <div class="time-row"><span id="time-current">0:00</span><span id="time-total">0:00</span></div>
@@ -221,6 +223,8 @@ function renderSongDetail(song) {
 
 function setupPlayer(song, tracks) {
   const playBtn = document.getElementById('play-btn');
+  const rewindBtn = document.getElementById('rewind-btn');
+  const forwardBtn = document.getElementById('forward-btn');
   const seekBar = document.getElementById('seek-bar');
   const seekFill = document.getElementById('seek-fill');
   const timeCurrent = document.getElementById('time-current');
@@ -273,6 +277,14 @@ function setupPlayer(song, tracks) {
       audio.pause();
       playBtn.innerHTML = '&#9658;';
     }
+  });
+
+  rewindBtn.addEventListener('click', () => {
+    audio.currentTime = Math.max(0, audio.currentTime - 10);
+  });
+
+  forwardBtn.addEventListener('click', () => {
+    audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
   });
 
   seekBar.addEventListener('click', (e) => {
