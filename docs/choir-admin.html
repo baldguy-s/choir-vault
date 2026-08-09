@@ -280,7 +280,7 @@ const GH_BRANCH = 'main';   // <-- branch to write to
 
 const GH_PLACEHOLDERS = (GH_OWNER === 'owner' || GH_REPO === 'repo');
 const PAT_STORAGE_KEY = 'gh_pat_choir_music';
-const SONGS_PATH = 'data/songs.json';
+const SONGS_PATH = 'docs/data/songs.json';
 const TRACK_PARTS = ['Full Mix', 'Soprano', 'Alto', 'Tenor', 'Bass'];
 const GH_API = 'https://api.github.com';
 
@@ -659,13 +659,14 @@ async function handleTrackUpload(song, part, file) {
   try {
     const base64 = await fileToBase64(file);
     const ext = (file.name.split('.').pop() || 'mp3').toLowerCase();
-    const path = `audio/${song.id}/${slugify(part)}.${ext}`;
+    const appPath = `audio/${song.id}/${slugify(part)}.${ext}`;
+    const repoPath = `docs/${appPath}`;
 
-    const existingFile = await ghGetFile(path).catch(() => null);
-    await ghPutBase64(path, base64, `Upload ${part} track: ${song.title}`, existingFile ? existingFile.sha : undefined);
+    const existingFile = await ghGetFile(repoPath).catch(() => null);
+    await ghPutBase64(repoPath, base64, `Upload ${part} track: ${song.title}`, existingFile ? existingFile.sha : undefined);
 
     const trackIndex = song.tracks.findIndex(t => t.part === part);
-    const trackEntry = { part, file: path };
+    const trackEntry = { part, file: appPath };
     if (trackIndex >= 0) song.tracks[trackIndex] = trackEntry;
     else song.tracks.push(trackEntry);
 
@@ -697,7 +698,7 @@ function renderSheets(song) {
   } else {
     listEl.innerHTML = song.sheetMusic.map((s, i) => `
       <div class="sheet-item" data-index="${i}">
-        <img src="https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${s.file}" alt="">
+        <img src="https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/docs/${s.file}" alt="">
         <input type="text" class="label-input sheet-label-input" value="${escapeAttr(s.label || '')}" placeholder="Label">
         <div class="reorder-btns">
           <button class="btn plain sheet-up" ${i === 0 ? 'disabled' : ''}>&uarr;</button>
@@ -757,10 +758,11 @@ async function handleSheetUpload(song, file) {
     const base64 = await fileToBase64(file);
     const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
     const pageNum = song.sheetMusic.length + 1;
-    const path = `images/${song.id}/page-${pageNum}-${Date.now()}.${ext}`;
+    const appPath = `images/${song.id}/page-${pageNum}-${Date.now()}.${ext}`;
+    const repoPath = `docs/${appPath}`;
 
-    await ghPutBase64(path, base64, `Add sheet music page: ${song.title}`);
-    song.sheetMusic.push({ label: `Page ${pageNum}`, file: path });
+    await ghPutBase64(repoPath, base64, `Add sheet music page: ${song.title}`);
+    song.sheetMusic.push({ label: `Page ${pageNum}`, file: appPath });
     await saveSongs(`Add sheet music page: ${song.title}`);
     renderSheets(song);
   } catch (err) {
@@ -844,8 +846,8 @@ function wireDeleteSong(song) {
 
 async function deleteSongFiles(song) {
   const paths = [
-    ...song.tracks.map(t => t.file),
-    ...song.sheetMusic.map(s => s.file),
+    ...song.tracks.map(t => `docs/${t.file}`),
+    ...song.sheetMusic.map(s => `docs/${s.file}`),
   ];
   for (const path of paths) {
     try {
