@@ -415,6 +415,10 @@
         {
           "part": "Demo",
           "file": "audio/then-came-the-morning/demo.mp3"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/then-came-the-morning/bass.mp3"
         }
       ],
       "sheetMusic": [],
