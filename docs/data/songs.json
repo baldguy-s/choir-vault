@@ -433,12 +433,7 @@
         "Solo"
       ],
       "notes": "",
-      "tracks": [
-        {
-          "part": "Demo",
-          "file": "audio/we-are-the-reason/demo.mp3"
-        }
-      ],
+      "tracks": [],
       "sheetMusic": [],
       "links": []
     }
