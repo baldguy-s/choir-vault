@@ -737,7 +737,12 @@
           "file": "audio/when-he-calls-i-ll-fly-away/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/when-he-calls-i-ll-fly-away/page-1-1786375560549.pdf"
+        }
+      ],
       "links": []
     }
   ]
