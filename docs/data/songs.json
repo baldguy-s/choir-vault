@@ -338,7 +338,12 @@
           "file": "images/oh-to-see-the-dawn/page-1-1786252710464.pdf"
         }
       ],
-      "links": []
+      "links": [
+        {
+          "label": "Demo",
+          "url": "https://youtu.be/rDJVbEgCS4o?si=isCBO61b9TPFypOa"
+        }
+      ]
     },
     {
       "id": "sinner-saved-by-grace",
