@@ -511,7 +511,12 @@
           "file": "images/give-thanks-with-come-ye-thankful-people-come/page-1-1786371789660.pdf"
         }
       ],
-      "links": []
+      "links": [
+        {
+          "label": "Demo",
+          "url": "https://youtu.be/BDAdWRpDOQk?si=Jjj_Z5Y-_GaatmsM"
+        }
+      ]
     }
   ]
 }
