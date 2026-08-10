@@ -687,7 +687,12 @@
       "composer": "",
       "tags": [],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Soprano",
+          "file": "audio/set-my-soul-afire/soprano.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
