@@ -15,6 +15,10 @@
         {
           "part": "Soprano",
           "file": "audio/bought-by-the-blood/soprano.m4a"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/bought-by-the-blood/alto.m4a"
         }
       ],
       "sheetMusic": [],
