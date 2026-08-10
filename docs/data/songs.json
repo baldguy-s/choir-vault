@@ -487,7 +487,12 @@
         "Thanksgiving"
       ],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Soprano",
+          "file": "audio/give-thanks-with-come-ye-thankful-people-come/soprano.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
