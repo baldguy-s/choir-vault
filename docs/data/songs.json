@@ -505,7 +505,12 @@
           "file": "audio/give-thanks-with-come-ye-thankful-people-come/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/give-thanks-with-come-ye-thankful-people-come/page-1-1786371789660.pdf"
+        }
+      ],
       "links": []
     }
   ]
