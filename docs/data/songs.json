@@ -548,12 +548,7 @@
           "file": "audio/jesus-is-the-answer/demo.mp3"
         }
       ],
-      "sheetMusic": [
-        {
-          "label": "Music - Jesus Is The Answer",
-          "file": "images/jesus-is-the-answer/page-1-1786373554254.pdf"
-        }
-      ],
+      "sheetMusic": [],
       "links": [
         {
           "label": "Demo",
