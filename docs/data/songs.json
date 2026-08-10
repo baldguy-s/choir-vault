@@ -354,6 +354,10 @@
         {
           "part": "Tenor",
           "file": "audio/oh-to-see-the-dawn/tenor.m4a"
+        },
+        {
+          "part": "Demo",
+          "file": "audio/oh-to-see-the-dawn/demo.mp3"
         }
       ],
       "sheetMusic": [
