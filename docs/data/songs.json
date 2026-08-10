@@ -346,6 +346,10 @@
         {
           "part": "Soprano",
           "file": "audio/oh-to-see-the-dawn/soprano.m4a"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/oh-to-see-the-dawn/alto.m4a"
         }
       ],
       "sheetMusic": [
