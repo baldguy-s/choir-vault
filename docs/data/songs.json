@@ -531,6 +531,10 @@
         {
           "part": "Alto",
           "file": "audio/god-is-so-wonderful/alto.m4a"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/god-is-so-wonderful/tenor.m4a"
         }
       ],
       "sheetMusic": [],
