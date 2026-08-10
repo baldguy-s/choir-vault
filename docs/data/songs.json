@@ -595,6 +595,10 @@
         {
           "part": "Alto",
           "file": "audio/great-is-his-faithfulness/alto.m4a"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/great-is-his-faithfulness/tenor.m4a"
         }
       ],
       "sheetMusic": [],
