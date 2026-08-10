@@ -23,7 +23,14 @@
       "id": "2026-08-16-sunday_pm",
       "date": "2026-08-16",
       "type": "sunday_pm",
-      "songs": []
+      "songs": [
+        {
+          "songId": "",
+          "title": "",
+          "slot": "",
+          "soloist": ""
+        }
+      ]
     },
     {
       "id": "2026-08-23-sunday_am",
