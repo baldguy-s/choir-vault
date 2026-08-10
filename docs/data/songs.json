@@ -759,6 +759,10 @@
         {
           "part": "Alto",
           "file": "audio/how-can-i-keep-from-singing/alto.m4a"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/how-can-i-keep-from-singing/tenor.m4a"
         }
       ],
       "sheetMusic": [],
