@@ -848,7 +848,9 @@
     {
       "id": "make-me-a-blessing",
       "title": "Make Me A Blessing",
-      "tags": [],
+      "tags": [
+        "Slot 1"
+      ],
       "notes": "",
       "lyrics": "",
       "preRelease": false,
