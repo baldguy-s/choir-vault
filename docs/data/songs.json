@@ -723,6 +723,10 @@
         {
           "part": "Soprano",
           "file": "audio/when-he-calls-i-ll-fly-away/soprano.m4a"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/when-he-calls-i-ll-fly-away/alto.m4a"
         }
       ],
       "sheetMusic": [],
