@@ -782,7 +782,9 @@
     {
       "id": "when-he-calls-i-ll-fly-away",
       "title": "When He Calls I'll Fly Away",
-      "tags": [],
+      "tags": [
+        "Slot 1"
+      ],
       "notes": "",
       "lyrics": "",
       "preRelease": false,
