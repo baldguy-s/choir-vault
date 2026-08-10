@@ -795,7 +795,12 @@
       "composer": "",
       "tags": [],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Demo",
+          "file": "audio/make-me-a-blessing/demo.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": []
     }
