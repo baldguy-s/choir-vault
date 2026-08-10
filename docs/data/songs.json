@@ -606,7 +606,12 @@
       "composer": "",
       "tags": [],
       "notes": "",
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Soprano",
+          "file": "audio/give-me-jesus/soprano.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": [
         {
