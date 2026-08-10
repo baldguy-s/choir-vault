@@ -769,7 +769,12 @@
           "file": "audio/how-can-i-keep-from-singing/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/how-can-i-keep-from-singing/page-1-1786375769175.pdf"
+        }
+      ],
       "links": []
     }
   ]
