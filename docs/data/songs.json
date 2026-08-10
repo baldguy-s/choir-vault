@@ -610,6 +610,10 @@
         {
           "part": "Soprano",
           "file": "audio/give-me-jesus/soprano.m4a"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/give-me-jesus/alto.m4a"
         }
       ],
       "sheetMusic": [],
