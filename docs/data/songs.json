@@ -755,6 +755,10 @@
         {
           "part": "Soprano",
           "file": "audio/how-can-i-keep-from-singing/soprano.m4a"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/how-can-i-keep-from-singing/alto.m4a"
         }
       ],
       "sheetMusic": [],
