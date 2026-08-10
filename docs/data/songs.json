@@ -813,7 +813,9 @@
     {
       "id": "how-can-i-keep-from-singing",
       "title": "How Can I Keep From Singing",
-      "tags": [],
+      "tags": [
+        "Slot 1"
+      ],
       "notes": "",
       "lyrics": "",
       "preRelease": false,
