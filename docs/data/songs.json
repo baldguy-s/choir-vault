@@ -411,6 +411,10 @@
         {
           "part": "Soprano",
           "file": "audio/the-glory-land-way/soprano.m4a"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/the-glory-land-way/alto.m4a"
         }
       ],
       "sheetMusic": [],
