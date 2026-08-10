@@ -500,7 +500,12 @@
           "file": "audio/jesus-is-the-answer/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/jesus-is-the-answer/page-1-1786373554254.pdf"
+        }
+      ],
       "links": [
         {
           "label": "Demo",
