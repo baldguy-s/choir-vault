@@ -695,6 +695,10 @@
         {
           "part": "Alto",
           "file": "audio/set-my-soul-afire/alto.m4a"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/set-my-soul-afire/tenor.m4a"
         }
       ],
       "sheetMusic": [],
