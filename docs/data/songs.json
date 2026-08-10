@@ -747,7 +747,9 @@
     {
       "id": "set-my-soul-afire",
       "title": "Set My Soul Afire",
-      "tags": [],
+      "tags": [
+        "Slot 1"
+      ],
       "notes": "",
       "lyrics": "",
       "preRelease": false,
