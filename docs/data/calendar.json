@@ -38,8 +38,8 @@
       "type": "sunday_am",
       "songs": [
         {
-          "songId": "",
-          "title": "",
+          "songId": "oh-what-a-moment",
+          "title": "Oh, What A Moment",
           "slot": "4",
           "soloist": "Phil VanWinkle"
         }
