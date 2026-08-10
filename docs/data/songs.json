@@ -705,7 +705,12 @@
           "file": "audio/set-my-soul-afire/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/set-my-soul-afire/page-1-1786375373829.pdf"
+        }
+      ],
       "links": []
     }
   ]
