@@ -609,6 +609,10 @@
         {
           "part": "Bass",
           "file": "audio/give-thanks-with-come-ye-thankful-people-come/bass.m4a"
+        },
+        {
+          "part": "Demo",
+          "file": "audio/give-thanks-with-come-ye-thankful-people-come/demo.mp3"
         }
       ],
       "sheetMusic": [
