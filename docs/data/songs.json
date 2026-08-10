@@ -646,6 +646,10 @@
         {
           "part": "Bass",
           "file": "audio/give-me-jesus/bass.m4a"
+        },
+        {
+          "part": "Demo",
+          "file": "audio/give-me-jesus/demo.mp3"
         }
       ],
       "sheetMusic": [],
