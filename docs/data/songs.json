@@ -388,7 +388,12 @@
           "file": "images/statue-of-liberty/page-1-1786252916167.pdf"
         }
       ],
-      "links": []
+      "links": [
+        {
+          "label": "Demo",
+          "url": "https://youtu.be/_HJSbMkBYHs?si=79nKeAC1c8nJkIck"
+        }
+      ]
     },
     {
       "id": "the-glory-land-way",
