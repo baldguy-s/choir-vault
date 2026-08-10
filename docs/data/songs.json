@@ -491,6 +491,10 @@
         {
           "part": "Soprano",
           "file": "audio/give-thanks-with-come-ye-thankful-people-come/soprano.m4a"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/give-thanks-with-come-ye-thankful-people-come/alto.m4a"
         }
       ],
       "sheetMusic": [],
