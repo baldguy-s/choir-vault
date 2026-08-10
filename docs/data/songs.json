@@ -618,6 +618,10 @@
         {
           "part": "Tenor",
           "file": "audio/give-me-jesus/tenor.m4a"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/give-me-jesus/bass.m4a"
         }
       ],
       "sheetMusic": [],
