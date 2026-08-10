@@ -541,7 +541,12 @@
           "file": "audio/god-is-so-wonderful/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Page 1",
+          "file": "images/god-is-so-wonderful/page-1-1786373915798.pdf"
+        }
+      ],
       "links": []
     },
     {
