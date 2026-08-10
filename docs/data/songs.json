@@ -350,6 +350,10 @@
         {
           "part": "Alto",
           "file": "audio/oh-to-see-the-dawn/alto.m4a"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/oh-to-see-the-dawn/tenor.m4a"
         }
       ],
       "sheetMusic": [
