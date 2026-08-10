@@ -459,6 +459,10 @@
         {
           "part": "Alto",
           "file": "audio/we-are-the-reason/alto.m4a"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/we-are-the-reason/tenor.m4a"
         }
       ],
       "sheetMusic": [
