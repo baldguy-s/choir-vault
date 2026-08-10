@@ -686,6 +686,10 @@
         {
           "part": "Bass",
           "file": "audio/great-is-his-faithfulness/bass.m4a"
+        },
+        {
+          "part": "Demo",
+          "file": "audio/great-is-his-faithfulness/demo.mp3"
         }
       ],
       "sheetMusic": [
