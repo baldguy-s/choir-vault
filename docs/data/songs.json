@@ -486,6 +486,10 @@
         {
           "part": "Soprano",
           "file": "audio/jesus-is-the-answer/soprano.m4a"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/jesus-is-the-answer/alto.m4a"
         }
       ],
       "sheetMusic": [],
