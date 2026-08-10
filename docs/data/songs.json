@@ -490,6 +490,10 @@
         {
           "part": "Alto",
           "file": "audio/jesus-is-the-answer/alto.m4a"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/jesus-is-the-answer/tenor.m4a"
         }
       ],
       "sheetMusic": [],
