@@ -407,6 +407,10 @@
         {
           "part": "Bass",
           "file": "audio/the-glory-land-way/bass.m4a"
+        },
+        {
+          "part": "Soprano",
+          "file": "audio/the-glory-land-way/soprano.m4a"
         }
       ],
       "sheetMusic": [],
