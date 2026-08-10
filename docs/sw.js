@@ -3,12 +3,13 @@
    - shell cache: the app itself (HTML/CSS/JS/icons/manifest), precached on install
    - media cache: audio + sheet music images, cached on demand
 
-   songs.json uses network-first so the song list is always current.
+   Everything under data/ uses network-first so the song list, calendar
+   and news are always current.
    Bump both version strings whenever app-shell files change.
 */
 
-const SHELL_CACHE = 'choir-materials-shell-v7';
-const MEDIA_CACHE = 'choir-materials-media-v2';
+const SHELL_CACHE = 'choir-materials-shell-v9';
+const MEDIA_CACHE = 'choir-materials-media-v3';
 
 const SHELL_FILES = [
   './',
@@ -16,6 +17,7 @@ const SHELL_FILES = [
   'css/style.css',
   'js/app.js',
   'manifest.json',
+  'icons/bbcff-logo.png',
   'icons/icon-180.png',
   'icons/icon-192.png',
   'icons/icon-512.png'
@@ -45,8 +47,8 @@ function isMediaRequest(url) {
   return url.pathname.includes('/audio/') || url.pathname.includes('/images/');
 }
 
-function isSongsJson(url) {
-  return url.pathname.endsWith('songs.json');
+function isDataJson(url) {
+  return url.pathname.includes('/data/') && url.pathname.endsWith('.json');
 }
 
 self.addEventListener('fetch', (event) => {
@@ -56,8 +58,8 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  if (isSongsJson(url)) {
-    // Always bypass CDN and HTTP cache so song list is never stale.
+  if (isDataJson(url)) {
+    // Always bypass CDN and HTTP cache so songs/calendar/news are never stale.
     // cache:'reload' sends Cache-Control:no-cache to intermediate caches.
     const freshReq = new Request(req.url, { cache: 'reload' });
     event.respondWith(

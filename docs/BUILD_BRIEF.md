@@ -1,97 +1,72 @@
-# Choir Music Repository App — Build Brief for Claude Code
+# BBCFF Choir App — Build Brief
 
 ## What this is
 
-A GitHub-hosted admin app for managing a choir's music repository (practice
-tracks, sheet music, reference links) — built on the same architecture as the
-BBCFF Scheduling App, retargeted from scheduling data to music files. Give
-this whole document to Claude Code as the spec.
+A GitHub-hosted app for the BBCFF choir: a member-facing PWA plus an admin tool
+that writes to the same repo. No backend, no build step, no framework. Part of a
+family of church apps that share information with each other.
 
-There are already two related pieces in this repo ecosystem:
+This document describes **what is actually built** as of August 2026. It is the
+reference for anyone (human or Claude Code) picking the project up.
 
-1. **BBCFF Scheduling App** (`schedule-admin.html` / `schedule-display.html`)
-   — the reference architecture this brief adapts. Read it before starting;
-   the patterns below (auth, write strategy, guard rails) should match it
-   file-for-file where the domain allows.
-2. **Choir Materials app** (existing, already built) — a read-only,
-   offline-first PWA that displays songs from `data/songs.json`, plays
-   SATB practice tracks, shows sheet music, and lists reference links. It
-   currently requires hand-editing `songs.json` and manually pushing files
-   to GitHub to add a song.
+Related repos in the ecosystem:
 
-**This build is the missing piece: an admin interface that writes to the
-repo the Choir Materials app already reads from**, so adding a song stops
-requiring manual JSON editing and manual file uploads.
+1. **`bbcff-serv-sched`** (`schedule-admin.html` / `schedule-display.html`) — the
+   service schedule. Its header design is the shared visual identity, and the
+   choir app **pushes** choir slot/solo into its `schedule-data.json`. See
+   §6 Service Schedule sync.
+2. **`choir-vault`** (this repo) — the choir app and admin, served from `docs/`
+   on `main` via GitHub Pages.
 
 ---
 
-## 1. Architecture to replicate from the BBCFF Scheduling App
+## 1. Architecture
 
-- **Two-page split**: an authenticated admin page for writes, and a public
-  page for reads. The admin page is the new build here. The public/display
-  side already exists as the Choir Materials app — don't rebuild it, extend
-  it if needed.
-- **Write path**: GitHub Contents API (`PUT /repos/{owner}/{repo}/contents/{path}`)
-  for every write — song metadata, audio files, images. No backend server.
-- **Read path**: `raw.githubusercontent.com` for the public app, no auth.
-- **Auth**: fine-grained GitHub Personal Access Token, entered once by the
-  user and stored only in `localStorage` on that device — never in the repo,
-  never transmitted anywhere but the GitHub API. Follow the same storage-key
-  convention style as the scheduling app
-  (`gh_pat_choir_schedule` → use `gh_pat_choir_music` here).
-- **Config guard**: a `GH_PLACEHOLDERS` check exactly like the scheduling
-  app's — if `GH_OWNER` or `GH_REPO` still hold default placeholder values,
-  show a clear "Config not set" warning instead of silently failing or
-  writing to the wrong place. This was added after a real incident on the
-  scheduling app; don't skip it here.
-- **Base64 handling**: all file writes through the Contents API require
-  base64-encoded content. Encode/decode programmatically — never hand-paste
-  or manually reconstruct base64 blobs, which is how a truncation bug
-  previously broke an embedded logo on the scheduling app.
+- **Two-page split**: `index.html` is the public read-only PWA;
+  `choir-admin.html` is the authenticated write tool. Both live in `docs/`.
+- **Write path**: GitHub Contents API (`PUT`/`DELETE /repos/{owner}/{repo}/contents/{path}`)
+  for every write — JSON, audio, sheet music. No server.
+- **Read path**: plain relative fetches from GitHub Pages, no auth.
+- **Auth**: fine-grained GitHub PAT, entered once, stored only in `localStorage`
+  under `gh_pat_choir_music`. Never in the repo, never sent anywhere but GitHub.
+  An optional second token (`gh_pat_sched_sync`) covers the schedule repo if the
+  main token doesn't.
+- **Config guard**: the `GH_PLACEHOLDERS` check stays — if `GH_OWNER`/`GH_REPO`
+  hold placeholder values, show a clear config warning rather than writing to the
+  wrong place. This was added after a real incident; do not remove it.
+- **Base64**: all binary writes go `<input type="file">` → `FileReader` → base64
+  → Contents API. Always programmatic, never hand-pasted (a truncation bug once
+  broke an embedded logo on the scheduling app).
 
----
+### The two-path rule
 
-## 2. What's different: music files instead of schedule entries
+- **Repo paths** (Contents API): `docs/audio/<id>/bass.m4a`
+- **App paths** (stored in JSON, relative to `docs/index.html`): `audio/<id>/bass.m4a`
 
-The scheduling app's admin writes structured JSON only. This app also needs
-to **upload binary files** (MP3s, images) through the same Contents API,
-which the scheduling app never had to do. Key implications:
-
-- File uploads go through a `<input type="file">` → `FileReader` → base64 →
-  Contents API PUT pipeline.
-- Large files (multi-MB audio, camera-resolution photos) need a visible
-  upload progress state — GitHub's API has no chunked upload, so a single
-  PUT can take a while on a slow connection.
-- The GitHub Contents API caps individual file writes around 100MB via this
-  endpoint in practice, well above what a compressed practice track or
-  resized sheet-music photo needs, but validate file size client-side
-  before attempting the PUT and warn the user if a file is unusually large
-  (e.g. > 15MB) rather than letting the request fail silently.
+JSON always stores the app path. Prefix with `docs/` only when calling the API.
 
 ---
 
-## 3. Data model (matches the existing Choir Materials app — do not change the schema)
+## 2. Data model
 
-`data/songs.json`:
+### `data/songs.json`
 
 ```json
 {
   "songs": [
     {
-      "id": "amazing-grace",
-      "title": "Amazing Grace",
-      "composer": "John Newton, arr. Choir",
-      "tags": ["Hymn", "Sunday Service"],
+      "id": "how-great-thou-art",
+      "title": "How Great Thou Art",
+      "tags": ["Slot 4", "Christmas"],
       "notes": "Optional free text.",
+      "lyrics": "Optional. Plain text, line breaks preserved.",
+      "preRelease": false,
       "tracks": [
-        { "part": "Full Mix", "file": "audio/amazing-grace/full-mix.mp3" },
-        { "part": "Soprano", "file": "audio/amazing-grace/soprano.mp3" },
-        { "part": "Alto",    "file": "audio/amazing-grace/alto.mp3" },
-        { "part": "Tenor",   "file": "audio/amazing-grace/tenor.mp3" },
-        { "part": "Bass",    "file": "audio/amazing-grace/bass.mp3" }
+        { "part": "Demo", "file": "audio/how-great-thou-art/demo.mp3" },
+        { "part": "Bass", "file": "audio/how-great-thou-art/bass.m4a" }
       ],
       "sheetMusic": [
-        { "label": "Page 1", "file": "images/amazing-grace/page-1.jpg" }
+        { "label": "Music - How Great Thou Art", "file": "images/how-great-thou-art/music-...-1786251172010.pdf" }
       ],
       "links": [
         { "label": "Reference recording", "url": "https://www.youtube.com/..." }
@@ -101,139 +76,205 @@ which the scheduling app never had to do. Key implications:
 }
 ```
 
-`id` is derived from the title (slugified) when a song is created in the
-admin UI, and used as the folder name under `audio/` and `images/`. The
-admin app owns generating and validating this — reject or de-duplicate if a
-slug collision would occur.
+- **There is no `composer` field.** It was removed in August 2026. Don't add it back.
+- `id` is slugified from the title on creation and used as the folder name under
+  `audio/` and `images/`. The admin rejects slug collisions.
+- `tracks` array order **is** the tab order in the app. `part` is a free-form
+  custom name — Demo/Soprano/Alto/Tenor/Bass are quick-picks, not a fixed set.
+- `preRelease: true` hides the song from the public list so files and notes can be
+  loaded before it goes live. A direct `#/song/<id>` link still works, for preview.
+- `lyrics` renders in a collapsible panel on the song page and is searchable.
+
+### `data/calendar.json`
+
+```json
+{
+  "news": { "subject": "", "date": "", "html": "", "updated": "" },
+  "services": [
+    {
+      "id": "2026-08-16-sunday_am",
+      "date": "2026-08-16",
+      "type": "sunday_am",
+      "specialName": "",
+      "songs": [
+        { "songId": "my-tribute", "title": "My Tribute", "slot": "4", "soloist": "J. Smith" }
+      ]
+    }
+  ]
+}
+```
+
+- `type` is `sunday_am | sunday_pm | wednesday | special` — the same vocabulary as
+  the schedule repo. `id` is always `` `${date}-${type}` ``.
+- **Slot and Soloist live on the calendar entry, not the song record**, because the
+  same song can be Slot 1 one week and Slot 4 the next with a different soloist.
+- `slot` is `''`, `'1'` or `'4'`. `songId` may be empty with a free-text `title`
+  for a song not yet in the catalog.
+- `news.html` is stored **already sanitized** (see §5).
 
 ---
 
-## 4. Admin page requirements (`choir-admin.html`)
+## 3. Public app (`index.html`)
 
-**Auth gate**: same pattern as `schedule-admin.html` — PAT input on first
-load, stored in `localStorage`, gated behind the `GH_PLACEHOLDERS` check.
-
-**Song list view**:
-- Search and tag filter (mirror the public app's filtering)
-- Each row shows title, composer, track count, sheet music count, and a
-  quick indicator if any referenced file is missing from the repo
-
-**Add / edit song form**:
-- Title, composer, tags (add/remove chips), notes
-- Auto-slugify `id` from title on creation, locked after first save
-
-**Track manager** (per song):
-- One upload slot per voice part (Full Mix, Soprano, Alto, Tenor, Bass) —
-  match the Choir Materials app's part labels and color coding exactly
-- Replace or remove an individual track without touching the others
-- On upload: read file → base64 → PUT to `audio/<id>/<part-slug>.mp3` →
-  update the track's `file` path in `songs.json` → PUT the updated JSON
-
-**Sheet music manager** (per song):
-- Multi-image upload, drag-to-reorder, editable label per image
-- Same upload → PUT → update `sheetMusic` array pattern as tracks
-
-**Links manager** (per song):
-- Add/edit/remove `{label, url}` entries, basic URL validation
-
-**Delete song**:
-- Confirm dialog. Remove the entry from `songs.json`. Ask (checkbox,
-  default unchecked) whether to also delete the song's files from
-  `audio/<id>/` and `images/<id>/` via the Contents API's delete endpoint,
-  since orphaned files aren't harmful but silent data loss is — default to
-  leaving files in place unless the user opts in.
-
-**Save feedback**: toast/status messages for every write, matching the
-scheduling app's pattern — no silent successes or silent failures.
-
-**Design system**: match the BBCFF brand exactly, same as the scheduling
-app — Playfair Display for headings, Source Sans Pro for body text, the
-red/gray/ink palette, the embedded transparent PNG logo. This intentionally
-does *not* match the Choir Materials app's separate hymnal palette; the
-**admin tool** should look and feel like the church's other internal tools
-since only Scott and other admins use it, while the **member-facing** Choir
-Materials app keeps its own identity. Flag this assumption to the user
-before building in case they'd rather unify the two.
+- **Header**: gray banner with the centered Bible Baptist Church logo
+  (`icons/bbcff-logo.png`) above a Playfair Display uppercase `CHOIR` — matched to
+  `bbcff-serv-sched/schedule-display.html`.
+- **Layout**: two columns at `min-width: 980px` (Choir News + Calendar on the left,
+  songs on the right); stacked on mobile with a **Jump to songs** button in the
+  sticky toolbar. Fully usable on phone and desktop.
+- **Song list**: collapses into **first-letter groups**, and that is the default
+  view every time the app opens (`expandedLetters` starts empty each load).
+  Searching auto-expands matching groups. Non-letter titles group under `#`.
+- **Rolling calendar**: a plain list, not a grid of boxes. Shows services from
+  today through `today + CALENDAR_DAYS_AHEAD` (20 days = current service plus the
+  next two weeks). Past dates fall off with no intervention. A service with no
+  songs, or a song with no title, renders **"To Be Determined"**.
+- **Choir News**: the director's last email, rendered above the calendar.
+- Both side panels collapse; the choice is remembered per device.
+- **Song page**: part tabs, player with playback speed and an A/B loop, spacebar
+  play/pause, a remembered "my part", a **Download** button for the selected
+  track, a collapsible **Lyrics** panel (collapsed by default), and sheet music as
+  **filename links with Download buttons — never a PDF thumbnail**. Images open a
+  lightbox; PDFs open in a new tab.
+- **Offline**: the shell precaches; media caches on demand as songs are played and
+  viewed. There is deliberately **no "Save this song for offline" button** — it was
+  removed in August 2026. A checkmark in the list still marks fully-cached songs.
+- Dark mode toggle, remembered per device.
 
 ---
 
-## 5. Carry-over lessons (do not relearn these the hard way)
+## 4. Admin (`choir-admin.html`)
 
-- `window.storage` is a Claude-artifact-only API and does not exist on
-  GitHub Pages — everything here is real GitHub Contents API calls.
-- Never hand-reconstruct base64 content from pasted text; always
-  programmatic encode/decode, and verify round-trip on anything large
-  (especially the embedded logo, if reused from the scheduling app).
-- iOS Safari requires 180×180 PNG for the home screen icon — SVG is
-  ignored for `apple-touch-icon`.
-- Large HTML builds: assemble via shell heredoc / proper file writes, not
-  incremental manual pasting, to avoid silent truncation.
-- The `GH_PLACEHOLDERS` guard is not optional — it's the difference between
-  a clear config error and what looks like data loss.
+Auth gate first, then three tabs.
 
----
+**Songs**
+- Search (title, tags, notes), tag filter, pre-release badge, per-song counts.
+- Song info: title, tags, notes, lyrics, Pre-Release checkbox.
+- **Practice tracks**: fully dynamic list — add, remove, rename, reorder with
+  arrows, and replace the audio on an existing track. Voice-part quick-picks fill
+  the name field; any custom name works. The name sets both the app tab label and
+  the uploaded file name. Renaming later changes the label only, leaving the file
+  in place.
+- **Multi-file upload**: select every part at once and the track name is inferred
+  from each file name (`BASS - Song.m4a` → Bass, including `sop`/`alt`/`ten`
+  abbreviations and `full mix` → Demo). Files are staged in an **editable review
+  list sorted into standard part order** so a wrong guess is corrected before
+  anything uploads. Uploads run sequentially with progress, then one JSON save.
+- **Sheet music**: upload with a custom label, edit labels, reorder, remove.
+- **Links**: add/edit/remove `{label, url}`.
 
-## 6. Skills Claude Code should create for repeatable operational tasks
+**Calendar**
+- Add a service (date + service type), edit its date/type, delete it.
+- Per service, add songs from a dropdown of the catalog or type a title that isn't
+  in it, each with a **Slot** (1 or 4) and a **Soloist**; reorder with arrows.
+- Every save also runs the schedule sync (§6).
 
-These are the recurring jobs Scott will ask Claude Code to do after the app
-exists — build each as a proper skill (`SKILL.md` + any helper scripts) so
-they're repeatable and don't need re-explaining each time.
+**Choir News**
+- Subject, date, and a `contenteditable` paste box. Paste straight from the email.
 
-### `choir-add-song`
-Creates a new song end-to-end from raw source material: takes a title,
-composer, and a folder of source files (audio takes, sheet music scans),
-slugifies the id, creates `audio/<id>/` and `images/<id>/`, runs the
-compress-audio and resize-sheet-music skills on the source files, uploads
-everything via the Contents API, and appends the new entry to `songs.json`.
+**Deletion is destructive by design.** Removing a track, a sheet music file, or a
+whole song **deletes the real file from the repo**. Order is always: update the
+JSON first, then delete files, so the app never points at a missing file. Files
+that fail to delete are reported in a toast, not swallowed.
 
-### `choir-compress-audio`
-Takes a raw audio file (any format/bitrate) and outputs a practice-track
-MP3 at 128kbps, normalized volume, with silence trimmed from the start and
-end. Used before any track upload so file sizes stay reasonable on a weak
-church-basement connection.
+**Save feedback**: every write reports status; no silent successes or failures.
 
-### `choir-resize-sheet-music`
-Takes a raw image (phone photo or scan) and outputs a JPEG resized to a
-sane max dimension (1600px long edge), auto-rotated based on EXIF, and
-compressed to a reasonable file size, without visibly degrading legibility
-of printed music notation.
-
-### `choir-validate-repo`
-Walks `songs.json`, checks that every referenced `file` path in `tracks`
-and `sheetMusic` actually exists in the repo, checks every `id` is a valid
-slug with no duplicates, and reports orphaned files in `audio/`/`images/`
-that no song references. Run this before and after bulk changes.
-
-### `choir-bulk-import`
-Given a folder structured as `<song-title>/<part-or-page-files>`, infers
-song boundaries and file roles (matches filenames like `soprano.mp3`,
-`page-1.jpg` against known patterns), and runs `choir-add-song` for each
-one — for the initial migration of an existing physical/digital music
-library into the repo.
-
-### `choir-backup-songs-json`
-Snapshots the current `songs.json` (timestamped copy, e.g. to a
-`backups/` folder in the repo or a local path) before any destructive
-operation — bulk import, bulk delete, schema migration. Cheap insurance
-against a bad batch edit.
-
-### `choir-deploy-check`
-Pre-push checklist: confirms `GH_PLACEHOLDERS` values are filled in both
-`choir-admin.html` and the Choir Materials app's config, confirms
-`choir-validate-repo` passes clean, and confirms the service worker cache
-version has been bumped if app-shell files changed (so users actually get
-the update instead of a stale cached copy).
+**Design**: same banner, palette and fonts as the public app and the schedule app —
+the three tools read as one system. Dark mode included.
 
 ---
 
-## 7. Deliverables checklist
+## 5. News sanitizing
 
-- [ ] `choir-admin.html` — the admin app described in section 4
-- [ ] Confirms compatibility with the existing `data/songs.json` schema and
-      existing `audio/`/`images/` folder conventions — no breaking changes
-      to the Choir Materials app
-- [ ] `GH_PLACEHOLDERS` guard in place and tested (deliberately leave a
-      placeholder unfilled once to confirm the warning fires)
-- [ ] The six skills in section 6, each as a proper skill definition
-- [ ] A short README addition covering: how to get a fine-grained PAT with
-      the right repo permissions, and what scopes it needs
+Pasted email HTML is cleaned against an allowlist, both on paste and again on
+render in the public app (defence in depth — the stored value is trusted only as
+far as the sanitizer).
+
+- Kept: `p br b strong i em u ul ol li a h3 h4 blockquote`
+- Renamed: `div`→`p`, `h1`/`h2`→`h3`, `h5`/`h6`→`h4`, `s`/`strike`→`em`
+- Unwrapped (text kept, tag dropped): `span`, `font`, table elements, Word/Outlook
+  wrappers and `mso`/`o:p` junk
+- Removed outright: `script style iframe object embed link meta img svg form input
+  button select textarea noscript title base`, and all comments
+- All attributes stripped except `href` on `<a>`, which must be `http:`, `https:`,
+  `mailto:` or `tel:` — anything else (notably `javascript:`) is dropped, keeping
+  the link text. Surviving links get `target="_blank" rel="noopener noreferrer"`.
+
+---
+
+## 6. Service Schedule sync
+
+**The choir app is the source of truth for the choir's slot and solo status.**
+Every calendar save (and the Calendar tab's **Sync now** button) writes into
+`bbcff-serv-sched/schedule-data.json`:
+
+- `choir.slot` ← the first non-empty Slot among that service's songs (mixed slots
+  are reported; the schedule only holds one value)
+- `choir.solo` ← `'Y'` if **any** song in that service has a soloist, else `'N'`
+
+Constraints discovered by reading that repo — don't relearn these:
+
+- `choir` exists **only** on `sunday_am` and `sunday_pm` entries, never Wednesday
+  or special. Its admin renders the choir controls behind `if (entry.choir)`, so
+  creating the key on a Wednesday would make a phantom control appear. The sync
+  **skips non-Sunday types entirely** and reports how many it skipped.
+- `slot` is exactly `'1'` or `'4'`; `solo` is exactly `'Y'` or `'N'`.
+- That admin saves with **`JSON.stringify(entries)`** — minified, no indentation,
+  no trailing newline. The sync must serialize identically or every run produces a
+  whole-file diff.
+- Dates not present in the choir calendar are **left untouched**, so the sync never
+  clobbers manual edits made over there.
+- The sync skips the `PUT` entirely when nothing changed, so it is idempotent.
+
+---
+
+## 7. Service worker
+
+Two caches in `docs/sw.js`:
+
+- `choir-materials-shell-vN` — shell: `index.html`, `css/style.css`, `js/app.js`,
+  `manifest.json`, icons **including `icons/bbcff-logo.png`**
+- `choir-materials-media-vN` — audio and sheet music, cached on demand
+
+**Bump `SHELL_CACHE` whenever any shell file changes**, or installed PWAs keep
+serving stale files. `MEDIA_CACHE` is duplicated as a constant in `js/app.js` —
+keep the two in step. Brand assets belong in `icons/`, not `images/`, because
+`isMediaRequest()` routes `/images/` to the media cache.
+
+`isDataJson()` makes **everything under `/data/`** network-first with
+`cache: 'reload'`, so songs, calendar and news bypass the GitHub Pages CDN
+(Fastly, `max-age=600`).
+
+---
+
+## 8. Carry-over lessons
+
+- `window.storage` is a Claude-artifact-only API and does not exist on GitHub
+  Pages — everything here is real Contents API calls.
+- Never hand-reconstruct base64; always programmatic encode/decode.
+- iOS Safari needs a 180×180 PNG for `apple-touch-icon` — SVG is ignored.
+- Write large HTML files in one shot, not by incremental pasting, to avoid silent
+  truncation.
+- The `GH_PLACEHOLDERS` guard is not optional.
+- **Guard array deletes against `findIndex() === -1`.** `splice(-1, 1)` silently
+  removes the *last* item, so a double-clicked Delete button once deleted an
+  unrelated song. Song delete and service delete both check for `-1` and disable
+  the button while running.
+- Parse `YYYY-MM-DD` as local time (`new Date(y, m-1, d)`). `new Date("2026-08-16")`
+  is UTC and shifts the day in western time zones.
+- `saveJsonWithRetry()` retries once on 409/422 by re-fetching the SHA — this
+  happens whenever a `git push` lands while the admin page is open.
+
+---
+
+## 9. Skills
+
+Built and living in `.claude/skills/`:
+
+`choir-add-song`, `choir-bulk-import`, `choir-validate-repo`,
+`choir-backup-songs-json`, `choir-deploy-check`, `choir-compress-audio`,
+`choir-resize-sheet-music`.
+
+**Note on audio:** the standing instruction is to upload practice tracks **as-is**
+— never compress, normalize, or convert them first. `choir-compress-audio` exists
+but should not be run on a track before upload unless explicitly asked for.

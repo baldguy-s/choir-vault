@@ -3,6 +3,12 @@
     {
       "id": "bought-by-the-blood",
       "title": "Bought By The Blood",
+      "tags": [
+        "Slot 4"
+      ],
+      "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Demo",
@@ -26,21 +32,17 @@
         }
       ],
       "sheetMusic": [],
-      "links": [],
-      "composer": "",
-      "tags": [
-        "Slot 4"
-      ],
-      "notes": ""
+      "links": []
     },
     {
       "id": "he-looked-beyond-my-fault",
       "title": "He Looked Beyond My Fault",
-      "composer": "",
       "tags": [
         "Slot 4"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -58,9 +60,10 @@
     {
       "id": "heaven-came-down",
       "title": "Heaven Came Down",
-      "composer": "",
       "tags": [],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -78,11 +81,12 @@
     {
       "id": "heaven-will-surely-be-worth-it-all",
       "title": "Heaven Will Surely Be Worth It All",
-      "composer": "",
       "tags": [
         "Slot 4"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -95,11 +99,12 @@
     {
       "id": "how-great-thou-art",
       "title": "How Great Thou Art",
-      "composer": "",
       "tags": [
         "Slot 4"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -117,11 +122,12 @@
     {
       "id": "i-ve-got-that-old-time-religion-in-my-heart",
       "title": "I've Got That Old Time Religion In My Heart",
-      "composer": "",
       "tags": [
         "Slot 1"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -139,11 +145,12 @@
     {
       "id": "jesus-hold-my-hand",
       "title": "Jesus Hold My Hand",
-      "composer": "",
       "tags": [
         "Slot 1"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -161,11 +168,12 @@
     {
       "id": "jesus-is-coming-again",
       "title": "Jesus Is Coming Again",
-      "composer": "",
       "tags": [
         "Slot 4"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -178,12 +186,13 @@
     {
       "id": "joy-to-the-world",
       "title": "Joy To The World",
-      "composer": "",
       "tags": [
         "Slot 1",
         "Christmas"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -201,11 +210,12 @@
     {
       "id": "look-unto-jesus",
       "title": "Look Unto Jesus",
-      "composer": "",
       "tags": [
         "Slot 1"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -223,9 +233,10 @@
     {
       "id": "mansion-over-the-hilltop",
       "title": "Mansion Over The Hilltop",
-      "composer": "",
       "tags": [],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -243,12 +254,13 @@
     {
       "id": "mary-did-you-know",
       "title": "Mary, Did You Know",
-      "composer": "",
       "tags": [
         "Slot 4",
         "Christmas"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -266,12 +278,13 @@
     {
       "id": "my-tribute",
       "title": "My Tribute",
-      "composer": "",
       "tags": [
         "Slot 4",
         "Thanksgiving"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -289,12 +302,13 @@
     {
       "id": "o-come-all-ye-faithful",
       "title": "O Come, All Ye Faithful",
-      "composer": "",
       "tags": [
         "Slot 1",
         "Christmas"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -312,12 +326,13 @@
     {
       "id": "o-holy-night",
       "title": "O Holy Night",
-      "composer": "",
       "tags": [
         "Slot 4",
         "Christmas"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -335,9 +350,10 @@
     {
       "id": "oh-to-see-the-dawn",
       "title": "Oh, To See The Dawn",
-      "composer": "",
       "tags": [],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -376,12 +392,13 @@
     {
       "id": "sinner-saved-by-grace",
       "title": "Sinner Saved By Grace",
-      "composer": "",
       "tags": [
         "Slot 4",
         "Solo"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -399,11 +416,12 @@
     {
       "id": "statue-of-liberty",
       "title": "Statue Of Liberty",
-      "composer": "",
       "tags": [
         "Solo"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -430,11 +448,12 @@
     {
       "id": "the-glory-land-way",
       "title": "The Glory Land Way",
-      "composer": "",
       "tags": [
         "Slot 1"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Bass",
@@ -459,12 +478,13 @@
     {
       "id": "then-came-the-morning",
       "title": "Then Came The Morning",
-      "composer": "",
       "tags": [
         "Slot 4",
         "Solo"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Demo",
@@ -481,12 +501,13 @@
     {
       "id": "we-are-the-reason",
       "title": "We Are The Reason",
-      "composer": "",
       "tags": [
         "Slot 4",
         "Solo"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Demo",
@@ -520,12 +541,13 @@
     {
       "id": "jesus-is-the-answer",
       "title": "Jesus Is The Answer",
-      "composer": "",
       "tags": [
         "Solo",
         "Teens"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Soprano",
@@ -564,9 +586,10 @@
     {
       "id": "god-is-so-wonderful",
       "title": "God Is So Wonderful",
-      "composer": "",
       "tags": [],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Soprano",
@@ -596,11 +619,12 @@
     {
       "id": "give-thanks-with-come-ye-thankful-people-come",
       "title": "Give Thanks (with Come, Ye Thankful People, Come)",
-      "composer": "",
       "tags": [
         "Thanksgiving"
       ],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Soprano",
@@ -639,9 +663,10 @@
     {
       "id": "give-me-jesus",
       "title": "Give Me Jesus",
-      "composer": "",
       "tags": [],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Soprano",
@@ -675,9 +700,10 @@
     {
       "id": "great-is-his-faithfulness",
       "title": "Great Is His Faithfulness",
-      "composer": "",
       "tags": [],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Soprano",
@@ -716,9 +742,10 @@
     {
       "id": "set-my-soul-afire",
       "title": "Set My Soul Afire",
-      "composer": "",
       "tags": [],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Soprano",
@@ -748,9 +775,10 @@
     {
       "id": "when-he-calls-i-ll-fly-away",
       "title": "When He Calls I'll Fly Away",
-      "composer": "",
       "tags": [],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Soprano",
@@ -780,9 +808,10 @@
     {
       "id": "how-can-i-keep-from-singing",
       "title": "How Can I Keep From Singing",
-      "composer": "",
       "tags": [],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Soprano",
@@ -812,9 +841,10 @@
     {
       "id": "make-me-a-blessing",
       "title": "Make Me A Blessing",
-      "composer": "",
       "tags": [],
       "notes": "",
+      "lyrics": "",
+      "preRelease": false,
       "tracks": [
         {
           "part": "Demo",

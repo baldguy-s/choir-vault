@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Choir Materials</title>
+<title>Choir</title>
 <meta name="theme-color" content="#B5B5B5">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
@@ -11,15 +11,25 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Choir">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<header class="app-header">
-  <button class="back-btn" id="back-btn" aria-label="Back" style="display:none">&#8592;</button>
-  <div class="brand" id="header-brand"><span class="mark">&#9834;</span> Choir Materials</div>
-  <span class="online-pill" id="online-pill">Online</span>
+
+<header class="site">
+  <img class="logo-img" src="icons/bbcff-logo.png" alt="Bible Baptist Church of Fort Fairfield logo">
+  <h1>Choir</h1>
 </header>
+
+<div class="sticky-bar">
+  <div class="sticky-bar-inner">
+    <button class="bar-btn" id="back-btn" hidden>&larr; All songs</button>
+    <button class="bar-btn" id="jump-songs-btn">&#9834; Jump to songs</button>
+    <span class="bar-spacer"></span>
+    <span class="online-pill" id="online-pill">Online</span>
+    <button class="bar-btn icon-btn" id="theme-btn" aria-label="Toggle dark mode" title="Toggle dark mode">&#9789;</button>
+  </div>
+</div>
 
 <main id="app-root"></main>
 

@@ -1,0 +1,46 @@
+{
+  "news": {
+    "subject": "",
+    "date": "",
+    "html": "",
+    "updated": ""
+  },
+  "services": [
+    {
+      "id": "2026-08-16-sunday_am",
+      "date": "2026-08-16",
+      "type": "sunday_am",
+      "songs": []
+    },
+    {
+      "id": "2026-08-16-sunday_pm",
+      "date": "2026-08-16",
+      "type": "sunday_pm",
+      "songs": []
+    },
+    {
+      "id": "2026-08-23-sunday_am",
+      "date": "2026-08-23",
+      "type": "sunday_am",
+      "songs": []
+    },
+    {
+      "id": "2026-08-23-sunday_pm",
+      "date": "2026-08-23",
+      "type": "sunday_pm",
+      "songs": []
+    },
+    {
+      "id": "2026-08-30-sunday_am",
+      "date": "2026-08-30",
+      "type": "sunday_am",
+      "songs": []
+    },
+    {
+      "id": "2026-08-30-sunday_pm",
+      "date": "2026-08-30",
+      "type": "sunday_pm",
+      "songs": []
+    }
+  ]
+}

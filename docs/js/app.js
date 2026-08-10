@@ -1,35 +1,70 @@
-/* Choir Materials — app logic
+/* Choir — app logic
    Hash-routed single page app. No build step, no framework.
-   Data comes from data/songs.json. Files come from audio/ and images/.
+   Data: data/songs.json (catalog) + data/calendar.json (services + news).
+   Files: audio/ and images/.
 */
 
-const MEDIA_CACHE = 'choir-materials-media-v2';
+const MEDIA_CACHE = 'choir-materials-media-v3';
+
+/* How far ahead the rolling calendar looks: the current service plus the
+   next two weeks. Entries drop off automatically once their date passes. */
+const CALENDAR_DAYS_AHEAD = 20;
+
+const SERVICE_TYPES = {
+  sunday_am:  { short: 'Morning',   long: 'Sunday Morning',  order: 0 },
+  sunday_pm:  { short: 'Evening',   long: 'Sunday Evening',  order: 1 },
+  wednesday:  { short: 'Wednesday', long: 'Wednesday',       order: 2 },
+  special:    { short: 'Special',   long: 'Special Service', order: 3 },
+};
+
+const LS = {
+  theme:       'choir_theme',
+  myPart:      'choir_my_part',
+  panelNews:   'choir_panel_news',
+  panelCal:    'choir_panel_cal',
+  panelLyrics: 'choir_panel_lyrics',
+};
 
 let SONGS = [];
+let CALENDAR = { news: null, services: [] };
 let activeTag = null;
+let searchQuery = '';
+let expandedLetters = new Set();   /* starts empty — collapsed A–Z is the default view */
 let currentAudio = null;
-let currentTrackKey = null;
+let activePlayer = null;
 
 const root = document.getElementById('app-root');
-const headerBrand = document.getElementById('header-brand');
 const backBtn = document.getElementById('back-btn');
+const jumpBtn = document.getElementById('jump-songs-btn');
 const onlinePill = document.getElementById('online-pill');
+const themeBtn = document.getElementById('theme-btn');
 
 init();
 
 async function init() {
+  applyStoredTheme();
   updateOnlinePill();
   window.addEventListener('online', updateOnlinePill);
   window.addEventListener('offline', updateOnlinePill);
 
-  try {
-    const res = await fetch('data/songs.json', { cache: 'reload' });
-    const data = await res.json();
-    SONGS = data.songs || [];
-  } catch (err) {
-    SONGS = [];
-    console.error('Could not load songs.json', err);
-  }
+  themeBtn.addEventListener('click', toggleTheme);
+  backBtn.addEventListener('click', () => { window.location.hash = '#/'; });
+  jumpBtn.addEventListener('click', () => {
+    const anchor = document.getElementById('songs-anchor');
+    if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  document.addEventListener('keydown', onGlobalKey);
+
+  const [songsData, calData] = await Promise.all([
+    fetchJson('data/songs.json'),
+    fetchJson('data/calendar.json'),
+  ]);
+  SONGS = (songsData && songsData.songs) || [];
+  CALENDAR = {
+    news: (calData && calData.news) || null,
+    services: (calData && calData.services) || [],
+  };
 
   window.addEventListener('hashchange', route);
   route();
@@ -39,164 +74,484 @@ async function init() {
   }
 }
 
-function updateOnlinePill() {
-  if (!onlinePill) return;
-  if (navigator.onLine) {
-    onlinePill.textContent = 'Online';
-    onlinePill.classList.remove('offline');
-  } else {
-    onlinePill.textContent = 'Offline';
-    onlinePill.classList.add('offline');
+async function fetchJson(path) {
+  try {
+    const res = await fetch(path, { cache: 'reload' });
+    if (!res.ok) throw new Error(`${path} → ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error('Could not load', path, err);
+    return null;
   }
 }
+
+/* ---------- Theme ---------- */
+
+function applyStoredTheme() {
+  let pref = null;
+  try { pref = localStorage.getItem(LS.theme); } catch {}
+  if (pref === null && window.matchMedia) {
+    pref = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  setTheme(pref === 'dark');
+}
+
+function setTheme(dark) {
+  document.body.classList.toggle('dark-mode', dark);
+  themeBtn.innerHTML = dark ? '&#9788;' : '&#9789;';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', dark ? '#4A4A4A' : '#B5B5B5');
+}
+
+function toggleTheme() {
+  const dark = !document.body.classList.contains('dark-mode');
+  setTheme(dark);
+  try { localStorage.setItem(LS.theme, dark ? 'dark' : 'light'); } catch {}
+}
+
+function updateOnlinePill() {
+  if (!onlinePill) return;
+  const on = navigator.onLine;
+  onlinePill.textContent = on ? 'Online' : 'Offline';
+  onlinePill.classList.toggle('offline', !on);
+}
+
+/* ---------- Routing ---------- */
 
 function route() {
   const hash = window.location.hash || '#/';
   const match = hash.match(/^#\/song\/(.+)$/);
   stopCurrentAudio();
+  activePlayer = null;
   if (match) {
     const song = SONGS.find(s => s.id === decodeURIComponent(match[1]));
     if (song) {
       renderSongDetail(song);
+      window.scrollTo({ top: 0 });
       return;
     }
   }
-  renderSongList();
+  renderListView();
 }
 
-/* ---------- List page ---------- */
+/* ================================================================
+   List view — News + rolling calendar (left) and songs (right)
+   ================================================================ */
 
-function renderSongList() {
-  backBtn.style.display = 'none';
-  headerBrand.innerHTML = '<span class="mark">&#9834;</span> Choir Materials';
+function renderListView() {
+  backBtn.hidden = true;
+  jumpBtn.hidden = false;
 
-  const allTags = Array.from(new Set(SONGS.flatMap(s => s.tags || []))).sort();
-
-  const filtered = SONGS.filter(s => !activeTag || (s.tags || []).includes(activeTag));
-
-  let html = '';
-  html += `<div class="search-wrap">
-    <input type="search" class="search-input" id="search-input" placeholder="Search songs or composers&hellip;" />
-  </div>`;
-
-  if (allTags.length) {
-    html += '<div class="tag-row">';
-    html += `<button class="tag-chip ${!activeTag ? 'active' : ''}" data-tag="">All</button>`;
-    allTags.forEach(t => {
-      html += `<button class="tag-chip ${activeTag === t ? 'active' : ''}" data-tag="${escapeAttr(t)}">${escapeHtml(t)}</button>`;
-    });
-    html += '</div>';
-  }
-
-  if (!filtered.length) {
-    html += `<div class="empty-state">
-      <div class="big">No songs yet</div>
-      <div>Add an entry to data/songs.json to get started.</div>
+  root.innerHTML = `
+    <div class="layout two-col">
+      <aside class="side">
+        ${newsPanelHtml()}
+        ${calendarPanelHtml()}
+      </aside>
+      <section class="main-col">
+        <div id="songs-anchor"></div>
+        <div class="search-wrap">
+          <input type="search" class="search-input" id="search-input"
+                 placeholder="Search songs, tags or notes&hellip;" value="${escapeAttr(searchQuery)}">
+        </div>
+        <div id="tag-row-wrap"></div>
+        <div class="list-tools">
+          <button class="mini-btn" id="expand-all-btn">Expand all</button>
+          <button class="mini-btn" id="collapse-all-btn">Collapse all</button>
+          <span class="count" id="song-count"></span>
+        </div>
+        <div class="letter-groups" id="letter-groups"></div>
+      </section>
     </div>`;
-  } else {
-    html += '<ul class="song-list" id="song-list"></ul>';
-  }
 
-  root.innerHTML = html;
+  wirePanels();
 
   const searchInput = document.getElementById('search-input');
-  searchInput.addEventListener('input', () => renderFilteredList(searchInput.value));
-
-  document.querySelectorAll('.tag-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      activeTag = chip.dataset.tag || null;
-      renderSongList();
-    });
+  searchInput.addEventListener('input', () => {
+    searchQuery = searchInput.value;
+    renderTagRow();
+    renderSongGroups();
   });
 
-  renderFilteredList('');
+  document.getElementById('expand-all-btn').addEventListener('click', () => {
+    visibleLetters().forEach(l => expandedLetters.add(l));
+    renderSongGroups();
+  });
+  document.getElementById('collapse-all-btn').addEventListener('click', () => {
+    expandedLetters.clear();
+    renderSongGroups();
+  });
+
+  renderTagRow();
+  renderSongGroups();
 }
 
-async function renderFilteredList(query) {
-  const listEl = document.getElementById('song-list');
-  if (!listEl) return;
+/* ---------- Choir News panel ---------- */
 
-  const q = query.trim().toLowerCase();
-  let filtered = SONGS.filter(s => !activeTag || (s.tags || []).includes(activeTag));
-  if (q) {
-    filtered = filtered.filter(s =>
-      s.title.toLowerCase().includes(q) ||
-      (s.composer || '').toLowerCase().includes(q)
-    );
+function newsPanelHtml() {
+  const news = CALENDAR.news || {};
+  const hasBody = !!(news.html && news.html.trim());
+  const collapsed = readPanelState(LS.panelNews) ? '' : 'collapsed';
+
+  let body;
+  if (!hasBody) {
+    body = `<p class="panel-note">No news from the director yet.</p>`;
+  } else {
+    body = `
+      ${news.subject ? `<div class="news-subject">${escapeHtml(news.subject)}</div>` : ''}
+      ${news.date ? `<div class="news-date">${escapeHtml(formatDateLong(news.date))}</div>` : ''}
+      <div class="news-body">${sanitizeHtml(news.html)}</div>`;
   }
-  filtered.sort((a, b) => a.title.localeCompare(b.title));
 
-  if (!filtered.length) {
-    listEl.innerHTML = `<div class="empty-state"><div class="big">No matches</div><div>Try a different search.</div></div>`;
+  return `
+    <section class="panel ${collapsed}" data-panel-key="${LS.panelNews}">
+      <button class="panel-head" type="button">
+        <span class="panel-title">Choir News</span>
+        <span class="twisty">${collapsed ? '+' : '&ndash;'}</span>
+      </button>
+      <div class="panel-body">${body}</div>
+    </section>`;
+}
+
+/* ---------- Rolling calendar panel ---------- */
+
+function calendarPanelHtml() {
+  const collapsed = readPanelState(LS.panelCal) ? '' : 'collapsed';
+  const services = upcomingServices();
+
+  let body;
+  if (!services.length) {
+    body = `<p class="panel-note">No services scheduled for the next three weeks.</p>`;
+  } else {
+    body = services.map(serviceHtml).join('');
+  }
+
+  return `
+    <section class="panel ${collapsed}" data-panel-key="${LS.panelCal}">
+      <button class="panel-head" type="button">
+        <span class="panel-title">Calendar</span>
+        <span class="twisty">${collapsed ? '+' : '&ndash;'}</span>
+      </button>
+      <div class="panel-body">${body}</div>
+    </section>`;
+}
+
+/* Current service through the next two weeks. Past dates fall off on their own. */
+function upcomingServices() {
+  const today = todayStr();
+  const cutoff = addDays(today, CALENDAR_DAYS_AHEAD);
+  return (CALENDAR.services || [])
+    .filter(s => s && s.date && s.date >= today && s.date <= cutoff)
+    .slice()
+    .sort((a, b) => {
+      if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+      return typeOrder(a.type) - typeOrder(b.type);
+    });
+}
+
+function serviceHtml(svc) {
+  const meta = SERVICE_TYPES[svc.type] || { short: svc.type || 'Service' };
+  const label = svc.type === 'special' && svc.specialName ? svc.specialName : meta.short;
+  const isToday = svc.date === todayStr();
+  const songs = Array.isArray(svc.songs) ? svc.songs : [];
+
+  const rows = songs.length
+    ? songs.map(calSongHtml).join('')
+    : `<li class="cal-song"><span class="cal-tbd">To Be Determined</span></li>`;
+
+  return `
+    <div class="cal-service">
+      <div class="cal-date">
+        ${escapeHtml(formatDateShort(svc.date))}
+        <span class="cal-svc">${escapeHtml(label)}</span>
+        ${isToday ? '<span class="cal-today">Today</span>' : ''}
+      </div>
+      <ul class="cal-songs">${rows}</ul>
+    </div>`;
+}
+
+function calSongHtml(entry) {
+  const e = entry || {};
+  const song = e.songId ? SONGS.find(s => s.id === e.songId) : null;
+  const title = (song && song.title) || (e.title || '').trim();
+  const slot = (e.slot || '').trim();
+  const soloist = (e.soloist || '').trim();
+
+  const titleHtml = !title
+    ? `<span class="cal-tbd">To Be Determined</span>`
+    : song
+      ? `<a class="cal-title" href="#/song/${encodeURIComponent(song.id)}">${escapeHtml(title)}</a>`
+      : `<span class="cal-title">${escapeHtml(title)}</span>`;
+
+  return `<li class="cal-song">
+    ${slot ? `<span class="cal-slot">Slot ${escapeHtml(slot)}</span>` : ''}
+    <span class="cal-song-main">${titleHtml}${soloist ? ` <span class="cal-soloist">&mdash; Soloist: ${escapeHtml(soloist)}</span>` : ''}</span>
+  </li>`;
+}
+
+/* ---------- Panel collapse ---------- */
+
+function readPanelState(key, dflt = true) {
+  try {
+    const v = localStorage.getItem(key);
+    return v === null ? dflt : v === '1';
+  } catch { return dflt; }
+}
+
+function wirePanels() {
+  document.querySelectorAll('.panel').forEach(panel => {
+    const head = panel.querySelector('.panel-head');
+    const key = panel.dataset.panelKey;
+    head.addEventListener('click', () => {
+      const nowCollapsed = !panel.classList.contains('collapsed');
+      panel.classList.toggle('collapsed', nowCollapsed);
+      panel.querySelector('.twisty').innerHTML = nowCollapsed ? '+' : '&ndash;';
+      const titleEl = panel.querySelector('.panel-title');
+      if (titleEl && titleEl.dataset.open) {
+        titleEl.textContent = nowCollapsed ? titleEl.dataset.closed : titleEl.dataset.open;
+      }
+      try { localStorage.setItem(key, nowCollapsed ? '0' : '1'); } catch {}
+    });
+  });
+}
+
+/* ---------- Songs: tag row + A–Z groups ---------- */
+
+function publicSongs() {
+  return SONGS.filter(s => !s.preRelease);
+}
+
+function renderTagRow() {
+  const wrap = document.getElementById('tag-row-wrap');
+  if (!wrap) return;
+  const allTags = Array.from(new Set(publicSongs().flatMap(s => s.tags || []))).sort();
+  if (!allTags.length) { wrap.innerHTML = ''; return; }
+
+  wrap.innerHTML = `<div class="tag-row">
+    <button class="tag-chip ${!activeTag ? 'active' : ''}" data-tag="">All</button>
+    ${allTags.map(t => `<button class="tag-chip ${activeTag === t ? 'active' : ''}" data-tag="${escapeAttr(t)}">${escapeHtml(t)}</button>`).join('')}
+  </div>`;
+
+  wrap.querySelectorAll('.tag-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      activeTag = chip.dataset.tag || null;
+      renderTagRow();
+      renderSongGroups();
+    });
+  });
+}
+
+function matchingSongs() {
+  const q = searchQuery.trim().toLowerCase();
+  return publicSongs().filter(s => {
+    if (activeTag && !(s.tags || []).includes(activeTag)) return false;
+    if (!q) return true;
+    return s.title.toLowerCase().includes(q)
+      || (s.tags || []).some(t => t.toLowerCase().includes(q))
+      || (s.notes || '').toLowerCase().includes(q)
+      || (s.lyrics || '').toLowerCase().includes(q);
+  });
+}
+
+function groupByLetter(songs) {
+  const groups = new Map();
+  songs.slice().sort((a, b) => a.title.localeCompare(b.title)).forEach(song => {
+    const letter = letterFor(song.title);
+    if (!groups.has(letter)) groups.set(letter, []);
+    groups.get(letter).push(song);
+  });
+  const keys = Array.from(groups.keys()).sort((a, b) => {
+    if (a === '#') return 1;
+    if (b === '#') return -1;
+    return a.localeCompare(b);
+  });
+  return keys.map(k => [k, groups.get(k)]);
+}
+
+function letterFor(title) {
+  const ch = String(title || '').trim().charAt(0).toUpperCase();
+  return /[A-Z]/.test(ch) ? ch : '#';
+}
+
+function visibleLetters() {
+  return groupByLetter(matchingSongs()).map(([letter]) => letter);
+}
+
+async function renderSongGroups() {
+  const el = document.getElementById('letter-groups');
+  const countEl = document.getElementById('song-count');
+  if (!el) return;
+
+  const songs = matchingSongs();
+  const groups = groupByLetter(songs);
+  const searching = !!searchQuery.trim();
+
+  if (countEl) {
+    countEl.textContent = songs.length
+      ? `${songs.length} song${songs.length === 1 ? '' : 's'}`
+      : '';
+  }
+
+  if (!groups.length) {
+    el.innerHTML = publicSongs().length
+      ? `<div class="empty-state"><div class="big">No matches</div><div>Try a different search or tag.</div></div>`
+      : `<div class="empty-state"><div class="big">No songs yet</div><div>Add songs in the admin tool to get started.</div></div>`;
     return;
   }
 
-  const rows = await Promise.all(filtered.map(async song => {
-    const cached = await isSongCached(song);
-    return `<li>
-      <a class="song-card" href="#/song/${encodeURIComponent(song.id)}">
-        <div class="title">${cached ? '<span class="cached-badge" title="Saved for offline">&#10003;</span>' : ''}${escapeHtml(song.title)}</div>
-        ${song.composer ? `<div class="composer">${escapeHtml(song.composer)}</div>` : ''}
-        <div class="meta-row">
-          ${(song.tags || []).map(t => `<span class="mini-tag">${escapeHtml(t)}</span>`).join('')}
-        </div>
-      </a>
-    </li>`;
+  /* A search auto-opens its matches; otherwise honour the collapsed default. */
+  const html = await Promise.all(groups.map(async ([letter, list]) => {
+    const open = searching || expandedLetters.has(letter);
+    const rows = await Promise.all(list.map(songRowHtml));
+    return `
+      <div class="letter-group ${open ? '' : 'collapsed'}" data-letter="${escapeAttr(letter)}">
+        <button class="letter-head" type="button">
+          <span class="letter">${escapeHtml(letter)}</span>
+          <span class="letter-count">${list.length} song${list.length === 1 ? '' : 's'}</span>
+          <span class="twisty">${open ? '&ndash;' : '+'}</span>
+        </button>
+        <div class="letter-body"><ul class="song-list">${rows.join('')}</ul></div>
+      </div>`;
   }));
 
-  listEl.innerHTML = rows.join('');
+  el.innerHTML = html.join('');
+
+  el.querySelectorAll('.letter-group').forEach(group => {
+    group.querySelector('.letter-head').addEventListener('click', () => {
+      const letter = group.dataset.letter;
+      const nowCollapsed = !group.classList.contains('collapsed');
+      group.classList.toggle('collapsed', nowCollapsed);
+      group.querySelector('.twisty').innerHTML = nowCollapsed ? '+' : '&ndash;';
+      if (nowCollapsed) expandedLetters.delete(letter);
+      else expandedLetters.add(letter);
+    });
+  });
 }
 
-/* ---------- Song detail page ---------- */
+async function songRowHtml(song) {
+  const cached = await isSongCached(song);
+  const trackCount = (song.tracks || []).length;
+  const sheetCount = (song.sheetMusic || []).length;
+  const bits = [];
+  if (trackCount) bits.push(`${trackCount} track${trackCount === 1 ? '' : 's'}`);
+  if (sheetCount) bits.push(`${sheetCount} file${sheetCount === 1 ? '' : 's'}`);
+
+  return `<li>
+    <a class="song-card" href="#/song/${encodeURIComponent(song.id)}">
+      <span class="sc-main">
+        <span class="title">
+          ${cached ? '<span class="cached-badge" title="Saved for offline">&#10003;</span>' : ''}
+          ${escapeHtml(song.title)}
+        </span>
+        <span class="meta-row">
+          ${(song.tags || []).map(t => `<span class="mini-tag">${escapeHtml(t)}</span>`).join('')}
+          ${bits.length ? `<span class="mini-tag file-count">${bits.join(' &middot; ')}</span>` : ''}
+        </span>
+      </span>
+    </a>
+  </li>`;
+}
+
+/* ================================================================
+   Song detail
+   ================================================================ */
 
 function renderSongDetail(song) {
-  backBtn.style.display = 'block';
-  headerBrand.textContent = song.title;
+  backBtn.hidden = false;
+  jumpBtn.hidden = true;
 
   const tracks = song.tracks || [];
   const sheets = song.sheetMusic || [];
   const links = song.links || [];
 
-  let html = `<div class="song-detail">
+  let html = `<div class="layout"><div class="song-detail">
     <div class="song-title-block">
       <h1>${escapeHtml(song.title)}</h1>
-      ${song.composer ? `<div class="composer">${escapeHtml(song.composer)}</div>` : ''}
+      ${song.preRelease ? '<span class="prerelease-badge">Pre-release</span>' : ''}
+      ${(song.tags || []).length ? `<div class="meta-row">${(song.tags || []).map(t => `<span class="mini-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
     </div>`;
 
-  if (song.notes) {
-    html += `<div class="notes-box">${escapeHtml(song.notes)}</div>`;
-  }
+  if (song.notes) html += `<div class="notes-box">${escapeHtml(song.notes)}</div>`;
 
   if (tracks.length) {
+    const startIndex = preferredTrackIndex(tracks);
     html += `<div class="section-label">Practice tracks</div>
       <div class="part-tabs" id="part-tabs">
-        ${tracks.map((t, i) => `<button class="part-tab ${i === 0 ? 'active' : ''}" data-part="${escapeAttr(t.part)}" data-index="${i}">${escapeHtml(t.part)}</button>`).join('')}
+        ${tracks.map((t, i) => `
+          <button class="part-tab ${i === startIndex ? 'active' : ''}"
+                  data-tone="${escapeAttr(toneFor(t.part))}" data-index="${i}">${escapeHtml(t.part)}</button>`).join('')}
       </div>
       <div class="player-card">
-        <div class="player-track-name" id="player-track-name">${escapeHtml(tracks[0].part)}</div>
+        <div class="player-head">
+          <div class="player-track-name" id="player-track-name"></div>
+          <button class="star-btn" id="my-part-btn" type="button"></button>
+          <a class="dl-btn" id="dl-track" href="#" download>&#8681; Download</a>
+        </div>
         <div class="player-row">
-          <button class="skip-btn" id="rewind-btn" aria-label="Skip back 10 seconds">−10s</button>
+          <button class="skip-btn" id="rewind-btn" aria-label="Skip back 10 seconds">&minus;10s</button>
           <button class="play-btn" id="play-btn" aria-label="Play">&#9658;</button>
           <button class="skip-btn" id="forward-btn" aria-label="Skip forward 10 seconds">+10s</button>
-          <div style="flex:1">
-            <div class="seek-bar" id="seek-bar"><div class="seek-fill" id="seek-fill"></div></div>
+          <div style="flex:1;min-width:0">
+            <div class="seek-bar" id="seek-bar">
+              <div class="loop-range" id="loop-range"></div>
+              <div class="seek-fill" id="seek-fill"></div>
+            </div>
             <div class="time-row"><span id="time-current">0:00</span><span id="time-total">0:00</span></div>
           </div>
         </div>
+        <div class="player-tools">
+          <span class="tool-label">Speed</span>
+          <select class="speed-select" id="speed-select" aria-label="Playback speed">
+            <option value="0.5">0.5&times;</option>
+            <option value="0.75">0.75&times;</option>
+            <option value="0.9">0.9&times;</option>
+            <option value="1" selected>1&times;</option>
+            <option value="1.1">1.1&times;</option>
+            <option value="1.25">1.25&times;</option>
+            <option value="1.5">1.5&times;</option>
+          </select>
+          <span class="tool-label" style="margin-left:0.4rem">Loop</span>
+          <button class="loop-btn" id="loop-a" type="button">Set A</button>
+          <button class="loop-btn" id="loop-b" type="button">Set B</button>
+          <button class="loop-btn" id="loop-clear" type="button" title="Clear loop">&times;</button>
+        </div>
       </div>`;
+  } else {
+    html += `<div class="section-label">Practice tracks</div>
+      <div class="no-track-msg">No practice tracks for this song yet.</div>`;
+  }
+
+  if (song.lyrics && song.lyrics.trim()) {
+    /* Collapsed by default so it doesn't push the sheet music off the screen. */
+    const open = readPanelState(LS.panelLyrics, false);
+    html += `<div class="section-label">Lyrics</div>
+      <section class="panel lyrics-panel ${open ? '' : 'collapsed'}" data-panel-key="${LS.panelLyrics}">
+        <button class="panel-head" type="button">
+          <span class="panel-title" data-open="Hide lyrics" data-closed="Show lyrics">${open ? 'Hide lyrics' : 'Show lyrics'}</span>
+          <span class="twisty">${open ? '&ndash;' : '+'}</span>
+        </button>
+        <div class="panel-body"><div class="lyrics-body">${escapeHtml(song.lyrics.trim())}</div></div>
+      </section>`;
   }
 
   if (sheets.length) {
     html += `<div class="section-label">Sheet music</div>
-      <div class="sheet-grid" id="sheet-grid">
-        ${sheets.map((s, i) => `
-          <a class="sheet-thumb${isPdf(s.file) ? ' sheet-thumb-pdf' : ''}" href="#" data-index="${i}">
-            ${isPdf(s.file)
-              ? `<div class="pdf-badge">PDF</div>`
-              : `<img src="${escapeAttr(s.file)}" alt="${escapeAttr(s.label || ('Page ' + (i + 1)))}" loading="lazy" />`}
-            <div class="label">${escapeHtml(s.label || ('Page ' + (i + 1)))}</div>
-          </a>`).join('')}
-      </div>`;
+      <ul class="file-list" id="sheet-list">
+        ${sheets.map((s, i) => {
+          const name = baseName(s.file);
+          const label = (s.label || '').trim() || name;
+          const kind = fileExt(s.file).toUpperCase() || 'FILE';
+          return `<li class="file-row">
+            <span class="file-main">
+              <a class="file-link" href="${escapeAttr(s.file)}" data-index="${i}"
+                 ${isPdf(s.file) ? 'target="_blank" rel="noopener"' : ''}>${escapeHtml(label)}</a>
+              <span class="file-kind">${escapeHtml(kind)} &middot; ${escapeHtml(name)}</span>
+            </span>
+            <a class="dl-btn" href="${escapeAttr(s.file)}"
+               download="${escapeAttr(downloadName(song.title, label, fileExt(s.file)))}">&#8681; Download</a>
+          </li>`;
+        }).join('')}
+      </ul>`;
   }
 
   if (links.length) {
@@ -206,92 +561,197 @@ function renderSongDetail(song) {
       </ul>`;
   }
 
-  html += `<div class="offline-row">
-      <button class="save-offline-btn" id="save-offline-btn">Save this song for offline</button>
-    </div>
-    <div class="save-status" id="save-status"></div>
-  </div>`;
+  html += `</div></div>`;
 
   root.innerHTML = html;
 
+  wirePanels();
   if (tracks.length) setupPlayer(song, tracks);
-  if (sheets.length) setupLightbox(song, sheets);
-  setupOfflineButton(song);
+  if (sheets.length) setupSheetLinks(song, sheets);
+}
+
+/* Remembered voice part wins, then an exact name match, then the first track. */
+function preferredTrackIndex(tracks) {
+  let saved = null;
+  try { saved = localStorage.getItem(LS.myPart); } catch {}
+  if (!saved) return 0;
+  const want = saved.toLowerCase();
+  const exact = tracks.findIndex(t => String(t.part || '').toLowerCase() === want);
+  if (exact >= 0) return exact;
+  const byTone = tracks.findIndex(t => toneFor(t.part) === toneFor(saved) && toneFor(saved) !== 'other');
+  return byTone >= 0 ? byTone : 0;
+}
+
+function toneFor(part) {
+  const p = String(part || '').toLowerCase();
+  if (p.includes('demo')) return 'demo';
+  if (p.includes('soprano')) return 'soprano';
+  if (p.includes('alto')) return 'alto';
+  if (p.includes('tenor')) return 'tenor';
+  if (p.includes('bass')) return 'bass';
+  return 'other';
 }
 
 /* ---------- Audio player ---------- */
 
 function setupPlayer(song, tracks) {
   const playBtn = document.getElementById('play-btn');
-  const rewindBtn = document.getElementById('rewind-btn');
-  const forwardBtn = document.getElementById('forward-btn');
   const seekBar = document.getElementById('seek-bar');
   const seekFill = document.getElementById('seek-fill');
+  const loopRange = document.getElementById('loop-range');
   const timeCurrent = document.getElementById('time-current');
   const timeTotal = document.getElementById('time-total');
   const trackNameEl = document.getElementById('player-track-name');
-  const tabs = document.querySelectorAll('.part-tab');
+  const myPartBtn = document.getElementById('my-part-btn');
+  const dlLink = document.getElementById('dl-track');
+  const speedSelect = document.getElementById('speed-select');
+  const loopABtn = document.getElementById('loop-a');
+  const loopBBtn = document.getElementById('loop-b');
+  const loopClearBtn = document.getElementById('loop-clear');
+  const tabs = Array.from(document.querySelectorAll('.part-tab'));
 
   let audio = new Audio();
   let activeIndex = 0;
+  let speed = 1;
+  let loopA = null;
+  let loopB = null;
+
+  function refreshLoopUi() {
+    loopABtn.textContent = loopA === null ? 'Set A' : `A ${formatTime(loopA)}`;
+    loopBBtn.textContent = loopB === null ? 'Set B' : `B ${formatTime(loopB)}`;
+    loopABtn.classList.toggle('set', loopA !== null);
+    loopBBtn.classList.toggle('set', loopB !== null);
+    const live = loopA !== null && loopB !== null && loopB > loopA;
+    loopABtn.classList.toggle('active', live);
+    loopBBtn.classList.toggle('active', live);
+
+    if (live && audio.duration) {
+      loopRange.style.display = 'block';
+      loopRange.style.left = (loopA / audio.duration * 100) + '%';
+      loopRange.style.width = ((loopB - loopA) / audio.duration * 100) + '%';
+    } else {
+      loopRange.style.display = 'none';
+    }
+  }
+
+  function refreshMyPartBtn() {
+    const part = tracks[activeIndex].part;
+    let saved = null;
+    try { saved = localStorage.getItem(LS.myPart); } catch {}
+    const isMine = saved && saved.toLowerCase() === String(part).toLowerCase();
+    myPartBtn.classList.toggle('on', !!isMine);
+    myPartBtn.innerHTML = isMine ? '&#9733; My part' : '&#9734; My part';
+    myPartBtn.title = isMine
+      ? `${part} opens by default — click to forget`
+      : `Always open ${part} first`;
+  }
 
   function loadTrack(index) {
-    const track = tracks[index];
     activeIndex = index;
+    const track = tracks[index];
+
     audio.pause();
     audio = new Audio(track.file);
+    audio.playbackRate = speed;
     currentAudio = audio;
-    currentTrackKey = song.id + ':' + track.part;
-    trackNameEl.textContent = track.part;
+
+    loopA = loopB = null;
     seekFill.style.width = '0%';
     timeCurrent.textContent = '0:00';
     timeTotal.textContent = '0:00';
     playBtn.innerHTML = '&#9658;';
+    trackNameEl.textContent = track.part;
+    trackNameEl.classList.remove('err');
+
+    dlLink.href = track.file;
+    dlLink.setAttribute('download', downloadName(song.title, track.part, fileExt(track.file)));
+
+    refreshMyPartBtn();
+    refreshLoopUi();
 
     audio.addEventListener('loadedmetadata', () => {
       timeTotal.textContent = formatTime(audio.duration);
+      refreshLoopUi();
     });
     audio.addEventListener('timeupdate', () => {
+      if (loopA !== null && loopB !== null && loopB > loopA && audio.currentTime >= loopB) {
+        audio.currentTime = loopA;
+      }
       if (audio.duration) {
         seekFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
         timeCurrent.textContent = formatTime(audio.currentTime);
       }
     });
-    audio.addEventListener('ended', () => {
-      playBtn.innerHTML = '&#9658;';
-    });
+    audio.addEventListener('ended', () => { playBtn.innerHTML = '&#9658;'; });
     audio.addEventListener('error', () => {
-      trackNameEl.textContent = track.part + ' — file not found';
+      trackNameEl.textContent = `${track.part} — file not found`;
+      trackNameEl.classList.add('err');
     });
   }
 
-  loadTrack(0);
-
-  playBtn.addEventListener('click', () => {
+  function toggle() {
     if (audio.paused) {
-      audio.play().catch(() => {
-        trackNameEl.textContent = tracks[activeIndex].part + ' — could not play (file missing?)';
+      audio.play().then(() => {
+        playBtn.innerHTML = '&#10074;&#10074;';
+      }).catch(() => {
+        trackNameEl.textContent = `${tracks[activeIndex].part} — could not play (file missing?)`;
+        trackNameEl.classList.add('err');
       });
-      playBtn.innerHTML = '&#10074;&#10074;';
     } else {
       audio.pause();
       playBtn.innerHTML = '&#9658;';
     }
-  });
+  }
 
-  rewindBtn.addEventListener('click', () => {
+  loadTrack(preferredTrackIndex(tracks));
+  activePlayer = { toggle };
+
+  playBtn.addEventListener('click', toggle);
+  document.getElementById('rewind-btn').addEventListener('click', () => {
     audio.currentTime = Math.max(0, audio.currentTime - 10);
   });
-
-  forwardBtn.addEventListener('click', () => {
+  document.getElementById('forward-btn').addEventListener('click', () => {
     audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10);
   });
 
   seekBar.addEventListener('click', (e) => {
     if (!audio.duration) return;
     const rect = seekBar.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
+    const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
     audio.currentTime = pct * audio.duration;
+  });
+
+  speedSelect.addEventListener('change', () => {
+    speed = parseFloat(speedSelect.value) || 1;
+    audio.playbackRate = speed;
+  });
+
+  loopABtn.addEventListener('click', () => {
+    loopA = audio.currentTime;
+    if (loopB !== null && loopB <= loopA) loopB = null;
+    refreshLoopUi();
+  });
+  loopBBtn.addEventListener('click', () => {
+    loopB = audio.currentTime;
+    if (loopA !== null && loopB <= loopA) loopA = null;
+    refreshLoopUi();
+  });
+  loopClearBtn.addEventListener('click', () => {
+    loopA = loopB = null;
+    refreshLoopUi();
+  });
+
+  myPartBtn.addEventListener('click', () => {
+    const part = tracks[activeIndex].part;
+    let saved = null;
+    try { saved = localStorage.getItem(LS.myPart); } catch {}
+    const isMine = saved && saved.toLowerCase() === String(part).toLowerCase();
+    try {
+      if (isMine) localStorage.removeItem(LS.myPart);
+      else localStorage.setItem(LS.myPart, part);
+    } catch {}
+    refreshMyPartBtn();
+    showToast(isMine ? 'Cleared your default part.' : `${part} will open first from now on.`);
   });
 
   tabs.forEach(tab => {
@@ -303,6 +763,14 @@ function setupPlayer(song, tracks) {
   });
 }
 
+function onGlobalKey(e) {
+  if (e.code !== 'Space' || !activePlayer) return;
+  const t = e.target;
+  if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT|BUTTON|A)$/.test(t.tagName))) return;
+  e.preventDefault();
+  activePlayer.toggle();
+}
+
 function stopCurrentAudio() {
   if (currentAudio) {
     currentAudio.pause();
@@ -310,19 +778,22 @@ function stopCurrentAudio() {
   }
 }
 
-/* ---------- Sheet music lightbox ---------- */
+/* ---------- Sheet music: images open a lightbox, PDFs open in a tab ---------- */
 
-function setupLightbox(song, sheets) {
-  const thumbs = document.querySelectorAll('.sheet-thumb');
-  thumbs.forEach(thumb => {
-    thumb.addEventListener('click', (e) => {
+function setupSheetLinks(song, sheets) {
+  document.querySelectorAll('#sheet-list .file-link').forEach(link => {
+    const index = parseInt(link.dataset.index, 10);
+    if (isPdf(sheets[index].file)) return;   /* let the browser open it */
+    link.addEventListener('click', (e) => {
       e.preventDefault();
-      openLightbox(sheets, parseInt(thumb.dataset.index, 10));
+      openLightbox(sheets.filter(s => !isPdf(s.file)),
+                   sheets.filter(s => !isPdf(s.file)).indexOf(sheets[index]));
     });
   });
 }
 
 function openLightbox(sheets, index) {
+  if (!sheets.length) return;
   const overlay = document.createElement('div');
   overlay.className = 'lightbox';
 
@@ -331,9 +802,7 @@ function openLightbox(sheets, index) {
     const hide = sheets.length < 2 ? 'style="visibility:hidden"' : '';
     overlay.innerHTML = `
       <button class="lightbox-close" aria-label="Close">&times;</button>
-      ${isPdf(s.file)
-        ? `<iframe class="pdf-viewer" src="${escapeAttr(s.file)}" title="${escapeAttr(s.label || 'Sheet music')}"></iframe>`
-        : `<img src="${escapeAttr(s.file)}" alt="${escapeAttr(s.label || '')}" />`}
+      <img src="${escapeAttr(s.file)}" alt="${escapeAttr(s.label || '')}">
       <div class="lightbox-nav">
         <button id="lb-prev" ${hide}>&larr; Prev</button>
         <button id="lb-next" ${hide}>Next &rarr;</button>
@@ -344,7 +813,7 @@ function openLightbox(sheets, index) {
   }
 
   function close() {
-    document.body.removeChild(overlay);
+    overlay.remove();
     document.removeEventListener('keydown', onKey);
   }
 
@@ -364,10 +833,10 @@ function openLightbox(sheets, index) {
 /* ---------- Offline save-per-song ---------- */
 
 function songAssetUrls(song) {
-  const urls = [];
-  (song.tracks || []).forEach(t => urls.push(t.file));
-  (song.sheetMusic || []).forEach(s => urls.push(s.file));
-  return urls;
+  return [
+    ...(song.tracks || []).map(t => t.file),
+    ...(song.sheetMusic || []).map(s => s.file),
+  ];
 }
 
 async function isSongCached(song) {
@@ -377,68 +846,143 @@ async function isSongCached(song) {
   try {
     const cache = await caches.open(MEDIA_CACHE);
     const results = await Promise.all(urls.map(u => cache.match(u)));
-    return results.every(r => !!r);
+    return results.every(Boolean);
   } catch {
     return false;
   }
 }
 
-function setupOfflineButton(song) {
-  const btn = document.getElementById('save-offline-btn');
-  const status = document.getElementById('save-status');
-  if (!btn) return;
+/* ================================================================
+   HTML sanitizer — Choir News is pasted from email, so it is
+   re-cleaned on render as well as on save.
+   ================================================================ */
 
-  isSongCached(song).then(cached => {
-    if (cached) {
-      btn.textContent = 'Saved for offline';
-      btn.classList.add('saved');
-    }
-  });
+const SANITIZE_ALLOW = new Set(['P','BR','B','STRONG','I','EM','U','UL','OL','LI','A','H3','H4','BLOCKQUOTE']);
+const SANITIZE_RENAME = { DIV: 'P', H1: 'H3', H2: 'H3', H5: 'H4', H6: 'H4', STRIKE: 'EM', S: 'EM' };
+const SANITIZE_DROP = 'script,style,iframe,object,embed,link,meta,img,svg,form,input,button,select,textarea,noscript,title,base';
 
-  btn.addEventListener('click', async () => {
-    if (!('caches' in window)) {
-      status.textContent = 'Offline storage is not supported in this browser.';
+function sanitizeHtml(html) {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString('<body><div id="sanitize-root"></div></body>', 'text/html');
+  const host = doc.getElementById('sanitize-root');
+  host.innerHTML = String(html);
+
+  host.querySelectorAll(SANITIZE_DROP).forEach(n => n.remove());
+
+  const walker = doc.createTreeWalker(host, NodeFilter.SHOW_COMMENT);
+  const comments = [];
+  while (walker.nextNode()) comments.push(walker.currentNode);
+  comments.forEach(c => c.remove());
+
+  sanitizeChildren(host);
+  return host.innerHTML;
+}
+
+function sanitizeChildren(parent) {
+  Array.from(parent.children).forEach(child => {
+    sanitizeChildren(child);
+    const tag = child.tagName;
+
+    if (SANITIZE_ALLOW.has(tag)) {
+      stripAttributes(child);
       return;
     }
-    const urls = songAssetUrls(song);
-    if (!urls.length) {
-      status.textContent = 'Nothing to save for this song.';
+
+    const renameTo = SANITIZE_RENAME[tag];
+    if (renameTo) {
+      const rep = child.ownerDocument.createElement(renameTo);
+      while (child.firstChild) rep.appendChild(child.firstChild);
+      child.replaceWith(rep);
+      stripAttributes(rep);
       return;
     }
-    btn.disabled = true;
-    btn.textContent = 'Saving…';
-    let done = 0;
-    try {
-      const cache = await caches.open(MEDIA_CACHE);
-      for (const url of urls) {
-        try {
-          const res = await fetch(url, { cache: 'reload' });
-          if (res.ok) {
-            await cache.put(url, res.clone());
-          }
-        } catch (err) {
-          console.error('Failed to cache', url, err);
-        }
-        done++;
-        status.textContent = `Saved ${done} of ${urls.length} files…`;
-      }
-      btn.textContent = 'Saved for offline';
-      btn.classList.add('saved');
-      status.textContent = `All ${urls.length} files available offline.`;
-    } catch (err) {
-      status.textContent = 'Something went wrong saving files.';
-      console.error(err);
-    } finally {
-      btn.disabled = false;
-    }
+
+    /* Unknown wrapper (span, font, table cells, Word junk): keep the text, drop the tag. */
+    const frag = child.ownerDocument.createDocumentFragment();
+    while (child.firstChild) frag.appendChild(child.firstChild);
+    child.replaceWith(frag);
   });
 }
 
-/* ---------- Utilities ---------- */
-
-function isPdf(file) {
-  return (file || '').toLowerCase().endsWith('.pdf');
+function stripAttributes(el) {
+  const href = el.tagName === 'A' ? el.getAttribute('href') : null;
+  Array.from(el.attributes).forEach(a => el.removeAttribute(a.name));
+  if (el.tagName === 'A') {
+    if (href && /^(https?:|mailto:|tel:)/i.test(href.trim())) {
+      el.setAttribute('href', href.trim());
+      el.setAttribute('target', '_blank');
+      el.setAttribute('rel', 'noopener noreferrer');
+    }
+  }
 }
+
+/* ---------- Dates ---------- */
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+function addDays(dateStr, days) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m - 1, d + days);
+  return `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`;
+}
+
+/* Parsed as local time on purpose — 'new Date("2026-08-16")' is UTC and can shift a day. */
+function parseLocalDate(dateStr) {
+  const [y, m, d] = String(dateStr).split('-').map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
+
+function formatDateShort(dateStr) {
+  const d = parseLocalDate(dateStr);
+  if (isNaN(d)) return dateStr;
+  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function formatDateLong(dateStr) {
+  const d = parseLocalDate(dateStr);
+  if (isNaN(d)) return dateStr;
+  return d.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function typeOrder(type) {
+  const meta = SERVICE_TYPES[type];
+  return meta ? meta.order : 99;
+}
+
+/* ---------- Files ---------- */
+
+function isPdf(file) { return fileExt(file) === 'pdf'; }
+
+function fileExt(file) {
+  const name = baseName(file);
+  const i = name.lastIndexOf('.');
+  return i > 0 ? name.slice(i + 1).toLowerCase() : '';
+}
+
+function baseName(file) {
+  const parts = String(file || '').split('/');
+  return parts[parts.length - 1] || '';
+}
+
+function downloadName(songTitle, label, ext) {
+  const clean = s => String(s || '').replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim();
+  const title = clean(songTitle);
+  const lbl = clean(label);
+  let base;
+  if (!lbl) base = title;
+  else if (!title) base = lbl;
+  /* Labels are often already "Music - <song title>" — don't say it twice. */
+  else if (lbl.toLowerCase().includes(title.toLowerCase())) base = lbl;
+  else base = `${title} - ${lbl}`;
+  return ext ? `${base}.${ext}` : base;
+}
+
+/* ---------- Misc ---------- */
 
 function formatTime(sec) {
   if (!isFinite(sec)) return '0:00';
@@ -453,10 +997,12 @@ function escapeHtml(str) {
   }[ch]));
 }
 
-function escapeAttr(str) {
-  return escapeHtml(str);
-}
+function escapeAttr(str) { return escapeHtml(str); }
 
-backBtn.addEventListener('click', () => {
-  window.location.hash = '#/';
-});
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2600);
+}

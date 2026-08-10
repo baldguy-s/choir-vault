@@ -2,337 +2,435 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Choir Materials — Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Choir — Admin</title>
+<meta name="theme-color" content="#B5B5B5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ================================================================
-   Config — edit these three lines for your repo, then remove
-   this comment. Everything else in the file is generic.
-   ================================================================ */
 :root {
   --paper: #FAFAFA;
+  --paper-dim: #F0F0F0;
+  --card: #FFFFFF;
+  --line: rgba(0,0,0,0.10);
+  --ink: #1A1A1A;
+  --slate: #6B6B6B;
   --red: #A3313B;
   --red-deep: #7E2530;
   --banner-gray: #B5B5B5;
-  --offwhite: #F7F7F7;
-  --ink: #1A1A1A;
-  --slate: #6B6B6B;
-  --line: rgba(0,0,0,0.10);
   --ok: #2F6B3A;
   --ok-bg: #E7F3E9;
   --warn-bg: #FBEAEA;
+  --radius: 4px;
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
+body.dark-mode {
+  --paper: #17181A;
+  --paper-dim: #232426;
+  --card: #1F2022;
+  --line: rgba(255,255,255,0.12);
+  --ink: #F0EFEC;
+  --slate: #A3A3A3;
+  --red: #C6505C;
+  --red-deep: #E08691;
+  --banner-gray: #4A4A4A;
+  --ok: #8FC79B;
+  --ok-bg: #25381F;
+  --warn-bg: #3A2323;
+}
+
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); }
+html { font-size: 16px; }
+html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
 body { padding-bottom: 4rem; }
 a { color: var(--red-deep); }
 button { font-family: inherit; cursor: pointer; }
 input, textarea, select { font-family: inherit; }
 :focus-visible { outline: 2px solid var(--red-deep); outline-offset: 2px; }
 
-.banner {
+/* ---------- Banner (matches the public app + Service Schedule) ---------- */
+
+header.site {
   background: var(--banner-gray);
-  padding: 0.9rem 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.banner h1 {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #fff;
-  margin: 0;
-  flex: 1;
-}
-.conn-pill {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.25);
-  color: #fff;
-}
-.conn-pill.connected { background: var(--ok); }
-
-.config-warning {
-  background: var(--warn-bg);
-  color: var(--red-deep);
-  border-bottom: 1px solid var(--red);
-  padding: 0.85rem 1.25rem;
-  font-size: 0.9rem;
-}
-.config-warning code { background: rgba(0,0,0,0.06); padding: 0.1rem 0.3rem; border-radius: 3px; }
-
-.wrap {
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 1.25rem;
-}
-
-/* PAT gate */
-.gate-card {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 1.5rem;
-  margin-top: 2rem;
-}
-.gate-card h2 { font-family: var(--font-display); margin-top: 0; }
-.gate-card p { color: var(--slate); font-size: 0.92rem; line-height: 1.5; }
-.field-row { margin-bottom: 1rem; }
-.field-row label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--slate);
-  margin-bottom: 0.3rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-.field-row input[type="text"],
-.field-row input[type="password"],
-.field-row input[type="url"],
-.field-row textarea,
-.field-row select {
-  width: 100%;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  font-size: 0.95rem;
-  background: #fff;
   color: var(--ink);
+  padding: 18px 18px 14px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+}
+header.site img.logo-img { max-width: 180px; width: 55%; height: auto; display: block; margin: 0 auto 6px; }
+header.site h1 {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 1rem;
+  margin: 2px 0 3px; letter-spacing: .05em; text-transform: uppercase;
+}
+
+.sticky-bar { position: sticky; top: 0; z-index: 30; background: var(--paper); border-bottom: 1px solid var(--line); }
+.sticky-bar-inner { max-width: 900px; margin: 0 auto; padding: .45rem 1rem; display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.bar-spacer { flex: 1; }
+
+.tab-btn {
+  background: none; border: 1px solid transparent; color: var(--slate);
+  font-size: .85rem; font-weight: 600; padding: .4rem .8rem; border-radius: 999px;
+}
+.tab-btn.active { background: var(--ink); color: var(--paper); }
+.tab-btn:hover { color: var(--red-deep); }
+
+.conn-pill {
+  font-family: var(--font-mono); font-size: .62rem; text-transform: uppercase;
+  letter-spacing: .04em; padding: .2rem .5rem; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--slate);
+}
+.conn-pill.connected { background: var(--ok); border-color: var(--ok); color: #fff; }
+.conn-pill.bad { border-color: var(--red-deep); color: var(--red-deep); }
+
+.icon-btn { background: var(--card); border: 1px solid var(--line); color: var(--ink); padding: .35rem .55rem; border-radius: 999px; font-size: 1rem; line-height: 1; }
+
+.config-warning { background: var(--warn-bg); color: var(--red-deep); border-bottom: 1px solid var(--red); padding: .85rem 1.25rem; font-size: .9rem; }
+.config-warning code { background: rgba(0,0,0,0.06); padding: .1rem .3rem; border-radius: 3px; }
+
+.wrap { max-width: 900px; margin: 0 auto; padding: 1.1rem 1rem 1rem; }
+
+/* ---------- Cards + fields ---------- */
+
+.gate-card, .section-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 6px; padding: 1.1rem 1.15rem; margin-bottom: 1rem;
+}
+.gate-card { margin-top: 1.5rem; }
+.gate-card h2 { font-family: var(--font-display); margin-top: 0; }
+.gate-card p { color: var(--slate); font-size: .92rem; line-height: 1.5; }
+
+.section-card h3 {
+  font-family: var(--font-mono); font-size: .72rem; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--red-deep); margin: 0 0 .85rem;
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+}
+.section-card h3 .h3-note { font-family: var(--font-body); text-transform: none; letter-spacing: 0; color: var(--slate); font-weight: 400; font-size: .78rem; }
+
+.field-row { margin-bottom: .9rem; }
+.field-row label, .field-label {
+  display: block; font-size: .72rem; font-weight: 700; color: var(--slate);
+  margin-bottom: .3rem; text-transform: uppercase; letter-spacing: .04em;
+}
+.field-row input[type="text"], .field-row input[type="password"], .field-row input[type="url"],
+.field-row input[type="date"], .field-row textarea, .field-row select,
+.inline-input, .inline-select {
+  width: 100%; padding: .55rem .7rem; border: 1px solid var(--line);
+  border-radius: var(--radius); font-size: .95rem; background: var(--card); color: var(--ink);
 }
 .field-row textarea { resize: vertical; min-height: 4rem; }
+.field-row textarea.lyrics-input { min-height: 11rem; font-size: .9rem; line-height: 1.55; }
+.field-hint { font-size: .78rem; color: var(--slate); margin-top: .3rem; line-height: 1.45; }
 
 .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.55rem 1rem;
-  border-radius: 4px;
-  border: 1px solid var(--red);
-  background: var(--red);
-  color: #fff;
-  font-weight: 600;
-  font-size: 0.88rem;
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .55rem 1rem; border-radius: var(--radius);
+  border: 1px solid var(--red); background: var(--red); color: #fff;
+  font-weight: 600; font-size: .88rem;
 }
 .btn:hover { background: var(--red-deep); border-color: var(--red-deep); }
-.btn.secondary { background: #fff; color: var(--red-deep); border-color: var(--red); }
+.btn.secondary { background: var(--card); color: var(--red-deep); border-color: var(--red); }
 .btn.secondary:hover { background: var(--warn-bg); }
-.btn.plain { background: none; border-color: var(--line); color: var(--ink); }
-.btn.danger { background: #fff; color: var(--red-deep); border-color: var(--red-deep); }
+.btn.plain { background: var(--card); border-color: var(--line); color: var(--ink); }
+.btn.plain:hover { border-color: var(--red); color: var(--red-deep); background: var(--card); }
+.btn.danger { background: var(--card); color: var(--red-deep); border-color: var(--red-deep); }
 .btn.danger:hover { background: var(--red-deep); color: #fff; }
-.btn:disabled { opacity: 0.55; cursor: default; }
-.btn.small { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+.btn:disabled { opacity: .55; cursor: default; }
+.btn.small { padding: .35rem .65rem; font-size: .78rem; }
+.btn.tiny { padding: .2rem .45rem; font-size: .7rem; font-family: var(--font-mono); }
 
-/* List view */
-.toolbar { display: flex; gap: 0.6rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.btn-row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+
+/* ---------- Songs list ---------- */
+
+.toolbar { display: flex; gap: .5rem; margin-bottom: .9rem; flex-wrap: wrap; }
 .toolbar input[type="search"] {
-  flex: 1;
-  min-width: 160px;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  font-size: 0.95rem;
+  flex: 1; min-width: 150px; padding: .55rem .7rem;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  font-size: .95rem; background: var(--card); color: var(--ink);
 }
 
-.tag-row { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.tag-row { display: flex; gap: .35rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .tag-chip {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  background: var(--offwhite);
-  border: 1px solid var(--line);
-  color: var(--slate);
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
+  font-family: var(--font-mono); font-size: .68rem; background: var(--paper-dim);
+  border: 1px solid var(--line); color: var(--slate); padding: .25rem .6rem; border-radius: 999px;
 }
 .tag-chip.active { background: var(--red); border-color: var(--red-deep); color: #fff; }
 
 .song-row {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--banner-gray);
-  border-radius: 4px;
-  padding: 0.8rem 1rem;
-  margin-bottom: 0.55rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
+  background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--banner-gray);
+  border-radius: var(--radius); padding: .75rem .9rem; margin-bottom: .5rem;
+  display: flex; align-items: center; gap: .7rem; cursor: pointer;
 }
 .song-row:hover { border-left-color: var(--red); }
-.song-row .info { flex: 1; }
-.song-row .title { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
-.song-row .composer { color: var(--slate); font-size: 0.85rem; }
-.song-row .counts { font-family: var(--font-mono); font-size: 0.72rem; color: var(--slate); margin-top: 0.2rem; }
-.song-row .missing-flag { color: var(--red-deep); font-weight: 600; }
+.song-row .info { flex: 1; min-width: 0; }
+.song-row .title { font-family: var(--font-display); font-weight: 700; font-size: 1.02rem; display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.song-row .counts { font-family: var(--font-mono); font-size: .68rem; color: var(--slate); margin-top: .2rem; }
+.song-row .chev { color: var(--slate); font-size: 1.1rem; }
 
-.empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--slate); }
-.empty-state .big { font-family: var(--font-display); font-size: 1.2rem; color: var(--ink); margin-bottom: 0.3rem; }
-
-/* Detail view */
-.detail-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
-.detail-header h2 { font-family: var(--font-display); margin: 0; flex: 1; }
-
-.section-card {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 1.1rem 1.2rem;
-  margin-bottom: 1rem;
-}
-.section-card h3 {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--red-deep);
-  margin: 0 0 0.85rem;
+.pre-badge {
+  font-family: var(--font-mono); font-size: .58rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: #fff; background: var(--slate); padding: .12rem .4rem; border-radius: 999px;
 }
 
-.track-slot {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 0.55rem 0;
-  border-bottom: 1px solid var(--line);
+.empty-state { text-align: center; padding: 2.2rem 1rem; color: var(--slate); }
+.empty-state .big { font-family: var(--font-display); font-size: 1.15rem; color: var(--ink); margin-bottom: .3rem; }
+
+/* ---------- Detail ---------- */
+
+.detail-header { display: flex; align-items: center; gap: .7rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+.detail-header h2 { font-family: var(--font-display); margin: 0; flex: 1; font-size: 1.3rem; min-width: 0; word-break: break-word; }
+
+/* ---------- Track / sheet / link rows ---------- */
+
+.item-row {
+  display: grid; gap: .5rem; align-items: center;
+  padding: .6rem 0; border-bottom: 1px solid var(--line);
+  grid-template-columns: 1fr;
 }
-.track-slot:last-child { border-bottom: none; }
-.track-slot .part-name { width: 90px; font-weight: 600; font-size: 0.9rem; flex-shrink: 0; }
-.track-slot .status { flex: 1; font-size: 0.82rem; color: var(--slate); }
-.track-slot .status.present { color: var(--ok); }
-.track-slot .status.uploading { color: var(--red-deep); }
-.track-slot input[type="file"] { max-width: 160px; font-size: 0.78rem; }
+.item-row:last-of-type { border-bottom: none; }
 
-.sheet-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--line);
+.item-row .row-meta { font-family: var(--font-mono); font-size: .66rem; color: var(--slate); word-break: break-all; }
+.item-row .row-actions { display: flex; gap: .3rem; align-items: center; flex-wrap: wrap; }
+.reorder-btns { display: flex; gap: .2rem; }
+
+@media (min-width: 620px) {
+  .track-row { grid-template-columns: auto minmax(0,1fr) minmax(0,1.1fr) auto; }
+  .sheet-row { grid-template-columns: auto minmax(0,1fr) minmax(0,1fr) auto; }
+  .link-row  { grid-template-columns: minmax(0,1fr) minmax(0,1.3fr) auto; }
+  .cal-song-row { grid-template-columns: auto minmax(0,1fr) 6rem minmax(0,1fr) auto; }
 }
-.sheet-item:last-child { border-bottom: none; }
-.sheet-item img { width: 44px; height: 58px; object-fit: cover; border: 1px solid var(--line); border-radius: 3px; }
-.sheet-pdf-thumb { width: 44px; height: 58px; border: 1px solid var(--line); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; color: var(--red); background: var(--offwhite); letter-spacing: 0.05em; flex-shrink: 0; }
-.sheet-item .label-input { flex: 1; }
-.sheet-item .reorder-btns { display: flex; flex-direction: column; gap: 2px; }
-.sheet-item .reorder-btns button { padding: 0.1rem 0.4rem; font-size: 0.7rem; }
 
-.link-item { display: flex; gap: 0.5rem; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid var(--line); }
-.link-item:last-child { border-bottom: none; }
-.link-item input { flex: 1; }
+.replace-input { font-size: .72rem; max-width: 100%; color: var(--slate); }
 
-.add-row { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--line); }
+.add-block { margin-top: .9rem; padding-top: .9rem; border-top: 1px dashed var(--line); }
 
-.save-status { font-size: 0.8rem; color: var(--slate); margin-top: 0.5rem; }
+.preset-row { display: flex; gap: .3rem; flex-wrap: wrap; margin-bottom: .6rem; align-items: center; }
+.preset-chip {
+  font-family: var(--font-mono); font-size: .68rem; background: var(--paper-dim);
+  border: 1px solid var(--line); color: var(--ink); padding: .25rem .6rem; border-radius: 999px;
+}
+.preset-chip:hover { background: var(--red); border-color: var(--red-deep); color: #fff; }
+
+.save-status { font-size: .78rem; color: var(--slate); margin-top: .5rem; min-height: 1.1em; }
+.save-status.ok { color: var(--ok); }
+.save-status.err { color: var(--red-deep); }
+
+.checkbox-row { display: flex; align-items: flex-start; gap: .5rem; font-size: .88rem; color: var(--ink); margin: .6rem 0; }
+.checkbox-row input { margin-top: .2rem; flex-shrink: 0; }
+.checkbox-row .cb-note { display: block; font-size: .78rem; color: var(--slate); }
+
+.danger-zone { border-color: var(--red-deep); background: var(--warn-bg); }
+.danger-zone h3 { color: var(--red-deep); }
+
+/* ---------- Calendar editor ---------- */
+
+.svc-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-left: 4px solid var(--red); border-radius: var(--radius);
+  padding: .8rem .9rem; margin-bottom: .8rem;
+}
+.svc-head { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; margin-bottom: .5rem; }
+.svc-title { font-family: var(--font-display); font-weight: 700; font-size: 1.02rem; flex: 1; min-width: 9rem; }
+.svc-past { font-family: var(--font-mono); font-size: .58rem; text-transform: uppercase; letter-spacing: .05em; color: #fff; background: var(--slate); padding: .12rem .4rem; border-radius: 999px; }
+.svc-edit-row { display: grid; gap: .5rem; grid-template-columns: 1fr; margin-bottom: .6rem; }
+@media (min-width: 620px) { .svc-edit-row { grid-template-columns: minmax(0,1fr) minmax(0,1fr); } }
+
+.tbd-note { font-size: .85rem; color: var(--slate); font-style: italic; padding: .3rem 0; }
+
+/* ---------- News editor ---------- */
+
+.paste-box {
+  min-height: 11rem; max-height: 26rem; overflow-y: auto;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: .7rem .8rem; background: var(--card); color: var(--ink);
+  font-size: .93rem; line-height: 1.55;
+}
+.paste-box:empty::before { content: attr(data-placeholder); color: var(--slate); }
+.paste-box p { margin: 0 0 .7rem; }
+.paste-box ul, .paste-box ol { margin: 0 0 .7rem; padding-left: 1.3rem; }
+.paste-box h3, .paste-box h4 { font-family: var(--font-display); font-size: 1rem; margin: .8rem 0 .3rem; }
+.paste-box blockquote { margin: 0 0 .7rem; padding-left: .8rem; border-left: 3px solid var(--line); color: var(--slate); }
+
+/* ---------- Sync card ---------- */
+
+.sync-card { border-color: var(--line); }
+.sync-log { font-family: var(--font-mono); font-size: .7rem; color: var(--slate); line-height: 1.6; margin-top: .5rem; white-space: pre-wrap; }
+
+/* ---------- Toast ---------- */
 
 .toast {
-  position: fixed;
-  bottom: 1.25rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--ink);
-  color: #fff;
-  padding: 0.6rem 1.1rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  z-index: 100;
-  max-width: 90vw;
+  position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: var(--paper); padding: .6rem 1.05rem;
+  border-radius: 6px; font-size: .85rem; z-index: 100; max-width: 92vw;
   box-shadow: 0 4px 14px rgba(0,0,0,0.25);
 }
-.toast.error { background: var(--red-deep); }
-
-.checkbox-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; color: var(--slate); margin: 0.6rem 0; }
-
-.danger-zone { border: 1px solid var(--red-deep); background: var(--warn-bg); }
+.toast.error { background: var(--red-deep); color: #fff; }
 </style>
 </head>
 <body>
 
-<div class="banner">
-  <h1>Choir Materials — Admin</h1>
-  <span class="conn-pill" id="conn-pill">Checking&hellip;</span>
+<header class="site">
+  <img class="logo-img" src="icons/bbcff-logo.png" alt="Bible Baptist Church of Fort Fairfield logo">
+  <h1>Choir &middot; Admin</h1>
+</header>
+
+<div class="sticky-bar">
+  <div class="sticky-bar-inner">
+    <button class="tab-btn" data-tab="songs">Songs</button>
+    <button class="tab-btn" data-tab="calendar">Calendar</button>
+    <button class="tab-btn" data-tab="news">Choir News</button>
+    <span class="bar-spacer"></span>
+    <span class="conn-pill" id="conn-pill">Checking&hellip;</span>
+    <button class="icon-btn" id="theme-btn" aria-label="Toggle dark mode" title="Toggle dark mode">&#9789;</button>
+  </div>
 </div>
 
 <div id="config-warning" class="config-warning" style="display:none">
   Repo not configured. Open this file and set <code>GH_OWNER</code> and
-  <code>GH_REPO</code> near the top of the <code>&lt;script&gt;</code> block
-  before using this page.
+  <code>GH_REPO</code> near the top of the <code>&lt;script&gt;</code> block before using this page.
 </div>
 
 <div class="wrap" id="app-root"></div>
 
 <script>
 /* ================================================================
-   CONFIG — set these three values for your repo
+   CONFIG
    ================================================================ */
-const GH_OWNER = 'baldguy-s';
-const GH_REPO  = 'choir-vault';
-const GH_BRANCH = 'main';   // <-- branch to write to
+const GH_OWNER  = 'baldguy-s';
+const GH_REPO   = 'choir-vault';
+const GH_BRANCH = 'main';
+
+const SONGS_PATH    = 'docs/data/songs.json';
+const CALENDAR_PATH = 'docs/data/calendar.json';
+
+/* Standard voice-part names, offered as quick-picks. Any custom name is allowed. */
+const TRACK_PARTS = ['Demo', 'Soprano', 'Alto', 'Tenor', 'Bass'];
+
+const PAT_STORAGE_KEY = 'gh_pat_choir_music';
+const GH_API = 'https://api.github.com';
+
+/* --- Service Schedule repo: this app is the source of truth for choir slot/solo --- */
+const SCHED_OWNER  = 'baldguy-s';
+const SCHED_REPO   = 'bbcff-serv-sched';
+const SCHED_BRANCH = 'main';
+const SCHED_PATH   = 'schedule-data.json';
+const SCHED_PAT_KEY = 'gh_pat_sched_sync';   /* optional; falls back to the main token */
+
+/* Only Sunday services carry a choir block in the schedule app's model. */
+const SCHED_SYNC_TYPES = ['sunday_am', 'sunday_pm'];
+
+const SERVICE_TYPES = {
+  sunday_am: { short: 'Morning',   long: 'Sunday Morning',  order: 0 },
+  sunday_pm: { short: 'Evening',   long: 'Sunday Evening',  order: 1 },
+  wednesday: { short: 'Wednesday', long: 'Wednesday',       order: 2 },
+  special:   { short: 'Special',   long: 'Special Service', order: 3 },
+};
+
+const SLOT_OPTIONS = ['', '1', '4'];
 
 const GH_PLACEHOLDERS = (GH_OWNER === 'owner' || GH_REPO === 'repo');
-const PAT_STORAGE_KEY = 'gh_pat_choir_music';
-const SONGS_PATH = 'docs/data/songs.json';
-const TRACK_PARTS = ['Demo', 'Soprano', 'Alto', 'Tenor', 'Bass'];
-const GH_API = 'https://api.github.com';
+const THEME_KEY = 'choir_admin_theme';
 
 let STATE = {
   songs: [],
-  sha: null,
+  songsSha: null,
+  calendar: { news: { subject: '', date: '', html: '', updated: '' }, services: [] },
+  calSha: null,
+  tab: 'songs',
   activeTag: null,
   searchQuery: '',
 };
 
 const root = document.getElementById('app-root');
 const connPill = document.getElementById('conn-pill');
+const themeBtn = document.getElementById('theme-btn');
 
 init();
 
 async function init() {
+  applyStoredTheme();
+  themeBtn.addEventListener('click', toggleTheme);
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      STATE.tab = btn.dataset.tab;
+      renderTab();
+    });
+  });
+
   if (GH_PLACEHOLDERS) {
     document.getElementById('config-warning').style.display = 'block';
-    connPill.textContent = 'Not configured';
+    setConn('Not configured', 'bad');
     return;
   }
 
-  const token = localStorage.getItem(PAT_STORAGE_KEY);
-  if (!token) {
-    renderPatGate();
-    return;
-  }
+  if (!getToken()) { renderPatGate(); return; }
 
-  connPill.textContent = 'Connecting…';
+  setConn('Connecting…');
   try {
-    await loadSongs();
-    connPill.textContent = 'Connected';
-    connPill.classList.add('connected');
-    renderList();
+    await Promise.all([loadSongs(), loadCalendar()]);
+    setConn('Connected', 'connected');
+    renderTab();
   } catch (err) {
     console.error(err);
-    connPill.textContent = 'Connection failed';
+    setConn('Connection failed', 'bad');
     renderPatGate(err.message);
   }
 }
 
+function setConn(text, cls) {
+  connPill.textContent = text;
+  connPill.className = 'conn-pill' + (cls ? ' ' + cls : '');
+}
+
+function syncTabButtons() {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === STATE.tab);
+  });
+}
+
+/* ---------------- Theme ---------------- */
+
+function applyStoredTheme() {
+  let pref = null;
+  try { pref = localStorage.getItem(THEME_KEY); } catch {}
+  if (pref === null && window.matchMedia) {
+    pref = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  setTheme(pref === 'dark');
+}
+
+function setTheme(dark) {
+  document.body.classList.toggle('dark-mode', dark);
+  themeBtn.innerHTML = dark ? '&#9788;' : '&#9789;';
+}
+
+function toggleTheme() {
+  const dark = !document.body.classList.contains('dark-mode');
+  setTheme(dark);
+  try { localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light'); } catch {}
+}
+
 /* ---------------- PAT gate ---------------- */
 
+function getToken() {
+  try { return localStorage.getItem(PAT_STORAGE_KEY); } catch { return null; }
+}
+
 function renderPatGate(errorMsg) {
+  syncTabButtons();
   root.innerHTML = `
     <div class="gate-card">
       <h2>Connect to GitHub</h2>
-      <p>Paste a fine-grained personal access token with read/write access to
-      <strong>${escapeHtml(GH_OWNER)}/${escapeHtml(GH_REPO)}</strong> (Contents
-      permission: Read and write). It's stored only in this browser's local
-      storage, never sent anywhere but GitHub.</p>
+      <p>Paste a fine-grained personal access token with <strong>Contents: Read and write</strong> on
+      <strong>${escapeHtml(GH_OWNER)}/${escapeHtml(GH_REPO)}</strong>. To keep the Service Schedule in
+      sync automatically, give the same token access to
+      <strong>${escapeHtml(SCHED_OWNER)}/${escapeHtml(SCHED_REPO)}</strong> as well.
+      It is stored only in this browser, and sent nowhere but GitHub.</p>
       ${errorMsg ? `<p style="color:var(--red-deep)">${escapeHtml(errorMsg)}</p>` : ''}
       <div class="field-row">
         <label for="pat-input">Personal access token</label>
@@ -341,79 +439,78 @@ function renderPatGate(errorMsg) {
       <button class="btn" id="pat-save-btn">Connect</button>
     </div>`;
 
+  document.getElementById('pat-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('pat-save-btn').click();
+  });
+
   document.getElementById('pat-save-btn').addEventListener('click', async () => {
     const val = document.getElementById('pat-input').value.trim();
     if (!val) return;
-    localStorage.setItem(PAT_STORAGE_KEY, val);
-    connPill.textContent = 'Connecting…';
+    try { localStorage.setItem(PAT_STORAGE_KEY, val); } catch {}
+    setConn('Connecting…');
     try {
-      await loadSongs();
-      connPill.textContent = 'Connected';
-      connPill.classList.add('connected');
-      renderList();
+      await Promise.all([loadSongs(), loadCalendar()]);
+      setConn('Connected', 'connected');
+      renderTab();
     } catch (err) {
-      localStorage.removeItem(PAT_STORAGE_KEY);
+      try { localStorage.removeItem(PAT_STORAGE_KEY); } catch {}
+      setConn('Connection failed', 'bad');
       renderPatGate('Could not connect — check the token and repo permissions, then try again.');
     }
   });
 }
 
-/* ---------------- GitHub Contents API ---------------- */
+/* ================================================================
+   GitHub Contents API
+   ================================================================ */
 
-function ghHeaders() {
-  const token = localStorage.getItem(PAT_STORAGE_KEY);
+function ghHeaders(token) {
   return {
-    'Authorization': `Bearer ${token}`,
+    'Authorization': `Bearer ${token || getToken()}`,
     'Accept': 'application/vnd.github+json',
   };
 }
 
-async function ghGetFile(path) {
-  const res = await fetch(`${GH_API}/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`, {
-    headers: ghHeaders(),
-  });
+async function apiGetFile(owner, repo, branch, path, token) {
+  const url = `${GH_API}/repos/${owner}/${repo}/contents/${encodePath(path)}?ref=${encodeURIComponent(branch)}`;
+  const res = await fetch(url, { headers: ghHeaders(token) });
   if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`GitHub GET ${path} failed (${res.status})`);
+  if (!res.ok) {
+    const err = new Error(`GitHub GET ${path} failed (${res.status})`);
+    err.status = res.status;
+    throw err;
+  }
   const data = await res.json();
   return { sha: data.sha, content: b64DecodeUnicode(data.content) };
 }
 
-async function ghPutText(path, contentStr, message, sha) {
-  const body = {
-    message,
-    content: b64EncodeUnicode(contentStr),
-    branch: GH_BRANCH,
-  };
+async function apiPut(owner, repo, branch, path, base64Content, message, sha, token) {
+  const body = { message, content: base64Content, branch };
   if (sha) body.sha = sha;
-  const res = await fetch(`${GH_API}/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+  const res = await fetch(`${GH_API}/repos/${owner}/${repo}/contents/${encodePath(path)}`, {
     method: 'PUT',
-    headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+    headers: { ...ghHeaders(token), 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(`Save failed (${res.status}): ${err.message || 'unknown error'}`);
+    const e = new Error(`Save failed (${res.status}): ${err.message || 'unknown error'}`);
+    e.status = res.status;
+    throw e;
   }
   return res.json();
 }
 
-async function ghPutBase64(path, base64Content, message, sha) {
-  const body = { message, content: base64Content, branch: GH_BRANCH };
-  if (sha) body.sha = sha;
-  const res = await fetch(`${GH_API}/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
-    method: 'PUT',
-    headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(`Upload failed (${res.status}): ${err.message || 'unknown error'}`);
-  }
-  return res.json();
+function ghGetFile(path) { return apiGetFile(GH_OWNER, GH_REPO, GH_BRANCH, path); }
+function ghPutText(path, contentStr, message, sha) {
+  return apiPut(GH_OWNER, GH_REPO, GH_BRANCH, path, b64EncodeUnicode(contentStr), message, sha);
+}
+function ghPutBase64(path, base64, message, sha) {
+  return apiPut(GH_OWNER, GH_REPO, GH_BRANCH, path, base64, message, sha);
 }
 
 async function ghDeleteFile(path, sha, message) {
-  const res = await fetch(`${GH_API}/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+  const res = await fetch(`${GH_API}/repos/${GH_OWNER}/${GH_REPO}/contents/${encodePath(path)}`, {
     method: 'DELETE',
     headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
     body: JSON.stringify({ message, sha, branch: GH_BRANCH }),
@@ -421,51 +518,120 @@ async function ghDeleteFile(path, sha, message) {
   return res.ok;
 }
 
+/* Delete a repo file given its app-relative path (e.g. 'audio/song/bass.mp3'). */
+async function deleteRepoFile(appPath, message) {
+  const repoPath = `docs/${appPath}`;
+  try {
+    const file = await ghGetFile(repoPath);
+    if (!file) return true;            /* already gone */
+    return await ghDeleteFile(repoPath, file.sha, message);
+  } catch (err) {
+    console.error('Could not delete', repoPath, err);
+    return false;
+  }
+}
+
+function encodePath(path) {
+  return String(path).split('/').map(encodeURIComponent).join('/');
+}
+
+/* ---------------- Load / save ---------------- */
+
 async function loadSongs() {
   const file = await ghGetFile(SONGS_PATH);
+  if (!file) { STATE.songs = []; STATE.songsSha = null; return; }
+  const parsed = JSON.parse(file.content);
+  STATE.songs = parsed.songs || [];
+  STATE.songsSha = file.sha;
+}
+
+async function loadCalendar() {
+  const file = await ghGetFile(CALENDAR_PATH);
   if (!file) {
-    STATE.songs = [];
-    STATE.sha = null;
+    STATE.calendar = { news: { subject: '', date: '', html: '', updated: '' }, services: [] };
+    STATE.calSha = null;
     return;
   }
   const parsed = JSON.parse(file.content);
-  STATE.songs = parsed.songs || [];
-  STATE.sha = file.sha;
+  STATE.calendar = {
+    news: parsed.news || { subject: '', date: '', html: '', updated: '' },
+    services: parsed.services || [],
+  };
+  STATE.calSha = file.sha;
 }
 
-async function saveSongs(message) {
-  const contentStr = JSON.stringify({ songs: STATE.songs }, null, 2) + '\n';
+/* Retries once on 409/422, which means the file changed since we loaded it
+   (e.g. a git push landed while this page was open). */
+async function saveJsonWithRetry(path, dataObj, message, shaKey, stringify) {
+  const contentStr = stringify ? stringify(dataObj) : JSON.stringify(dataObj, null, 2) + '\n';
   try {
-    const result = await ghPutText(SONGS_PATH, contentStr, message, STATE.sha);
-    STATE.sha = result.content.sha;
+    const result = await ghPutText(path, contentStr, message, STATE[shaKey]);
+    STATE[shaKey] = result.content.sha;
   } catch (err) {
     if (/\b(422|409)\b/.test(err.message)) {
-      // SHA is stale (repo was updated outside this session) — refresh and retry once
-      const fresh = await ghGetFile(SONGS_PATH);
-      if (fresh) STATE.sha = fresh.sha;
-      const result = await ghPutText(SONGS_PATH, contentStr, message, STATE.sha);
-      STATE.sha = result.content.sha;
+      const fresh = await ghGetFile(path);
+      if (fresh) STATE[shaKey] = fresh.sha;
+      const result = await ghPutText(path, contentStr, message, STATE[shaKey]);
+      STATE[shaKey] = result.content.sha;
     } else {
       throw err;
     }
   }
 }
 
-/* ---------------- List view ---------------- */
+function saveSongs(message) {
+  return saveJsonWithRetry(SONGS_PATH, { songs: STATE.songs }, message, 'songsSha');
+}
 
-function renderList() {
+function saveCalendarFile(message) {
+  return saveJsonWithRetry(CALENDAR_PATH, STATE.calendar, message, 'calSha');
+}
+
+/* Saves the calendar, then pushes slot/solo to the Service Schedule repo. */
+async function saveCalendar(message, statusEl) {
+  setStatus(statusEl, 'Saving…');
+  await saveCalendarFile(message);
+  setStatus(statusEl, 'Saved. Syncing schedule…', 'ok');
+  try {
+    const report = await syncScheduleRepo();
+    setStatus(statusEl, `Saved. ${report.message}`, 'ok');
+  } catch (err) {
+    setStatus(statusEl, `Saved, but the schedule sync failed: ${err.message}`, 'err');
+  }
+}
+
+/* ================================================================
+   Tab router
+   ================================================================ */
+
+function renderTab() {
+  syncTabButtons();
+  if (STATE.tab === 'calendar') renderCalendarTab();
+  else if (STATE.tab === 'news') renderNewsTab();
+  else renderSongList();
+}
+
+/* ================================================================
+   Songs tab
+   ================================================================ */
+
+function renderSongList() {
   const allTags = Array.from(new Set(STATE.songs.flatMap(s => s.tags || []))).sort();
+
   let filtered = STATE.songs;
   if (STATE.activeTag) filtered = filtered.filter(s => (s.tags || []).includes(STATE.activeTag));
   if (STATE.searchQuery) {
     const q = STATE.searchQuery.toLowerCase();
-    filtered = filtered.filter(s => s.title.toLowerCase().includes(q) || (s.composer || '').toLowerCase().includes(q));
+    filtered = filtered.filter(s =>
+      s.title.toLowerCase().includes(q) ||
+      (s.tags || []).some(t => t.toLowerCase().includes(q)) ||
+      (s.notes || '').toLowerCase().includes(q));
   }
   filtered = filtered.slice().sort((a, b) => a.title.localeCompare(b.title));
 
   let html = `
     <div class="toolbar">
-      <input type="search" id="search-input" placeholder="Search songs or composers…" value="${escapeAttr(STATE.searchQuery)}">
+      <input type="search" id="search-input" placeholder="Search songs, tags or notes…" value="${escapeAttr(STATE.searchQuery)}">
       <button class="btn" id="add-song-btn">+ Add song</button>
     </div>`;
 
@@ -482,28 +648,30 @@ function renderList() {
     html += filtered.map(song => `
       <div class="song-row" data-id="${escapeAttr(song.id)}">
         <div class="info">
-          <div class="title">${escapeHtml(song.title)}</div>
-          ${song.composer ? `<div class="composer">${escapeHtml(song.composer)}</div>` : ''}
-          <div class="counts">${(song.tracks || []).length} track(s) &middot; ${(song.sheetMusic || []).length} page(s) &middot; ${(song.links || []).length} link(s)</div>
+          <div class="title">${escapeHtml(song.title)}${song.preRelease ? '<span class="pre-badge">Pre-release</span>' : ''}</div>
+          <div class="counts">${(song.tracks || []).length} track(s) &middot; ${(song.sheetMusic || []).length} file(s) &middot; ${(song.links || []).length} link(s)</div>
         </div>
+        <div class="chev">&rsaquo;</div>
       </div>`).join('');
   }
 
   root.innerHTML = html;
 
-  document.getElementById('search-input').addEventListener('input', (e) => {
+  const searchInput = document.getElementById('search-input');
+  searchInput.addEventListener('input', (e) => {
     STATE.searchQuery = e.target.value;
-    renderList();
-    document.getElementById('search-input').focus();
+    renderSongList();
     const el = document.getElementById('search-input');
+    el.focus();
     el.selectionStart = el.selectionEnd = el.value.length;
   });
-  document.getElementById('add-song-btn').addEventListener('click', () => renderAddSongForm());
+
+  document.getElementById('add-song-btn').addEventListener('click', renderAddSongForm);
   document.querySelectorAll('.tag-chip').forEach(chip => {
-    chip.addEventListener('click', () => { STATE.activeTag = chip.dataset.tag || null; renderList(); });
+    chip.addEventListener('click', () => { STATE.activeTag = chip.dataset.tag || null; renderSongList(); });
   });
   document.querySelectorAll('.song-row').forEach(row => {
-    row.addEventListener('click', () => renderDetail(row.dataset.id));
+    row.addEventListener('click', () => renderSongDetail(row.dataset.id));
   });
 }
 
@@ -515,52 +683,64 @@ function renderAddSongForm() {
     </div>
     <div class="section-card">
       <div class="field-row"><label for="new-title">Title</label><input type="text" id="new-title"></div>
-      <div class="field-row"><label for="new-composer">Composer</label><input type="text" id="new-composer"></div>
-      <div class="field-row"><label for="new-tags">Tags (comma separated)</label><input type="text" id="new-tags" placeholder="Hymn, Sunday Service"></div>
+      <div class="field-row"><label for="new-tags">Tags (comma separated)</label><input type="text" id="new-tags" placeholder="Christmas, Solo"></div>
       <div class="field-row"><label for="new-notes">Notes</label><textarea id="new-notes"></textarea></div>
+      <label class="checkbox-row">
+        <input type="checkbox" id="new-prerelease">
+        <span>Pre-Release
+          <span class="cb-note">Hidden from the choir app. Use this to load files and notes before the song goes live.</span>
+        </span>
+      </label>
       <button class="btn" id="create-song-btn">Create song</button>
       <div class="save-status" id="create-status"></div>
     </div>`;
 
-  document.getElementById('back-btn').addEventListener('click', renderList);
+  document.getElementById('back-btn').addEventListener('click', renderSongList);
   document.getElementById('create-song-btn').addEventListener('click', async () => {
+    const statusEl = document.getElementById('create-status');
     const title = document.getElementById('new-title').value.trim();
-    if (!title) { document.getElementById('create-status').textContent = 'Title is required.'; return; }
+    if (!title) { setStatus(statusEl, 'Title is required.', 'err'); return; }
     const id = slugify(title);
+    if (!id) { setStatus(statusEl, 'That title cannot be turned into an id — add some letters or numbers.', 'err'); return; }
     if (STATE.songs.some(s => s.id === id)) {
-      document.getElementById('create-status').textContent = `A song with id "${id}" already exists — use a different title or edit that song instead.`;
+      setStatus(statusEl, `A song with id "${id}" already exists — edit that song instead.`, 'err');
       return;
     }
-    const composer = document.getElementById('new-composer').value.trim();
-    const tags = document.getElementById('new-tags').value.split(',').map(t => t.trim()).filter(Boolean);
-    const notes = document.getElementById('new-notes').value.trim();
 
-    const newSong = { id, title, composer, tags, notes, tracks: [], sheetMusic: [], links: [] };
+    const newSong = {
+      id,
+      title,
+      tags: document.getElementById('new-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+      notes: document.getElementById('new-notes').value.trim(),
+      lyrics: '',
+      preRelease: document.getElementById('new-prerelease').checked,
+      tracks: [], sheetMusic: [], links: [],
+    };
     STATE.songs.push(newSong);
 
-    const statusEl = document.getElementById('create-status');
-    statusEl.textContent = 'Saving…';
+    setStatus(statusEl, 'Saving…');
     try {
       await saveSongs(`Add song: ${title}`);
-      renderDetail(id);
+      renderSongDetail(id);
     } catch (err) {
       STATE.songs.pop();
-      statusEl.textContent = err.message;
+      setStatus(statusEl, err.message, 'err');
     }
   });
 }
 
-/* ---------------- Detail view ---------------- */
+/* ---------------- Song detail ---------------- */
 
 function findSong(id) { return STATE.songs.find(s => s.id === id); }
 
-function renderDetail(id) {
+function renderSongDetail(id) {
   const song = findSong(id);
-  if (!song) { renderList(); return; }
+  if (!song) { renderSongList(); return; }
 
   song.tracks = song.tracks || [];
   song.sheetMusic = song.sheetMusic || [];
   song.links = song.links || [];
+  MULTI_QUEUE = [];   /* don't carry a staged batch across songs */
 
   root.innerHTML = `
     <div class="detail-header">
@@ -571,33 +751,80 @@ function renderDetail(id) {
     <div class="section-card">
       <h3>Song info</h3>
       <div class="field-row"><label>Title</label><input type="text" id="edit-title" value="${escapeAttr(song.title)}"></div>
-      <div class="field-row"><label>Composer</label><input type="text" id="edit-composer" value="${escapeAttr(song.composer || '')}"></div>
       <div class="field-row"><label>Tags (comma separated)</label><input type="text" id="edit-tags" value="${escapeAttr((song.tags || []).join(', '))}"></div>
       <div class="field-row"><label>Notes</label><textarea id="edit-notes">${escapeHtml(song.notes || '')}</textarea></div>
+      <div class="field-row">
+        <label>Lyrics</label>
+        <textarea id="edit-lyrics" class="lyrics-input">${escapeHtml(song.lyrics || '')}</textarea>
+        <div class="field-hint">Shown in a collapsible panel on the song page, and searchable. Line breaks are kept.</div>
+      </div>
+      <label class="checkbox-row">
+        <input type="checkbox" id="edit-prerelease" ${song.preRelease ? 'checked' : ''}>
+        <span>Pre-Release
+          <span class="cb-note">Hidden from the choir app. Files and notes stay attached and go live when you uncheck this.</span>
+        </span>
+      </label>
       <button class="btn" id="save-info-btn">Save info</button>
       <div class="save-status" id="info-status"></div>
     </div>
 
     <div class="section-card">
-      <h3>Practice tracks</h3>
+      <h3>Practice tracks <span class="h3-note">Tab order in the app follows this list.</span></h3>
       <div id="tracks-list"></div>
+      <div class="add-block">
+        <div class="field-label">Add several at once</div>
+        <div class="field-row">
+          <input type="file" id="multi-track-input" accept="audio/*" multiple>
+          <div class="field-hint">
+            Pick all the parts together. Voice parts are read from the file names
+            (<code>BASS - Song.m4a</code> &rarr; Bass) and you can correct any of them before uploading.
+          </div>
+        </div>
+        <div id="multi-stage"></div>
+      </div>
+
+      <div class="add-block">
+        <div class="field-label">Add one track</div>
+        <div class="preset-row">
+          ${TRACK_PARTS.map(p => `<button class="preset-chip" data-preset="${escapeAttr(p)}" type="button">${escapeHtml(p)}</button>`).join('')}
+        </div>
+        <div class="field-row">
+          <label for="new-track-name">Track name</label>
+          <input type="text" id="new-track-name" placeholder="Bass, Tenor 2, Piano only…">
+          <div class="field-hint">Names the tab in the app and the uploaded file.</div>
+        </div>
+        <div class="field-row">
+          <label for="new-track-file">Audio file</label>
+          <input type="file" id="new-track-file" accept="audio/*">
+        </div>
+        <button class="btn secondary small" id="add-track-btn">Upload track</button>
+        <div class="save-status" id="track-add-status"></div>
+      </div>
     </div>
 
     <div class="section-card">
       <h3>Sheet music</h3>
       <div id="sheets-list"></div>
-      <div class="add-row">
-        <label class="field-row" style="margin-bottom:0.4rem">
-          <span style="display:block;font-size:0.8rem;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:0.3rem">Add a page</span>
+      <div class="add-block">
+        <div class="field-label">Add a file</div>
+        <div class="field-row">
+          <label for="new-sheet-label">Label</label>
+          <input type="text" id="new-sheet-label" placeholder="Music - ${escapeAttr(song.title)}">
+          <div class="field-hint">Shown as the link text in the app. Also names the uploaded file.</div>
+        </div>
+        <div class="field-row">
+          <label for="add-sheet-input">PDF or image</label>
           <input type="file" id="add-sheet-input" accept="image/*,.pdf,application/pdf">
-        </label>
+        </div>
+        <button class="btn secondary small" id="add-sheet-btn">Upload file</button>
+        <div class="save-status" id="sheet-add-status"></div>
       </div>
     </div>
 
     <div class="section-card">
       <h3>Reference links</h3>
       <div id="links-list"></div>
-      <div class="add-row">
+      <div class="add-block">
         <div class="field-row"><label>Label</label><input type="text" id="new-link-label" placeholder="Reference recording"></div>
         <div class="field-row"><label>URL</label><input type="url" id="new-link-url" placeholder="https://"></div>
         <button class="btn secondary small" id="add-link-btn">+ Add link</button>
@@ -606,14 +833,16 @@ function renderDetail(id) {
     </div>
 
     <div class="section-card danger-zone">
-      <h3 style="color:var(--red-deep)">Delete song</h3>
-      <p style="font-size:0.85rem;color:var(--slate);margin-top:0">Removes this song from the list. Files in the repo are kept by default.</p>
-      <label class="checkbox-row"><input type="checkbox" id="delete-files-checkbox"> Also delete this song's audio and image files from the repo</label>
-      <button class="btn danger" id="delete-song-btn">Delete song</button>
-    </div>
-  `;
+      <h3>Delete song</h3>
+      <p style="font-size:.85rem;color:var(--slate);margin-top:0;line-height:1.5">
+        Removes the song from the list <strong>and deletes every one of its audio and sheet music
+        files from the repository</strong>. This cannot be undone from here.
+      </p>
+      <button class="btn danger" id="delete-song-btn">Delete song and all files</button>
+      <div class="save-status" id="delete-status"></div>
+    </div>`;
 
-  document.getElementById('back-btn').addEventListener('click', renderList);
+  document.getElementById('back-btn').addEventListener('click', renderSongList);
   wireInfoSave(song);
   renderTracks(song);
   renderSheets(song);
@@ -624,125 +853,371 @@ function renderDetail(id) {
 function wireInfoSave(song) {
   document.getElementById('save-info-btn').addEventListener('click', async () => {
     const statusEl = document.getElementById('info-status');
-    const prev = { title: song.title, composer: song.composer, tags: song.tags, notes: song.notes };
+    const prev = { title: song.title, tags: song.tags, notes: song.notes,
+                   lyrics: song.lyrics, preRelease: song.preRelease };
     song.title = document.getElementById('edit-title').value.trim() || song.title;
-    song.composer = document.getElementById('edit-composer').value.trim();
     song.tags = document.getElementById('edit-tags').value.split(',').map(t => t.trim()).filter(Boolean);
     song.notes = document.getElementById('edit-notes').value.trim();
-    statusEl.textContent = 'Saving…';
+    song.lyrics = document.getElementById('edit-lyrics').value.trim();
+    song.preRelease = document.getElementById('edit-prerelease').checked;
+
+    setStatus(statusEl, 'Saving…');
     try {
       await saveSongs(`Update info: ${song.title}`);
-      statusEl.textContent = 'Saved.';
+      setStatus(statusEl, 'Saved.', 'ok');
     } catch (err) {
       Object.assign(song, prev);
-      statusEl.textContent = err.message;
+      setStatus(statusEl, err.message, 'err');
     }
   });
 }
 
-/* ---- Tracks ---- */
+/* ---------------- Practice tracks ---------------- */
 
 function renderTracks(song) {
   const listEl = document.getElementById('tracks-list');
-  listEl.innerHTML = TRACK_PARTS.map(part => {
-    const existing = song.tracks.find(t => t.part === part);
-    return `
-      <div class="track-slot" data-part="${escapeAttr(part)}">
-        <div class="part-name">${escapeHtml(part)}</div>
-        <div class="status ${existing ? 'present' : ''}" id="status-${slugify(part)}">${existing ? 'Uploaded' : 'No file'}</div>
-        <input type="file" accept="audio/*" data-part="${escapeAttr(part)}" class="track-upload">
-        ${existing ? `<button class="btn plain small remove-track-btn" data-part="${escapeAttr(part)}">Remove</button>` : ''}
-      </div>`;
-  }).join('');
 
-  listEl.querySelectorAll('.track-upload').forEach(input => {
-    input.addEventListener('change', (e) => handleTrackUpload(song, input.dataset.part, e.target.files[0]));
-  });
-  listEl.querySelectorAll('.remove-track-btn').forEach(btn => {
-    btn.addEventListener('click', () => handleTrackRemove(song, btn.dataset.part));
-  });
-}
-
-async function handleTrackUpload(song, part, file) {
-  if (!file) return;
-  if (file.size > 15 * 1024 * 1024) {
-    if (!confirm(`This file is ${(file.size / 1024 / 1024).toFixed(1)} MB — larger than the recommended 15 MB limit. Upload anyway?`)) return;
+  if (!song.tracks.length) {
+    listEl.innerHTML = `<div class="tbd-note">No tracks yet.</div>`;
+  } else {
+    listEl.innerHTML = song.tracks.map((t, i) => `
+      <div class="item-row track-row" data-index="${i}">
+        <div class="reorder-btns">
+          <button class="btn plain tiny track-up" ${i === 0 ? 'disabled' : ''} title="Move up">&uarr;</button>
+          <button class="btn plain tiny track-down" ${i === song.tracks.length - 1 ? 'disabled' : ''} title="Move down">&darr;</button>
+        </div>
+        <div>
+          <input type="text" class="inline-input track-name-input" value="${escapeAttr(t.part || '')}" placeholder="Track name" aria-label="Track name">
+          <div class="row-meta">${escapeHtml(baseName(t.file))}</div>
+        </div>
+        <div>
+          <input type="file" class="replace-input track-replace" accept="audio/*" aria-label="Replace audio file">
+        </div>
+        <div class="row-actions">
+          <button class="btn danger small track-remove">Remove</button>
+        </div>
+      </div>`).join('');
   }
-  const statusEl = document.getElementById(`status-${slugify(part)}`);
-  statusEl.textContent = 'Uploading…';
-  statusEl.classList.add('uploading');
-  try {
-    const base64 = await fileToBase64(file);
-    const ext = (file.name.split('.').pop() || 'mp3').toLowerCase();
-    const appPath = `audio/${song.id}/${slugify(part)}.${ext}`;
-    const repoPath = `docs/${appPath}`;
 
-    const existingFile = await ghGetFile(repoPath).catch(() => null);
-    await ghPutBase64(repoPath, base64, `Upload ${part} track: ${song.title}`, existingFile ? existingFile.sha : undefined);
+  listEl.querySelectorAll('.item-row').forEach(row => {
+    const i = parseInt(row.dataset.index, 10);
+    row.querySelector('.track-up').addEventListener('click', () => moveTrack(song, i, i - 1));
+    row.querySelector('.track-down').addEventListener('click', () => moveTrack(song, i, i + 1));
+    row.querySelector('.track-remove').addEventListener('click', () => removeTrack(song, i));
+    row.querySelector('.track-name-input').addEventListener('change', (e) => renameTrack(song, i, e.target.value));
+    row.querySelector('.track-replace').addEventListener('change', (e) => replaceTrack(song, i, e.target.files[0]));
+  });
 
-    const trackIndex = song.tracks.findIndex(t => t.part === part);
-    const trackEntry = { part, file: appPath };
-    if (trackIndex >= 0) song.tracks[trackIndex] = trackEntry;
-    else song.tracks.push(trackEntry);
+  /* onclick, not addEventListener — renderTracks() re-runs and these live outside its container */
+  document.querySelectorAll('.preset-chip').forEach(chip => {
+    chip.onclick = () => { document.getElementById('new-track-name').value = chip.dataset.preset; };
+  });
+  document.getElementById('add-track-btn').onclick = () => addTrack(song);
 
-    await saveSongs(`Update tracks: ${song.title}`);
-    renderTracks(song);
-  } catch (err) {
-    statusEl.textContent = err.message;
-    statusEl.classList.remove('uploading');
+  const multiInput = document.getElementById('multi-track-input');
+  if (multiInput) {
+    multiInput.onchange = (e) => stageMultiTracks(song, Array.from(e.target.files || []));
   }
 }
 
-async function handleTrackRemove(song, part) {
-  if (!confirm(`Remove the ${part} track? This deletes the entry, not the file in the repo.`)) return;
-  song.tracks = song.tracks.filter(t => t.part !== part);
+/* ---- Multi-file upload: guess each voice part from the file name ---- */
+
+const PART_PATTERNS = [
+  { part: 'Demo',    re: /\b(demo|full ?mix|all ?parts)\b/ },
+  { part: 'Soprano', re: /\b(soprano|sop)\b/ },
+  { part: 'Alto',    re: /\b(alto|alt)\b/ },
+  { part: 'Tenor',   re: /\b(tenor|ten)\b/ },
+  { part: 'Bass',    re: /\b(bass|bs)\b/ },
+];
+
+let MULTI_QUEUE = [];
+
+function guessPartFromFilename(filename) {
+  const stem = baseNameNoExt(filename).replace(/[_\-.]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const hay = ' ' + stem.toLowerCase() + ' ';
+  for (const { part, re } of PART_PATTERNS) {
+    if (re.test(hay)) return part;
+  }
+  /* No voice part in the name — fall back to the file name so nothing is guessed wrongly. */
+  const words = stem.split(' ').filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1));
+  return words.join(' ') || 'Track';
+}
+
+function partRank(name) {
+  const i = TRACK_PARTS.findIndex(p => p.toLowerCase() === String(name).toLowerCase());
+  return i === -1 ? TRACK_PARTS.length : i;
+}
+
+function stageMultiTracks(song, files) {
+  MULTI_QUEUE = files.map(f => ({ file: f, name: guessPartFromFilename(f.name) }));
+  /* Standard part order, so the app's tabs come out Demo → Soprano → Alto → Tenor → Bass. */
+  MULTI_QUEUE.sort((a, b) => partRank(a.name) - partRank(b.name));
+  renderMultiStage(song);
+}
+
+function renderMultiStage(song) {
+  const el = document.getElementById('multi-stage');
+  if (!el) return;
+  if (!MULTI_QUEUE.length) { el.innerHTML = ''; return; }
+
+  el.innerHTML = `
+    <div class="field-label" style="margin-top:.7rem">Review ${MULTI_QUEUE.length} file(s)</div>
+    ${MULTI_QUEUE.map((item, i) => `
+      <div class="item-row track-row" data-index="${i}">
+        <div class="row-meta">${i + 1}.</div>
+        <div><input type="text" class="inline-input multi-name" value="${escapeAttr(item.name)}" aria-label="Track name"></div>
+        <div class="row-meta">${escapeHtml(item.file.name)}<br>${formatSize(item.file.size)}</div>
+        <div class="row-actions"><button class="btn plain small multi-drop">Skip</button></div>
+      </div>`).join('')}
+    <div class="btn-row" style="margin-top:.7rem">
+      <button class="btn secondary small" id="multi-upload-btn">Upload ${MULTI_QUEUE.length} track(s)</button>
+      <button class="btn plain small" id="multi-cancel-btn">Cancel</button>
+    </div>
+    <div class="save-status" id="multi-status"></div>`;
+
+  el.querySelectorAll('.item-row').forEach(row => {
+    const i = parseInt(row.dataset.index, 10);
+    row.querySelector('.multi-name').addEventListener('change', (e) => {
+      MULTI_QUEUE[i].name = e.target.value.trim();
+    });
+    row.querySelector('.multi-drop').addEventListener('click', () => {
+      MULTI_QUEUE.splice(i, 1);
+      renderMultiStage(song);
+    });
+  });
+
+  document.getElementById('multi-upload-btn').onclick = () => uploadMultiTracks(song);
+  document.getElementById('multi-cancel-btn').onclick = () => {
+    MULTI_QUEUE = [];
+    const input = document.getElementById('multi-track-input');
+    if (input) input.value = '';
+    renderMultiStage(song);
+  };
+}
+
+async function uploadMultiTracks(song) {
+  const statusEl = document.getElementById('multi-status');
+  const btn = document.getElementById('multi-upload-btn');
+
+  const queue = MULTI_QUEUE.filter(q => String(q.name).trim());
+  if (!queue.length) { setStatus(statusEl, 'Give each track a name first.', 'err'); return; }
+
+  btn.disabled = true;
+  let added = 0;
+  const failures = [];
+
+  for (let i = 0; i < queue.length; i++) {
+    const { file, name } = queue[i];
+    setStatus(statusEl, `Uploading ${i + 1} of ${queue.length}: ${name}…`);
+    try {
+      if (!(await confirmLargeFile(file))) { failures.push(`${file.name} (skipped)`); continue; }
+      const base64 = await fileToBase64(file);
+      const ext = fileExt(file.name) || 'mp3';
+      /* uniqueTrackSlug sees the entries pushed earlier in this loop, so
+         two files named the same don't overwrite each other. */
+      const slug = uniqueTrackSlug(song, slugify(name) || 'track');
+      const appPath = `audio/${song.id}/${slug}.${ext}`;
+      const existing = await ghGetFile(`docs/${appPath}`).catch(() => null);
+      await ghPutBase64(`docs/${appPath}`, base64, `Upload ${name} track: ${song.title}`, existing ? existing.sha : undefined);
+      song.tracks.push({ part: name, file: appPath });
+      added++;
+    } catch (err) {
+      failures.push(`${file.name}: ${err.message}`);
+    }
+  }
+
+  if (added) {
+    setStatus(statusEl, 'Saving song list…');
+    try {
+      await saveSongs(`Add ${added} practice track(s): ${song.title}`);
+    } catch (err) {
+      setStatus(statusEl, `Files uploaded, but the song list could not be saved: ${err.message}`, 'err');
+      btn.disabled = false;
+      return;
+    }
+  }
+
+  MULTI_QUEUE = [];
+  const input = document.getElementById('multi-track-input');
+  if (input) input.value = '';
+  renderTracks(song);
+  renderMultiStage(song);
+
+  showToast(failures.length
+    ? `${added} uploaded, ${failures.length} could not be added.`
+    : `${added} track(s) uploaded.`, !!failures.length);
+  if (failures.length) console.error('Multi-upload failures:', failures);
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+async function moveTrack(song, from, to) {
+  if (to < 0 || to >= song.tracks.length) return;
+  const [item] = song.tracks.splice(from, 1);
+  song.tracks.splice(to, 0, item);
   try {
-    await saveSongs(`Remove track: ${part} — ${song.title}`);
+    await saveSongs(`Reorder practice tracks: ${song.title}`);
     renderTracks(song);
   } catch (err) {
+    song.tracks.splice(to, 1);
+    song.tracks.splice(from, 0, item);
     showToast(err.message, true);
   }
 }
 
-/* ---- Sheet music ---- */
+async function renameTrack(song, i, value) {
+  const name = String(value).trim();
+  if (!name || name === song.tracks[i].part) { renderTracks(song); return; }
+  const prev = song.tracks[i].part;
+  song.tracks[i].part = name;
+  try {
+    await saveSongs(`Rename track to ${name}: ${song.title}`);
+    showToast('Track renamed. The file name in the repo is unchanged.');
+    renderTracks(song);
+  } catch (err) {
+    song.tracks[i].part = prev;
+    showToast(err.message, true);
+    renderTracks(song);
+  }
+}
+
+async function removeTrack(song, i) {
+  const track = song.tracks[i];
+  if (!confirm(`Remove the "${track.part}" track?\n\nThis deletes ${baseName(track.file)} from the repository as well.`)) return;
+
+  const removed = song.tracks.splice(i, 1)[0];
+  try {
+    await saveSongs(`Remove track ${removed.part}: ${song.title}`);
+  } catch (err) {
+    song.tracks.splice(i, 0, removed);
+    showToast(err.message, true);
+    return;
+  }
+
+  const ok = await deleteRepoFile(removed.file, `Delete ${removed.part} track: ${song.title}`);
+  showToast(ok ? 'Track and file removed.' : 'Entry removed, but the file could not be deleted — check the repo.', !ok);
+  renderTracks(song);
+}
+
+async function addTrack(song) {
+  const statusEl = document.getElementById('track-add-status');
+  const nameEl = document.getElementById('new-track-name');
+  const fileEl = document.getElementById('new-track-file');
+  const btn = document.getElementById('add-track-btn');
+
+  const name = nameEl.value.trim();
+  const file = fileEl.files[0];
+  if (!name) { setStatus(statusEl, 'Give the track a name first.', 'err'); return; }
+  if (!file) { setStatus(statusEl, 'Choose an audio file.', 'err'); return; }
+  if (!(await confirmLargeFile(file))) return;
+
+  btn.disabled = true;
+  setStatus(statusEl, 'Uploading…');
+  try {
+    const base64 = await fileToBase64(file);
+    const ext = fileExt(file.name) || 'mp3';
+    const slug = uniqueTrackSlug(song, slugify(name) || 'track');
+    const appPath = `audio/${song.id}/${slug}.${ext}`;
+
+    const existing = await ghGetFile(`docs/${appPath}`).catch(() => null);
+    await ghPutBase64(`docs/${appPath}`, base64, `Upload ${name} track: ${song.title}`, existing ? existing.sha : undefined);
+
+    song.tracks.push({ part: name, file: appPath });
+    await saveSongs(`Add ${name} track: ${song.title}`);
+
+    nameEl.value = '';
+    fileEl.value = '';
+    setStatus(statusEl, `Uploaded as ${slug}.${ext}`, 'ok');
+    renderTracks(song);
+  } catch (err) {
+    setStatus(statusEl, err.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function replaceTrack(song, i, file) {
+  if (!file) return;
+  if (!(await confirmLargeFile(file))) return;
+
+  const track = song.tracks[i];
+  const oldPath = track.file;
+  const ext = fileExt(file.name) || fileExt(oldPath) || 'mp3';
+  const slug = baseNameNoExt(oldPath);
+  const newPath = `audio/${song.id}/${slug}.${ext}`;
+
+  showToast(`Replacing ${track.part}…`);
+  try {
+    const base64 = await fileToBase64(file);
+    const existing = await ghGetFile(`docs/${newPath}`).catch(() => null);
+    await ghPutBase64(`docs/${newPath}`, base64, `Replace ${track.part} track: ${song.title}`, existing ? existing.sha : undefined);
+
+    if (newPath !== oldPath) {
+      track.file = newPath;
+      await saveSongs(`Replace ${track.part} track: ${song.title}`);
+      await deleteRepoFile(oldPath, `Remove superseded ${track.part} track: ${song.title}`);
+    }
+    showToast(`${track.part} replaced.`);
+    renderTracks(song);
+  } catch (err) {
+    showToast(err.message, true);
+    renderTracks(song);
+  }
+}
+
+function uniqueTrackSlug(song, slug) {
+  const taken = new Set((song.tracks || []).map(t => baseNameNoExt(t.file)));
+  if (!taken.has(slug)) return slug;
+  let n = 2;
+  while (taken.has(`${slug}-${n}`)) n++;
+  return `${slug}-${n}`;
+}
+
+/* ---------------- Sheet music ---------------- */
 
 function renderSheets(song) {
   const listEl = document.getElementById('sheets-list');
+
   if (!song.sheetMusic.length) {
-    listEl.innerHTML = `<div style="color:var(--slate);font-size:0.88rem">No pages yet.</div>`;
+    listEl.innerHTML = `<div class="tbd-note">No files yet.</div>`;
   } else {
     listEl.innerHTML = song.sheetMusic.map((s, i) => `
-      <div class="sheet-item" data-index="${i}">
-        ${isPdf(s.file)
-          ? `<div class="sheet-pdf-thumb">PDF</div>`
-          : `<img src="https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/docs/${s.file}" alt="">`}
-        <input type="text" class="label-input sheet-label-input" value="${escapeAttr(s.label || '')}" placeholder="Label">
+      <div class="item-row sheet-row" data-index="${i}">
         <div class="reorder-btns">
-          <button class="btn plain sheet-up" ${i === 0 ? 'disabled' : ''}>&uarr;</button>
-          <button class="btn plain sheet-down" ${i === song.sheetMusic.length - 1 ? 'disabled' : ''}>&darr;</button>
+          <button class="btn plain tiny sheet-up" ${i === 0 ? 'disabled' : ''} title="Move up">&uarr;</button>
+          <button class="btn plain tiny sheet-down" ${i === song.sheetMusic.length - 1 ? 'disabled' : ''} title="Move down">&darr;</button>
         </div>
-        <button class="btn plain small sheet-remove">Remove</button>
+        <div>
+          <input type="text" class="inline-input sheet-label-input" value="${escapeAttr(s.label || '')}" placeholder="Label" aria-label="File label">
+          <div class="row-meta">${escapeHtml(baseName(s.file))}</div>
+        </div>
+        <div class="row-meta">
+          <a href="https://github.com/${GH_OWNER}/${GH_REPO}/blob/${GH_BRANCH}/docs/${escapeAttr(s.file)}" target="_blank" rel="noopener">view in repo &rarr;</a>
+        </div>
+        <div class="row-actions">
+          <button class="btn danger small sheet-remove">Remove</button>
+        </div>
       </div>`).join('');
   }
 
-  listEl.querySelectorAll('.sheet-label-input').forEach((input, i) => {
-    input.addEventListener('change', async () => {
-      song.sheetMusic[i].label = input.value.trim();
-      try { await saveSongs(`Update sheet label: ${song.title}`); }
-      catch (err) { showToast(err.message, true); }
+  listEl.querySelectorAll('.item-row').forEach(row => {
+    const i = parseInt(row.dataset.index, 10);
+    row.querySelector('.sheet-up').addEventListener('click', () => moveSheet(song, i, i - 1));
+    row.querySelector('.sheet-down').addEventListener('click', () => moveSheet(song, i, i + 1));
+    row.querySelector('.sheet-remove').addEventListener('click', () => removeSheet(song, i));
+    row.querySelector('.sheet-label-input').addEventListener('change', async (e) => {
+      const prev = song.sheetMusic[i].label;
+      song.sheetMusic[i].label = e.target.value.trim();
+      try { await saveSongs(`Update file label: ${song.title}`); }
+      catch (err) { song.sheetMusic[i].label = prev; showToast(err.message, true); renderSheets(song); }
     });
   });
-  listEl.querySelectorAll('.sheet-up').forEach((btn, i) => {
-    btn.addEventListener('click', () => moveSheet(song, i, i - 1));
-  });
-  listEl.querySelectorAll('.sheet-down').forEach((btn, i) => {
-    btn.addEventListener('click', () => moveSheet(song, i, i + 1));
-  });
-  listEl.querySelectorAll('.sheet-remove').forEach((btn, i) => {
-    btn.addEventListener('click', () => removeSheet(song, i));
-  });
 
-  document.getElementById('add-sheet-input').onchange = (e) => handleSheetUpload(song, e.target.files[0]);
+  document.getElementById('add-sheet-btn').onclick = () => addSheet(song);
 }
 
 async function moveSheet(song, from, to) {
@@ -752,154 +1227,821 @@ async function moveSheet(song, from, to) {
   try {
     await saveSongs(`Reorder sheet music: ${song.title}`);
     renderSheets(song);
-  } catch (err) { showToast(err.message, true); }
-}
-
-async function removeSheet(song, index) {
-  if (!confirm('Remove this page? This deletes the entry, not the file in the repo.')) return;
-  song.sheetMusic.splice(index, 1);
-  try {
-    await saveSongs(`Remove sheet page: ${song.title}`);
-    renderSheets(song);
-  } catch (err) { showToast(err.message, true); }
-}
-
-async function handleSheetUpload(song, file) {
-  if (!file) return;
-  if (file.size > 15 * 1024 * 1024) {
-    if (!confirm(`This file is ${(file.size / 1024 / 1024).toFixed(1)} MB — larger than the recommended 15 MB limit. Upload anyway?`)) return;
+  } catch (err) {
+    song.sheetMusic.splice(to, 1);
+    song.sheetMusic.splice(from, 0, item);
+    showToast(err.message, true);
   }
-  const input = document.getElementById('add-sheet-input');
-  input.disabled = true;
+}
+
+async function removeSheet(song, i) {
+  const sheet = song.sheetMusic[i];
+  if (!confirm(`Remove "${sheet.label || baseName(sheet.file)}"?\n\nThis deletes ${baseName(sheet.file)} from the repository as well.`)) return;
+
+  const removed = song.sheetMusic.splice(i, 1)[0];
+  try {
+    await saveSongs(`Remove sheet music: ${song.title}`);
+  } catch (err) {
+    song.sheetMusic.splice(i, 0, removed);
+    showToast(err.message, true);
+    return;
+  }
+
+  const ok = await deleteRepoFile(removed.file, `Delete sheet music file: ${song.title}`);
+  showToast(ok ? 'File removed from the repo.' : 'Entry removed, but the file could not be deleted — check the repo.', !ok);
+  renderSheets(song);
+}
+
+async function addSheet(song) {
+  const statusEl = document.getElementById('sheet-add-status');
+  const labelEl = document.getElementById('new-sheet-label');
+  const fileEl = document.getElementById('add-sheet-input');
+  const btn = document.getElementById('add-sheet-btn');
+
+  const file = fileEl.files[0];
+  if (!file) { setStatus(statusEl, 'Choose a PDF or image.', 'err'); return; }
+  if (!(await confirmLargeFile(file))) return;
+
+  const label = labelEl.value.trim() || `Page ${song.sheetMusic.length + 1}`;
+
+  btn.disabled = true;
+  setStatus(statusEl, 'Uploading…');
   try {
     const base64 = await fileToBase64(file);
-    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-    const pageNum = song.sheetMusic.length + 1;
-    const appPath = `images/${song.id}/page-${pageNum}-${Date.now()}.${ext}`;
-    const repoPath = `docs/${appPath}`;
+    const ext = fileExt(file.name) || 'pdf';
+    const slug = slugify(label) || `page-${song.sheetMusic.length + 1}`;
+    const appPath = `images/${song.id}/${slug}-${Date.now()}.${ext}`;
 
-    await ghPutBase64(repoPath, base64, `Add sheet music page: ${song.title}`);
-    song.sheetMusic.push({ label: `Page ${pageNum}`, file: appPath });
-    await saveSongs(`Add sheet music page: ${song.title}`);
+    await ghPutBase64(`docs/${appPath}`, base64, `Add sheet music: ${song.title}`);
+    song.sheetMusic.push({ label, file: appPath });
+    await saveSongs(`Add sheet music: ${song.title}`);
+
+    labelEl.value = '';
+    fileEl.value = '';
+    setStatus(statusEl, 'Uploaded.', 'ok');
     renderSheets(song);
   } catch (err) {
-    showToast(err.message, true);
+    setStatus(statusEl, err.message, 'err');
   } finally {
-    input.disabled = false;
+    btn.disabled = false;
   }
 }
 
-/* ---- Links ---- */
+/* ---------------- Links ---------------- */
 
 function renderLinks(song) {
   const listEl = document.getElementById('links-list');
+
   if (!song.links.length) {
-    listEl.innerHTML = `<div style="color:var(--slate);font-size:0.88rem">No links yet.</div>`;
+    listEl.innerHTML = `<div class="tbd-note">No links yet.</div>`;
   } else {
     listEl.innerHTML = song.links.map((l, i) => `
-      <div class="link-item" data-index="${i}">
-        <input type="text" class="link-label-input" value="${escapeAttr(l.label || '')}" placeholder="Label">
-        <input type="url" class="link-url-input" value="${escapeAttr(l.url || '')}" placeholder="https://">
-        <button class="btn plain small link-remove">Remove</button>
+      <div class="item-row link-row" data-index="${i}">
+        <input type="text" class="inline-input link-label-input" value="${escapeAttr(l.label || '')}" placeholder="Label" aria-label="Link label">
+        <input type="url" class="inline-input link-url-input" value="${escapeAttr(l.url || '')}" placeholder="https://" aria-label="Link URL">
+        <div class="row-actions"><button class="btn danger small link-remove">Remove</button></div>
       </div>`).join('');
   }
 
-  listEl.querySelectorAll('.link-item').forEach((row, i) => {
-    row.querySelector('.link-label-input').addEventListener('change', () => saveLinkEdit(song, i));
-    row.querySelector('.link-url-input').addEventListener('change', () => saveLinkEdit(song, i));
+  listEl.querySelectorAll('.item-row').forEach(row => {
+    const i = parseInt(row.dataset.index, 10);
+    row.querySelector('.link-label-input').addEventListener('change', () => saveLinkEdit(song, i, row));
+    row.querySelector('.link-url-input').addEventListener('change', () => saveLinkEdit(song, i, row));
     row.querySelector('.link-remove').addEventListener('click', () => removeLink(song, i));
   });
 
   document.getElementById('add-link-btn').onclick = () => addLink(song);
 }
 
-async function saveLinkEdit(song, i) {
-  const row = document.querySelectorAll('.link-item')[i];
+async function saveLinkEdit(song, i, row) {
+  const prev = { ...song.links[i] };
   song.links[i].label = row.querySelector('.link-label-input').value.trim();
   song.links[i].url = row.querySelector('.link-url-input').value.trim();
-  try { await saveSongs(`Update link: ${song.title}`); }
-  catch (err) { showToast(err.message, true); }
+  try { await saveSongs(`Update link: ${song.title}`); showToast('Link saved.'); }
+  catch (err) { song.links[i] = prev; showToast(err.message, true); renderLinks(song); }
 }
 
 async function removeLink(song, i) {
-  song.links.splice(i, 1);
+  const removed = song.links.splice(i, 1)[0];
   try { await saveSongs(`Remove link: ${song.title}`); renderLinks(song); }
-  catch (err) { showToast(err.message, true); }
+  catch (err) { song.links.splice(i, 0, removed); showToast(err.message, true); }
 }
 
 async function addLink(song) {
-  const label = document.getElementById('new-link-label').value.trim();
-  const url = document.getElementById('new-link-url').value.trim();
   const statusEl = document.getElementById('link-status');
-  if (!url) { statusEl.textContent = 'Please enter a URL.'; return; }
+  const labelEl = document.getElementById('new-link-label');
+  const urlEl = document.getElementById('new-link-url');
   const btn = document.getElementById('add-link-btn');
+
+  const url = urlEl.value.trim();
+  if (!url) { setStatus(statusEl, 'Please enter a URL.', 'err'); return; }
+
   btn.disabled = true;
-  statusEl.textContent = 'Saving…';
-  song.links.push({ label: label || url, url });
+  setStatus(statusEl, 'Saving…');
+  song.links.push({ label: labelEl.value.trim() || url, url });
   try {
     await saveSongs(`Add link: ${song.title}`);
-    document.getElementById('new-link-label').value = '';
-    document.getElementById('new-link-url').value = '';
-    statusEl.textContent = 'Link saved.';
+    labelEl.value = '';
+    urlEl.value = '';
+    setStatus(statusEl, 'Link saved.', 'ok');
     renderLinks(song);
   } catch (err) {
     song.links.pop();
-    statusEl.textContent = 'Save failed: ' + err.message;
+    setStatus(statusEl, 'Save failed: ' + err.message, 'err');
   } finally {
     btn.disabled = false;
   }
 }
 
-/* ---- Delete song ---- */
+/* ---------------- Delete song ---------------- */
 
 function wireDeleteSong(song) {
-  document.getElementById('delete-song-btn').addEventListener('click', async () => {
-    if (!confirm(`Delete "${song.title}"? This cannot be undone from here.`)) return;
-    const deleteFiles = document.getElementById('delete-files-checkbox').checked;
+  const btn = document.getElementById('delete-song-btn');
+  btn.addEventListener('click', async () => {
+    const files = [...song.tracks.map(t => t.file), ...song.sheetMusic.map(s => s.file)];
+    const msg = files.length
+      ? `Delete "${song.title}" and its ${files.length} file(s) from the repository?\n\nThis cannot be undone.`
+      : `Delete "${song.title}"?`;
+    if (!confirm(msg)) return;
 
-    STATE.songs = STATE.songs.filter(s => s.id !== song.id);
+    const statusEl = document.getElementById('delete-status');
+
+    /* Guard against a second click landing mid-delete: findIndex would return -1
+       and splice(-1, 1) would quietly remove a different song. */
+    const index = STATE.songs.findIndex(s => s.id === song.id);
+    if (index === -1) return;
+    btn.disabled = true;
+
+    const removed = STATE.songs.splice(index, 1)[0];
+
+    setStatus(statusEl, 'Removing song…');
     try {
       await saveSongs(`Delete song: ${song.title}`);
-      if (deleteFiles) {
-        await deleteSongFiles(song);
-      }
-      renderList();
     } catch (err) {
-      STATE.songs.push(song);
-      showToast(err.message, true);
+      STATE.songs.splice(index, 0, removed);
+      btn.disabled = false;
+      setStatus(statusEl, err.message, 'err');
+      return;
+    }
+
+    let failed = 0;
+    for (let i = 0; i < files.length; i++) {
+      setStatus(statusEl, `Deleting file ${i + 1} of ${files.length}…`);
+      const ok = await deleteRepoFile(files[i], `Delete file for removed song: ${song.title}`);
+      if (!ok) failed++;
+    }
+
+    showToast(failed
+      ? `Song deleted, but ${failed} file(s) could not be removed — check the repo.`
+      : 'Song and all of its files deleted.', !!failed);
+    renderSongList();
+  });
+}
+
+/* ================================================================
+   Calendar tab
+   ================================================================ */
+
+function renderCalendarTab() {
+  const services = STATE.calendar.services.slice().sort(compareServices);
+  const today = todayStr();
+
+  root.innerHTML = `
+    <div class="section-card">
+      <h3>Add a service</h3>
+      <div class="svc-edit-row">
+        <div>
+          <div class="field-label">Date</div>
+          <input type="date" id="new-svc-date" class="inline-input" value="${escapeAttr(nextSundayStr())}">
+        </div>
+        <div>
+          <div class="field-label">Service</div>
+          <select id="new-svc-type" class="inline-select">
+            ${Object.entries(SERVICE_TYPES).map(([k, v]) => `<option value="${k}">${escapeHtml(v.long)}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <button class="btn" id="add-svc-btn">+ Add service</button>
+      <div class="save-status" id="svc-add-status"></div>
+    </div>
+
+    <div id="services-wrap"></div>
+
+    <div class="section-card sync-card">
+      <h3>Service Schedule sync <span class="h3-note">This app is the source of truth.</span></h3>
+      <p style="font-size:.85rem;color:var(--slate);margin:0 0 .6rem;line-height:1.5">
+        Every calendar save writes <code>choir.slot</code> and <code>choir.solo</code> into
+        <strong>${escapeHtml(SCHED_OWNER)}/${escapeHtml(SCHED_REPO)}</strong>. A soloist on any song in a
+        service sets <strong>Solo&nbsp;=&nbsp;Y</strong>. Sunday services only — the schedule has no choir
+        field on Wednesdays. Dates you have not added here are left untouched.
+      </p>
+      <div class="btn-row">
+        <button class="btn secondary small" id="sync-now-btn">Sync now</button>
+        <button class="btn plain small" id="sync-token-btn">Use a separate token</button>
+      </div>
+      <div id="sync-token-wrap" style="display:none;margin-top:.7rem">
+        <div class="field-row">
+          <label for="sched-pat-input">Token with Contents: Read and write on ${escapeHtml(SCHED_REPO)}</label>
+          <input type="password" id="sched-pat-input" placeholder="github_pat_..." autocomplete="off">
+          <div class="field-hint">Leave this empty to reuse the main token. Stored only in this browser.</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn secondary small" id="sched-pat-save">Save token</button>
+          <button class="btn plain small" id="sched-pat-clear">Clear</button>
+        </div>
+      </div>
+      <div class="sync-log" id="sync-log"></div>
+    </div>`;
+
+  document.getElementById('add-svc-btn').addEventListener('click', addService);
+
+  document.getElementById('sync-now-btn').addEventListener('click', async () => {
+    const log = document.getElementById('sync-log');
+    log.textContent = 'Syncing…';
+    try {
+      const report = await syncScheduleRepo();
+      log.textContent = report.detail;
+    } catch (err) {
+      log.textContent = 'Sync failed: ' + err.message;
+    }
+  });
+
+  document.getElementById('sync-token-btn').addEventListener('click', () => {
+    const wrap = document.getElementById('sync-token-wrap');
+    wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+    let existing = '';
+    try { existing = localStorage.getItem(SCHED_PAT_KEY) || ''; } catch {}
+    document.getElementById('sched-pat-input').value = existing;
+  });
+  document.getElementById('sched-pat-save').addEventListener('click', () => {
+    const val = document.getElementById('sched-pat-input').value.trim();
+    try {
+      if (val) localStorage.setItem(SCHED_PAT_KEY, val);
+      else localStorage.removeItem(SCHED_PAT_KEY);
+    } catch {}
+    showToast(val ? 'Schedule token saved.' : 'Schedule token cleared — using the main token.');
+  });
+  document.getElementById('sched-pat-clear').addEventListener('click', () => {
+    try { localStorage.removeItem(SCHED_PAT_KEY); } catch {}
+    document.getElementById('sched-pat-input').value = '';
+    showToast('Schedule token cleared — using the main token.');
+  });
+
+  renderServices(services, today);
+}
+
+function renderServices(services, today) {
+  const wrap = document.getElementById('services-wrap');
+
+  if (!services.length) {
+    wrap.innerHTML = `<div class="empty-state"><div class="big">No services yet</div><div>Add one above. Songs default to “To Be Determined”.</div></div>`;
+    return;
+  }
+
+  wrap.innerHTML = services.map(svc => {
+    const meta = SERVICE_TYPES[svc.type] || { long: svc.type, short: svc.type };
+    const past = svc.date < today;
+    const songs = Array.isArray(svc.songs) ? svc.songs : [];
+
+    return `
+      <div class="svc-card" data-id="${escapeAttr(svc.id)}">
+        <div class="svc-head">
+          <span class="svc-title">${escapeHtml(formatDateShort(svc.date))} &middot; ${escapeHtml(meta.short)}</span>
+          ${past ? '<span class="svc-past">Past</span>' : ''}
+          <button class="btn danger small svc-delete">Delete service</button>
+        </div>
+        <div class="svc-edit-row">
+          <div>
+            <div class="field-label">Date</div>
+            <input type="date" class="inline-input svc-date" value="${escapeAttr(svc.date)}">
+          </div>
+          <div>
+            <div class="field-label">Service</div>
+            <select class="inline-select svc-type">
+              ${Object.entries(SERVICE_TYPES).map(([k, v]) => `<option value="${k}" ${k === svc.type ? 'selected' : ''}>${escapeHtml(v.long)}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        ${svc.type === 'special' ? `
+        <div class="field-row">
+          <label>Special service name</label>
+          <input type="text" class="inline-input svc-special" value="${escapeAttr(svc.specialName || '')}" placeholder="Christmas Program">
+        </div>` : ''}
+
+        <div class="field-label">Songs</div>
+        <div class="svc-songs">
+          ${songs.length ? songs.map((entry, i) => songEditRow(entry, i, songs.length)).join('')
+                         : '<div class="tbd-note">No songs — the app shows “To Be Determined”.</div>'}
+        </div>
+        <div class="btn-row" style="margin-top:.6rem">
+          <button class="btn secondary small svc-add-song">+ Add song</button>
+        </div>
+        <div class="save-status svc-status"></div>
+      </div>`;
+  }).join('');
+
+  wrap.querySelectorAll('.svc-card').forEach(card => wireServiceCard(card));
+}
+
+function songEditRow(entry, i, total) {
+  const e = entry || {};
+  const known = STATE.songs.slice().sort((a, b) => a.title.localeCompare(b.title));
+  const isCustom = !e.songId && !!(e.title || '').trim();
+
+  return `
+    <div class="item-row cal-song-row" data-index="${i}">
+      <div class="reorder-btns">
+        <button class="btn plain tiny song-up" ${i === 0 ? 'disabled' : ''} title="Move up">&uarr;</button>
+        <button class="btn plain tiny song-down" ${i === total - 1 ? 'disabled' : ''} title="Move down">&darr;</button>
+      </div>
+      <div>
+        <select class="inline-select cal-song-select" aria-label="Song">
+          <option value="" ${!e.songId && !isCustom ? 'selected' : ''}>— To Be Determined —</option>
+          ${known.map(s => `<option value="${escapeAttr(s.id)}" ${e.songId === s.id ? 'selected' : ''}>${escapeHtml(s.title)}${s.preRelease ? ' (pre-release)' : ''}</option>`).join('')}
+          <option value="__custom" ${isCustom ? 'selected' : ''}>— Other title… —</option>
+        </select>
+        <input type="text" class="inline-input cal-song-custom" style="margin-top:.35rem;${isCustom ? '' : 'display:none'}"
+               value="${escapeAttr(isCustom ? e.title : '')}" placeholder="Type a song title" aria-label="Custom song title">
+      </div>
+      <div>
+        <select class="inline-select cal-slot" aria-label="Slot">
+          ${SLOT_OPTIONS.map(v => `<option value="${v}" ${String(e.slot || '') === v ? 'selected' : ''}>${v === '' ? 'Slot —' : 'Slot ' + v}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <input type="text" class="inline-input cal-soloist" value="${escapeAttr(e.soloist || '')}" placeholder="Soloist" aria-label="Soloist">
+      </div>
+      <div class="row-actions">
+        <button class="btn danger small cal-song-remove">Remove</button>
+      </div>
+    </div>`;
+}
+
+function wireServiceCard(card) {
+  const svc = STATE.calendar.services.find(s => s.id === card.dataset.id);
+  if (!svc) return;
+  const statusEl = card.querySelector('.svc-status');
+  svc.songs = Array.isArray(svc.songs) ? svc.songs : [];
+
+  const delBtn = card.querySelector('.svc-delete');
+  delBtn.addEventListener('click', async () => {
+    if (!confirm(`Delete the ${formatDateShort(svc.date)} ${(SERVICE_TYPES[svc.type] || {}).short || ''} service?`)) return;
+    /* Same -1 guard as song delete: splice(-1, 1) would drop the wrong service. */
+    const i = STATE.calendar.services.findIndex(s => s.id === svc.id);
+    if (i === -1) return;
+    delBtn.disabled = true;
+    const removed = STATE.calendar.services.splice(i, 1)[0];
+    try {
+      await saveCalendar(`Remove service: ${svc.date} ${svc.type}`, statusEl);
+      renderCalendarTab();
+    } catch (err) {
+      STATE.calendar.services.splice(i, 0, removed);
+      delBtn.disabled = false;
+      setStatus(statusEl, err.message, 'err');
+    }
+  });
+
+  card.querySelector('.svc-date').addEventListener('change', async (e) => {
+    const value = e.target.value;
+    if (!value) { renderCalendarTab(); return; }
+    const prevDate = svc.date, prevId = svc.id;
+    const newId = `${value}-${svc.type}`;
+    if (STATE.calendar.services.some(s => s.id === newId && s !== svc)) {
+      setStatus(statusEl, 'A service already exists for that date and time.', 'err');
+      e.target.value = prevDate;
+      return;
+    }
+    svc.date = value;
+    svc.id = newId;
+    try { await saveCalendar(`Update service date: ${value}`, statusEl); renderCalendarTab(); }
+    catch (err) { svc.date = prevDate; svc.id = prevId; setStatus(statusEl, err.message, 'err'); }
+  });
+
+  card.querySelector('.svc-type').addEventListener('change', async (e) => {
+    const value = e.target.value;
+    const prevType = svc.type, prevId = svc.id;
+    const newId = `${svc.date}-${value}`;
+    if (STATE.calendar.services.some(s => s.id === newId && s !== svc)) {
+      setStatus(statusEl, 'A service already exists for that date and time.', 'err');
+      e.target.value = prevType;
+      return;
+    }
+    svc.type = value;
+    svc.id = newId;
+    try { await saveCalendar(`Update service type: ${svc.date}`, statusEl); renderCalendarTab(); }
+    catch (err) { svc.type = prevType; svc.id = prevId; setStatus(statusEl, err.message, 'err'); }
+  });
+
+  const specialEl = card.querySelector('.svc-special');
+  if (specialEl) {
+    specialEl.addEventListener('change', async (e) => {
+      const prev = svc.specialName || '';
+      svc.specialName = e.target.value.trim();
+      try { await saveCalendar(`Update service name: ${svc.date}`, statusEl); }
+      catch (err) { svc.specialName = prev; setStatus(statusEl, err.message, 'err'); }
+    });
+  }
+
+  card.querySelector('.svc-add-song').addEventListener('click', async () => {
+    svc.songs.push({ songId: '', title: '', slot: '', soloist: '' });
+    try { await saveCalendar(`Add song slot: ${svc.date}`, statusEl); renderCalendarTab(); }
+    catch (err) { svc.songs.pop(); setStatus(statusEl, err.message, 'err'); }
+  });
+
+  card.querySelectorAll('.cal-song-row').forEach(row => {
+    const i = parseInt(row.dataset.index, 10);
+    const selectEl = row.querySelector('.cal-song-select');
+    const customEl = row.querySelector('.cal-song-custom');
+
+    selectEl.addEventListener('change', async () => {
+      const entry = svc.songs[i];
+      const prev = { ...entry };
+      const val = selectEl.value;
+      if (val === '__custom') {
+        entry.songId = '';
+        customEl.style.display = '';
+        customEl.focus();
+        return;                       /* wait for a title before saving */
+      }
+      customEl.style.display = 'none';
+      entry.songId = val;
+      const song = val ? STATE.songs.find(s => s.id === val) : null;
+      entry.title = song ? song.title : '';
+      try { await saveCalendar(`Update service songs: ${svc.date}`, statusEl); }
+      catch (err) { Object.assign(entry, prev); setStatus(statusEl, err.message, 'err'); renderCalendarTab(); }
+    });
+
+    customEl.addEventListener('change', async () => {
+      const entry = svc.songs[i];
+      const prev = { ...entry };
+      entry.songId = '';
+      entry.title = customEl.value.trim();
+      try { await saveCalendar(`Update service songs: ${svc.date}`, statusEl); }
+      catch (err) { Object.assign(entry, prev); setStatus(statusEl, err.message, 'err'); }
+    });
+
+    row.querySelector('.cal-slot').addEventListener('change', async (e) => {
+      const entry = svc.songs[i];
+      const prev = entry.slot;
+      entry.slot = e.target.value;
+      try { await saveCalendar(`Update slot: ${svc.date}`, statusEl); }
+      catch (err) { entry.slot = prev; setStatus(statusEl, err.message, 'err'); }
+    });
+
+    row.querySelector('.cal-soloist').addEventListener('change', async (e) => {
+      const entry = svc.songs[i];
+      const prev = entry.soloist;
+      entry.soloist = e.target.value.trim();
+      try { await saveCalendar(`Update soloist: ${svc.date}`, statusEl); }
+      catch (err) { entry.soloist = prev; setStatus(statusEl, err.message, 'err'); }
+    });
+
+    row.querySelector('.cal-song-remove').addEventListener('click', async () => {
+      const removed = svc.songs.splice(i, 1)[0];
+      try { await saveCalendar(`Remove song from service: ${svc.date}`, statusEl); renderCalendarTab(); }
+      catch (err) { svc.songs.splice(i, 0, removed); setStatus(statusEl, err.message, 'err'); }
+    });
+
+    row.querySelector('.song-up').addEventListener('click', () => moveServiceSong(svc, i, i - 1, statusEl));
+    row.querySelector('.song-down').addEventListener('click', () => moveServiceSong(svc, i, i + 1, statusEl));
+  });
+}
+
+async function moveServiceSong(svc, from, to, statusEl) {
+  if (to < 0 || to >= svc.songs.length) return;
+  const [item] = svc.songs.splice(from, 1);
+  svc.songs.splice(to, 0, item);
+  try { await saveCalendar(`Reorder songs: ${svc.date}`, statusEl); renderCalendarTab(); }
+  catch (err) {
+    svc.songs.splice(to, 1);
+    svc.songs.splice(from, 0, item);
+    setStatus(statusEl, err.message, 'err');
+  }
+}
+
+async function addService() {
+  const statusEl = document.getElementById('svc-add-status');
+  const date = document.getElementById('new-svc-date').value;
+  const type = document.getElementById('new-svc-type').value;
+  if (!date) { setStatus(statusEl, 'Pick a date.', 'err'); return; }
+
+  const id = `${date}-${type}`;
+  if (STATE.calendar.services.some(s => s.id === id)) {
+    setStatus(statusEl, 'That service already exists.', 'err');
+    return;
+  }
+
+  const svc = { id, date, type, songs: [] };
+  STATE.calendar.services.push(svc);
+  try {
+    await saveCalendar(`Add service: ${date} ${type}`, statusEl);
+    renderCalendarTab();
+  } catch (err) {
+    STATE.calendar.services.pop();
+    setStatus(statusEl, err.message, 'err');
+  }
+}
+
+function compareServices(a, b) {
+  if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+  return typeOrder(a.type) - typeOrder(b.type);
+}
+
+function typeOrder(type) {
+  const meta = SERVICE_TYPES[type];
+  return meta ? meta.order : 99;
+}
+
+/* ================================================================
+   Service Schedule sync — choir app is the source of truth
+   ================================================================ */
+
+function schedToken() {
+  let t = null;
+  try { t = localStorage.getItem(SCHED_PAT_KEY); } catch {}
+  return t || getToken();
+}
+
+async function syncScheduleRepo() {
+  const lines = [];
+  const desired = new Map();
+  let wednesdaySkipped = 0;
+  const mixedSlots = [];
+
+  for (const svc of STATE.calendar.services || []) {
+    if (!SCHED_SYNC_TYPES.includes(svc.type)) {
+      if (svc.type === 'wednesday') wednesdaySkipped++;
+      continue;
+    }
+    const songs = Array.isArray(svc.songs) ? svc.songs : [];
+    const slots = Array.from(new Set(songs.map(s => String(s.slot || '').trim()).filter(Boolean)));
+    if (slots.length > 1) mixedSlots.push(`${svc.date} ${svc.type}`);
+    desired.set(`${svc.date}|${svc.type}`, {
+      slot: slots[0] || null,                                              /* null → leave as-is */
+      solo: songs.some(s => String(s.soloist || '').trim()) ? 'Y' : 'N',
+    });
+  }
+
+  if (!desired.size) {
+    return { message: 'No Sunday services to sync.', detail: 'No Sunday services to sync.' };
+  }
+
+  let file;
+  try {
+    file = await apiGetFile(SCHED_OWNER, SCHED_REPO, SCHED_BRANCH, SCHED_PATH, schedToken());
+  } catch (err) {
+    if (err.status === 401 || err.status === 403 || err.status === 404) {
+      throw new Error(`no access to ${SCHED_OWNER}/${SCHED_REPO} (${err.status}). Add that repo to your token, or set a separate token under “Use a separate token”.`);
+    }
+    throw err;
+  }
+  if (!file) throw new Error(`${SCHED_PATH} not found in ${SCHED_OWNER}/${SCHED_REPO}.`);
+
+  const entries = JSON.parse(file.content);
+  if (!Array.isArray(entries)) throw new Error('schedule-data.json is not an array.');
+
+  let changed = 0;
+  const matched = new Set();
+
+  for (const entry of entries) {
+    if (!SCHED_SYNC_TYPES.includes(entry.type)) continue;
+    const key = `${entry.date}|${entry.type}`;
+    const want = desired.get(key);
+    if (!want) continue;                       /* not managed here — leave untouched */
+    matched.add(key);
+
+    if (!entry.choir) entry.choir = { slot: '1', solo: 'N' };
+    if (want.slot && entry.choir.slot !== want.slot) { entry.choir.slot = want.slot; changed++; }
+    if (entry.choir.solo !== want.solo) { entry.choir.solo = want.solo; changed++; }
+  }
+
+  const unmatched = Array.from(desired.keys()).filter(k => !matched.has(k));
+
+  if (!changed) {
+    lines.push('Schedule already up to date.');
+  } else {
+    /* The schedule app writes minified JSON with no trailing newline — match it exactly. */
+    await apiPut(SCHED_OWNER, SCHED_REPO, SCHED_BRANCH, SCHED_PATH,
+      b64EncodeUnicode(JSON.stringify(entries)),
+      'Sync choir slot/solo from choir-vault', file.sha, schedToken());
+    lines.push(`Schedule updated: ${changed} field(s) changed across ${matched.size} service(s).`);
+  }
+
+  if (unmatched.length) lines.push(`Not found in the schedule (skipped): ${unmatched.map(k => k.replace('|', ' ')).join(', ')}`);
+  if (mixedSlots.length) lines.push(`More than one slot set, used the first: ${mixedSlots.join(', ')}`);
+  if (wednesdaySkipped) lines.push(`Wednesday service(s) skipped (${wednesdaySkipped}) — the schedule has no choir field on Wednesdays.`);
+
+  return { message: lines[0], detail: lines.join('\n') };
+}
+
+/* ================================================================
+   Choir News tab
+   ================================================================ */
+
+function renderNewsTab() {
+  const news = STATE.calendar.news || { subject: '', date: '', html: '', updated: '' };
+
+  root.innerHTML = `
+    <div class="section-card">
+      <h3>Choir News <span class="h3-note">Shown above the calendar in the choir app.</span></h3>
+      <div class="field-row">
+        <label for="news-subject">Subject</label>
+        <input type="text" id="news-subject" value="${escapeAttr(news.subject || '')}" placeholder="Practice cancelled this week">
+      </div>
+      <div class="field-row">
+        <label for="news-date">Date</label>
+        <input type="date" id="news-date" value="${escapeAttr(news.date || todayStr())}">
+      </div>
+      <div class="field-row">
+        <label for="news-body">Message</label>
+        <div class="paste-box" id="news-body" contenteditable="true" role="textbox" aria-multiline="true"
+             data-placeholder="Paste the director's email here — bold, lists and links are kept."></div>
+        <div class="field-hint">
+          Paste straight from the email. Formatting is cleaned to a safe subset
+          (paragraphs, bold, italic, underline, lists, headings, quotes and links);
+          images, scripts and styling are stripped.
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" id="save-news-btn">Save news</button>
+        <button class="btn plain" id="clear-news-btn">Clear news</button>
+      </div>
+      <div class="save-status" id="news-status">${news.updated ? 'Last saved ' + escapeHtml(formatDateTime(news.updated)) : ''}</div>
+    </div>`;
+
+  const bodyEl = document.getElementById('news-body');
+  bodyEl.innerHTML = sanitizeHtml(news.html || '');
+
+  bodyEl.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const cd = e.clipboardData;
+    if (!cd) return;
+    const html = cd.getData('text/html');
+    const clean = html
+      ? sanitizeHtml(html)
+      : escapeHtml(cd.getData('text/plain'))
+          .split(/\n{2,}/)
+          .map(block => `<p>${block.replace(/\n/g, '<br>')}</p>`)
+          .join('');
+    document.execCommand('insertHTML', false, clean);
+  });
+
+  document.getElementById('save-news-btn').addEventListener('click', async () => {
+    const statusEl = document.getElementById('news-status');
+    const prev = { ...STATE.calendar.news };
+    STATE.calendar.news = {
+      subject: document.getElementById('news-subject').value.trim(),
+      date: document.getElementById('news-date').value,
+      html: sanitizeHtml(bodyEl.innerHTML).trim(),
+      updated: new Date().toISOString(),
+    };
+    setStatus(statusEl, 'Saving…');
+    try {
+      await saveCalendarFile('Update choir news');
+      setStatus(statusEl, 'Saved.', 'ok');
+    } catch (err) {
+      STATE.calendar.news = prev;
+      setStatus(statusEl, err.message, 'err');
+    }
+  });
+
+  document.getElementById('clear-news-btn').addEventListener('click', async () => {
+    if (!confirm('Clear the Choir News panel in the app?')) return;
+    const statusEl = document.getElementById('news-status');
+    const prev = { ...STATE.calendar.news };
+    STATE.calendar.news = { subject: '', date: '', html: '', updated: new Date().toISOString() };
+    setStatus(statusEl, 'Clearing…');
+    try {
+      await saveCalendarFile('Clear choir news');
+      renderNewsTab();
+      showToast('Choir News cleared.');
+    } catch (err) {
+      STATE.calendar.news = prev;
+      setStatus(statusEl, err.message, 'err');
     }
   });
 }
 
-async function deleteSongFiles(song) {
-  const paths = [
-    ...song.tracks.map(t => `docs/${t.file}`),
-    ...song.sheetMusic.map(s => `docs/${s.file}`),
-  ];
-  for (const path of paths) {
-    try {
-      const file = await ghGetFile(path);
-      if (file) await ghDeleteFile(path, file.sha, `Delete file for removed song: ${song.title}`);
-    } catch (err) {
-      console.error('Could not delete', path, err);
+/* ================================================================
+   HTML sanitizer (mirrors js/app.js)
+   ================================================================ */
+
+const SANITIZE_ALLOW = new Set(['P','BR','B','STRONG','I','EM','U','UL','OL','LI','A','H3','H4','BLOCKQUOTE']);
+const SANITIZE_RENAME = { DIV: 'P', H1: 'H3', H2: 'H3', H5: 'H4', H6: 'H4', STRIKE: 'EM', S: 'EM' };
+const SANITIZE_DROP = 'script,style,iframe,object,embed,link,meta,img,svg,form,input,button,select,textarea,noscript,title,base';
+
+function sanitizeHtml(html) {
+  if (!html) return '';
+  const doc = new DOMParser().parseFromString('<body><div id="sanitize-root"></div></body>', 'text/html');
+  const host = doc.getElementById('sanitize-root');
+  host.innerHTML = String(html);
+
+  host.querySelectorAll(SANITIZE_DROP).forEach(n => n.remove());
+
+  const walker = doc.createTreeWalker(host, NodeFilter.SHOW_COMMENT);
+  const comments = [];
+  while (walker.nextNode()) comments.push(walker.currentNode);
+  comments.forEach(c => c.remove());
+
+  sanitizeChildren(host);
+  return host.innerHTML;
+}
+
+function sanitizeChildren(parent) {
+  Array.from(parent.children).forEach(child => {
+    sanitizeChildren(child);
+    const tag = child.tagName;
+
+    if (SANITIZE_ALLOW.has(tag)) { stripAttributes(child); return; }
+
+    const renameTo = SANITIZE_RENAME[tag];
+    if (renameTo) {
+      const rep = child.ownerDocument.createElement(renameTo);
+      while (child.firstChild) rep.appendChild(child.firstChild);
+      child.replaceWith(rep);
+      stripAttributes(rep);
+      return;
     }
+
+    const frag = child.ownerDocument.createDocumentFragment();
+    while (child.firstChild) frag.appendChild(child.firstChild);
+    child.replaceWith(frag);
+  });
+}
+
+function stripAttributes(el) {
+  const href = el.tagName === 'A' ? el.getAttribute('href') : null;
+  Array.from(el.attributes).forEach(a => el.removeAttribute(a.name));
+  if (el.tagName === 'A' && href && /^(https?:|mailto:|tel:)/i.test(href.trim())) {
+    el.setAttribute('href', href.trim());
+    el.setAttribute('target', '_blank');
+    el.setAttribute('rel', 'noopener noreferrer');
   }
 }
 
-/* ---------------- Utilities ---------------- */
+/* ================================================================
+   Utilities
+   ================================================================ */
 
-function isPdf(file) {
-  return (file || '').toLowerCase().endsWith('.pdf');
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+function nextSundayStr() {
+  const d = new Date();
+  d.setDate(d.getDate() + ((7 - d.getDay()) % 7));
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+function parseLocalDate(dateStr) {
+  const [y, m, d] = String(dateStr).split('-').map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
+
+function formatDateShort(dateStr) {
+  const d = parseLocalDate(dateStr);
+  if (isNaN(d)) return dateStr;
+  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function formatDateTime(iso) {
+  const d = new Date(iso);
+  return isNaN(d) ? iso : d.toLocaleString();
 }
 
 function slugify(str) {
   return String(str).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
+function baseName(file) {
+  const parts = String(file || '').split('/');
+  return parts[parts.length - 1] || '';
+}
+
+function fileExt(file) {
+  const name = baseName(file);
+  const i = name.lastIndexOf('.');
+  return i > 0 ? name.slice(i + 1).toLowerCase() : '';
+}
+
+function baseNameNoExt(file) {
+  const name = baseName(file);
+  const i = name.lastIndexOf('.');
+  return i > 0 ? name.slice(0, i) : name;
+}
+
+async function confirmLargeFile(file) {
+  if (file.size <= 15 * 1024 * 1024) return true;
+  return confirm(`This file is ${(file.size / 1024 / 1024).toFixed(1)} MB — larger than the recommended 15 MB limit. Upload anyway?`);
+}
+
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onload = () => resolve(String(reader.result).split(',')[1]);
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
@@ -913,7 +2055,7 @@ function b64EncodeUnicode(str) {
 }
 
 function b64DecodeUnicode(b64) {
-  const binary = atob(b64.replace(/\n/g, ''));
+  const binary = atob(String(b64).replace(/\s/g, ''));
   const bytes = new Uint8Array([...binary].map(c => c.charCodeAt(0)));
   return new TextDecoder().decode(bytes);
 }
@@ -922,6 +2064,12 @@ function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
 }
 function escapeAttr(str) { return escapeHtml(str); }
+
+function setStatus(el, msg, cls) {
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'save-status' + (cls ? ' ' + cls : '');
+}
 
 function showToast(msg, isError) {
   const toast = document.createElement('div');
