@@ -362,12 +362,12 @@
       "preRelease": false,
       "tracks": [
         {
-          "part": "Bass",
-          "file": "audio/oh-to-see-the-dawn/bass.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/oh-to-see-the-dawn/demo.mp3"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/oh-to-see-the-dawn/bass.m4a"
         },
         {
           "part": "Soprano",
