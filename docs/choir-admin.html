@@ -267,6 +267,8 @@ header.site p { margin: 0; font-size: .72rem; letter-spacing: .13em; text-transf
 }
 
 .replace-input { font-size: .72rem; max-width: 100%; color: var(--slate); }
+/* Sheet music names are derived from the file name, so they read as text, not an input */
+.sheet-name { font-weight: 600; font-size: .92rem; word-break: break-word; }
 
 .add-block { margin-top: .9rem; padding-top: .9rem; border-top: 1px dashed var(--line); }
 
@@ -1017,13 +1019,13 @@ function renderSongDetail(id) {
       <div class="add-block">
         <div class="field-label">Add a file</div>
         <div class="field-row">
-          <label for="new-sheet-label">Label</label>
-          <input type="text" id="new-sheet-label" placeholder="Music - ${escapeAttr(song.title)}">
-          <div class="field-hint">Shown as the link text in the app. Also names the uploaded file.</div>
-        </div>
-        <div class="field-row">
           <label for="add-sheet-input">PDF or image</label>
           <input type="file" id="add-sheet-input" accept="image/*,.pdf,application/pdf">
+          <div class="field-hint">
+            The file keeps its own name, and that name minus the extension is what
+            the choir sees. Name the file how you want it to read
+            &mdash; e.g. <code>Music - ${escapeAttr(song.title)}.pdf</code> &mdash; before uploading.
+          </div>
         </div>
         <button class="btn secondary small" id="add-sheet-btn">Upload file</button>
         <div class="save-status" id="sheet-add-status"></div>
@@ -1402,8 +1404,8 @@ function renderSheets(song) {
           <button class="btn plain tiny sheet-down" ${i === song.sheetMusic.length - 1 ? 'disabled' : ''} title="Move down">&darr;</button>
         </div>
         <div>
-          <input type="text" class="inline-input sheet-label-input" value="${escapeAttr(s.label || '')}" placeholder="Label" aria-label="File label">
-          <div class="row-meta">${escapeHtml(baseName(s.file))}</div>
+          <div class="sheet-name">${escapeHtml(sheetName(s.file))}</div>
+          <div class="row-meta">${escapeHtml(fileExt(s.file).toUpperCase())}</div>
         </div>
         <div class="row-meta">
           <a href="https://github.com/${GH_OWNER}/${GH_REPO}/blob/${GH_BRANCH}/docs/${escapeAttr(s.file)}" target="_blank" rel="noopener">view in repo &rarr;</a>
@@ -1419,12 +1421,6 @@ function renderSheets(song) {
     row.querySelector('.sheet-up').addEventListener('click', () => moveSheet(song, i, i - 1));
     row.querySelector('.sheet-down').addEventListener('click', () => moveSheet(song, i, i + 1));
     row.querySelector('.sheet-remove').addEventListener('click', () => removeSheet(song, i));
-    row.querySelector('.sheet-label-input').addEventListener('change', async (e) => {
-      const prev = song.sheetMusic[i].label;
-      song.sheetMusic[i].label = e.target.value.trim();
-      try { await saveSongs(`Update file label: ${song.title}`); }
-      catch (err) { song.sheetMusic[i].label = prev; showToast(err.message, true); renderSheets(song); }
-    });
   });
 
   document.getElementById('add-sheet-btn').onclick = () => addSheet(song);
@@ -1446,7 +1442,7 @@ async function moveSheet(song, from, to) {
 
 async function removeSheet(song, i) {
   const sheet = song.sheetMusic[i];
-  if (!confirm(`Remove "${sheet.label || baseName(sheet.file)}"?\n\nThis deletes ${baseName(sheet.file)} from the repository as well.`)) return;
+  if (!confirm(`Remove "${sheetName(sheet.file)}"?\n\nThis deletes ${baseName(sheet.file)} from the repository as well.`)) return;
 
   const removed = song.sheetMusic.splice(i, 1)[0];
   try {
@@ -1464,7 +1460,6 @@ async function removeSheet(song, i) {
 
 async function addSheet(song) {
   const statusEl = document.getElementById('sheet-add-status');
-  const labelEl = document.getElementById('new-sheet-label');
   const fileEl = document.getElementById('add-sheet-input');
   const btn = document.getElementById('add-sheet-btn');
 
@@ -1472,29 +1467,56 @@ async function addSheet(song) {
   if (!file) { setStatus(statusEl, 'Choose a PDF or image.', 'err'); return; }
   if (!(await confirmLargeFile(file))) return;
 
-  const label = labelEl.value.trim() || `Page ${song.sheetMusic.length + 1}`;
+  /* The uploaded file keeps its own name, so the displayed name (file name minus
+     extension) matches it exactly. No timestamp suffix — that is what used to make
+     the two diverge. */
+  const ext = fileExt(file.name) || 'pdf';
+  const stem = uniqueSheetStem(song, sanitiseFileStem(baseNameNoExt(file.name)));
+  const appPath = `images/${song.id}/${stem}.${ext}`;
 
   btn.disabled = true;
   setStatus(statusEl, 'Uploading…');
   try {
     const base64 = await fileToBase64(file);
-    const ext = fileExt(file.name) || 'pdf';
-    const slug = slugify(label) || `page-${song.sheetMusic.length + 1}`;
-    const appPath = `images/${song.id}/${slug}-${Date.now()}.${ext}`;
-
-    await ghPutBase64(`docs/${appPath}`, base64, `Add sheet music: ${song.title}`);
-    song.sheetMusic.push({ label, file: appPath });
+    const existing = await ghGetFile(`docs/${appPath}`).catch(() => null);
+    await ghPutBase64(`docs/${appPath}`, base64, `Add sheet music: ${song.title}`,
+                      existing ? existing.sha : undefined);
+    song.sheetMusic.push({ file: appPath });
     await saveSongs(`Add sheet music: ${song.title}`);
 
-    labelEl.value = '';
     fileEl.value = '';
-    setStatus(statusEl, 'Uploaded.', 'ok');
+    setStatus(statusEl, `Uploaded as "${stem}".`, 'ok');
     renderSheets(song);
   } catch (err) {
     setStatus(statusEl, err.message, 'err');
   } finally {
     btn.disabled = false;
   }
+}
+
+/* Keeps spaces and readable punctuation — the name has to stay legible, since it
+   is what the choir sees. Only strips what is illegal in a path. */
+function sanitiseFileStem(name) {
+  const cleaned = String(name)
+    .replace(/[\\/:*?"<>|\x00-\x1f]+/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/^[. ]+|[. ]+$/g, '');
+  return cleaned || 'sheet';
+}
+
+/* Two files in one song must not collide on disk. */
+function uniqueSheetStem(song, stem) {
+  const taken = new Set((song.sheetMusic || []).map(s => baseNameNoExt(s.file).toLowerCase()));
+  if (!taken.has(stem.toLowerCase())) return stem;
+  let n = 2;
+  while (taken.has(`${stem} (${n})`.toLowerCase())) n++;
+  return `${stem} (${n})`;
+}
+
+/* Display name for a sheet music entry: the file name without its extension. */
+function sheetName(file) {
+  return baseNameNoExt(file);
 }
 
 /* ---------------- Links ---------------- */

@@ -682,17 +682,19 @@ function renderSongDetail(song) {
     html += `<div class="section-label">Sheet music</div>
       <ul class="file-list" id="sheet-list">
         ${sheets.map((s, i) => {
-          const name = baseName(s.file);
-          const label = (s.label || '').trim() || name;
-          const kind = fileExt(s.file).toUpperCase() || 'FILE';
+          /* The name IS the file name without its extension — derived, never stored,
+             so the two can't drift apart. */
+          const name = sheetName(s.file);
+          const ext = fileExt(s.file);
+          const kind = ext.toUpperCase() || 'FILE';
           return `<li class="file-row">
             <span class="file-main">
               <a class="file-link" href="${escapeAttr(s.file)}" data-index="${i}"
-                 ${isPdf(s.file) ? 'target="_blank" rel="noopener"' : ''}>${escapeHtml(label)}</a>
-              <span class="file-kind">${escapeHtml(kind)} &middot; ${escapeHtml(name)}</span>
+                 ${isPdf(s.file) ? 'target="_blank" rel="noopener"' : ''}>${escapeHtml(name)}</a>
+              <span class="file-kind">${escapeHtml(kind)}</span>
             </span>
             <a class="dl-btn" href="${escapeAttr(s.file)}"
-               download="${escapeAttr(downloadName(song.title, label, fileExt(s.file)))}">&#8681; Download</a>
+               download="${escapeAttr(ext ? `${name}.${ext}` : name)}">&#8681; Download</a>
           </li>`;
         }).join('')}
       </ul>`;
@@ -946,7 +948,7 @@ function openLightbox(sheets, index) {
     const hide = sheets.length < 2 ? 'style="visibility:hidden"' : '';
     overlay.innerHTML = `
       <button class="lightbox-close" aria-label="Close">&times;</button>
-      <img src="${escapeAttr(s.file)}" alt="${escapeAttr(s.label || '')}">
+      <img src="${escapeAttr(s.file)}" alt="${escapeAttr(sheetName(s.file))}">
       <div class="lightbox-nav">
         <button id="lb-prev" ${hide}>&larr; Prev</button>
         <button id="lb-next" ${hide}>Next &rarr;</button>
@@ -1111,6 +1113,13 @@ function fileExt(file) {
 function baseName(file) {
   const parts = String(file || '').split('/');
   return parts[parts.length - 1] || '';
+}
+
+/* A sheet music entry's display name: its file name without the extension. */
+function sheetName(file) {
+  const base = baseName(file);
+  const i = base.lastIndexOf('.');
+  return i > 0 ? base.slice(0, i) : base;
 }
 
 function downloadName(songTitle, label, ext) {

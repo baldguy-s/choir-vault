@@ -66,7 +66,7 @@ JSON always stores the app path. Prefix with `docs/` only when calling the API.
         { "part": "Bass", "file": "audio/how-great-thou-art/bass.m4a" }
       ],
       "sheetMusic": [
-        { "label": "Music - How Great Thou Art", "file": "images/how-great-thou-art/music-...-1786251172010.pdf" }
+        { "file": "images/how-great-thou-art/Music - How Great Thou Art.pdf" }
       ],
       "links": [
         { "label": "Reference recording", "url": "https://www.youtube.com/..." }
@@ -84,6 +84,11 @@ JSON always stores the app path. Prefix with `docs/` only when calling the API.
 - `preRelease: true` hides the song from the public list so files and notes can be
   loaded before it goes live. A direct `#/song/<id>` link still works, for preview.
 - `lyrics` renders in a collapsible panel on the song page and is searchable.
+- **`sheetMusic` entries carry only `file` — there is no `label`.** The displayed
+  name is derived as the file name minus its extension, so the name and the file
+  cannot drift apart. Uploads keep the original file name (spaces and apostrophes
+  intact; only path-illegal characters are replaced, and a colliding name gets a
+  " (2)" suffix). Renaming means re-uploading under the desired file name.
 
 ### `data/calendar.json`
 

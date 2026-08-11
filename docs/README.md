@@ -117,7 +117,7 @@ If you ever need to bypass the admin app:
     { "part": "Bass",    "file": "audio/how-great-thou-art/bass.mp3" }
   ],
   "sheetMusic": [
-    { "label": "Page 1", "file": "images/how-great-thou-art/page-1.jpg" }
+    { "file": "images/how-great-thou-art/Music - How Great Thou Art.pdf" }
   ],
   "links": [
     { "label": "Reference recording", "url": "https://www.youtube.com/watch?v=..." }
@@ -132,6 +132,11 @@ hides that section).
 `"preRelease": true` keeps a song **hidden from the choir app** while you attach
 its files and notes. Uncheck Pre-Release in the admin (or set it to `false`) when
 you're ready for it to go live.
+
+**Sheet music has no label.** The name the choir sees is simply the file name
+without its extension, so the two can never disagree. Name the file how you want
+it to read — `Music - How Great Thou Art.pdf` — before uploading. Spaces and
+apostrophes are fine; only characters illegal in a path get replaced.
 
 Track order in the array is the tab order in the app, so put the demo or your
 most-used part first. Track names are free-form — `Demo`, `Soprano`, `Alto`,
