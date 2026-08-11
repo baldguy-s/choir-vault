@@ -923,7 +923,12 @@
           "file": "audio/oh-what-a-moment/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Music - Oh What A Moment",
+          "file": "images/oh-what-a-moment/music-oh-what-a-moment-1786412335109.pdf"
+        }
+      ],
       "links": [
         {
           "label": "Demo",
