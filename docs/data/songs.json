@@ -965,7 +965,24 @@
       "notes": "",
       "lyrics": "",
       "preRelease": false,
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Soprano",
+          "file": "audio/start-at-the-manger/soprano.m4a"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/start-at-the-manger/alto.m4a"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/start-at-the-manger/tenor.m4a"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/start-at-the-manger/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": [
         {
