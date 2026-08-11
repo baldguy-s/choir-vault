@@ -905,7 +905,24 @@
       "notes": "",
       "lyrics": "",
       "preRelease": false,
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Soprano",
+          "file": "audio/oh-what-a-moment/soprano.m4a"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/oh-what-a-moment/alto.m4a"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/oh-what-a-moment/tenor.m4a"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/oh-what-a-moment/bass.m4a"
+        }
+      ],
       "sheetMusic": [],
       "links": [
         {
