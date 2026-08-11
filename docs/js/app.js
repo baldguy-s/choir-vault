@@ -234,6 +234,8 @@ function renderListView() {
 
   renderTagRow();
   renderSongGroups();
+  /* One cache read in the background; redraws only if the offline set changed. */
+  refreshCachedPaths();
 }
 
 /* ---------- Choir News panel ---------- */
@@ -514,7 +516,10 @@ function visibleLetters() {
   return groupByLetter(matchingSongs()).map(([letter]) => letter);
 }
 
-async function renderSongGroups() {
+/* Synchronous on purpose: when this was async, two renders could overlap and the
+   slower one would overwrite the newer markup — that is what made "Expand all"
+   appear to do nothing. */
+function renderSongGroups() {
   const el = document.getElementById('letter-groups');
   const countEl = document.getElementById('song-count');
   if (!el) return;
@@ -544,9 +549,9 @@ async function renderSongGroups() {
 
   /* A search auto-opens its matches, and so does Upcoming — both are short,
      targeted lists where collapsing would just be an extra tap. */
-  const html = await Promise.all(groups.map(async ([letter, list]) => {
+  const html = groups.map(([letter, list]) => {
     const open = searching || activeTag === UPCOMING_FILTER || expandedLetters.has(letter);
-    const rows = await Promise.all(list.map(songRowHtml));
+    const rows = list.map(song => songRowHtml(song));
     return `
       <div class="letter-group ${open ? '' : 'collapsed'}" data-letter="${escapeAttr(letter)}">
         <button class="letter-head" type="button">
@@ -556,7 +561,7 @@ async function renderSongGroups() {
         </button>
         <div class="letter-body"><ul class="song-list">${rows.join('')}</ul></div>
       </div>`;
-  }));
+  });
 
   el.innerHTML = html.join('');
 
@@ -572,8 +577,8 @@ async function renderSongGroups() {
   });
 }
 
-async function songRowHtml(song) {
-  const cached = await isSongCached(song);
+function songRowHtml(song) {
+  const cached = isSongCached(song);
   const trackCount = (song.tracks || []).length;
   const sheetCount = (song.sheetMusic || []).length;
   const bits = [];
@@ -985,17 +990,38 @@ function songAssetUrls(song) {
   ];
 }
 
-async function isSongCached(song) {
-  if (!('caches' in window)) return false;
-  const urls = songAssetUrls(song);
-  if (!urls.length) return false;
+/* Offline badges used to cost one cache.match() per asset per song per render —
+   over a hundred Cache API round-trips every time the list redrew, which made
+   rendering async, slow enough to overlap itself, and laggy on every search
+   keystroke once the cache filled up. Now the cache is read once into a set of
+   paths and membership is checked in memory. */
+let cachedPaths = new Set();
+
+async function loadCachedPaths() {
+  if (!('caches' in window)) return new Set();
   try {
     const cache = await caches.open(MEDIA_CACHE);
-    const results = await Promise.all(urls.map(u => cache.match(u)));
-    return results.every(Boolean);
+    const keys = await cache.keys();
+    return new Set(keys.map(req => new URL(req.url).pathname));
   } catch {
-    return false;
+    return new Set();
   }
+}
+
+/* Refreshes the set, and redraws the list once if it actually changed.
+   Only ever called from renderListView, so it cannot loop. */
+async function refreshCachedPaths() {
+  const before = cachedPaths.size;
+  cachedPaths = await loadCachedPaths();
+  if (cachedPaths.size !== before && document.getElementById('letter-groups')) {
+    renderSongGroups();
+  }
+}
+
+function isSongCached(song) {
+  const urls = songAssetUrls(song);
+  if (!urls.length || !cachedPaths.size) return false;
+  return urls.every(u => cachedPaths.has(new URL(u, location.href).pathname));
 }
 
 /* ================================================================

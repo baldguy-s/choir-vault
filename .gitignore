@@ -1,2 +1,5 @@
 .claude/settings.local.json
 .claude/memory/
+
+# Local staging area for source audio before upload
+Songs/

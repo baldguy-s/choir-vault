@@ -26,7 +26,9 @@ Run `/choir-validate-repo`. FAIL if any referenced file is missing. WARN (not fa
 
 ### 3. Service worker cache version
 
-Read `docs/sw.js`. Extract the cache version string (look for `CACHE_NAME` or similar versioned constant).
+Read `docs/sw.js`. Extract `SHELL_CACHE` (currently `choir-materials-shell-vN`) and `MEDIA_CACHE` (`choir-materials-media-vN`).
+
+`MEDIA_CACHE` is duplicated as a constant at the top of `docs/js/app.js` — FAIL if the two disagree, since "Save for offline" would then read a different cache than the service worker writes.
 
 Check git status / diff for changes to any of these files:
 - `docs/index.html`

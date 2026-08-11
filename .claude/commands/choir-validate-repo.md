@@ -21,9 +21,18 @@ For every song in the `songs` array:
 - **id**: must match `/^[a-z0-9]+(-[a-z0-9]+)*$/` (lowercase slug, no leading/trailing hyphens)
 - **id uniqueness**: no two songs share the same id
 - **title**: must be non-empty
-- **tracks**: for each track entry, fetch `docs/<file>` from the repo and confirm it exists (HTTP 200 or 404 check via raw.githubusercontent.com or Contents API)
-- **sheetMusic**: same existence check for each `file` path
+- **keys**: exactly `id, title, tags, notes, lyrics, preRelease, tracks, sheetMusic, links` — flag any extra key, and in particular flag a surviving `composer` (removed Aug 2026)
+- **tracks**: each entry has exactly `part` and `file`. Fetch `docs/<file>` and confirm it exists (HTTP 200 or 404 check via raw.githubusercontent.com or Contents API)
+- **sheetMusic**: each entry has **exactly `file` and nothing else** — a surviving `label` is an error. Same existence check for each path.
+- **sheet music naming invariant**: the file name minus its extension is what the choir sees, so every path must have an extension, must not contain `\ / : * ? " < > |`, must not have leading/trailing spaces or dots, and two entries in one song must not share a file name.
+- **folder match**: every `tracks` and `sheetMusic` path must sit under the song's own id, i.e. `audio/<id>/…` and `images/<id>/…`
 - **links**: each `url` should be a valid URL (basic regex check; do not make network requests to external URLs)
+
+### 2b. Validate calendar.json
+
+- `services[]`: `id` must equal `` `${date}-${type}` ``; `type` one of `sunday_am | sunday_pm | wednesday | special`
+- each service song entry: `slot` must be `''`, `'1'` or `'4'`; a non-empty `songId` must exist in songs.json (dangling ids are a warning, since the stored `title` still renders)
+- `director.fields[]`: exactly `label`, `value`, `type`, with `type` one of `text | email | phone | link`
 
 ### 3. Check for orphaned files
 
