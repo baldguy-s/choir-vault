@@ -716,12 +716,12 @@
           "file": "audio/great-is-his-faithfulness/soprano.m4a"
         },
         {
-          "part": "Alto",
-          "file": "audio/great-is-his-faithfulness/alto.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/great-is-his-faithfulness/demo.mp3"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/great-is-his-faithfulness/alto.m4a"
         },
         {
           "part": "Tenor",
