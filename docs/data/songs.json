@@ -687,12 +687,12 @@
           "file": "audio/give-me-jesus/tenor.m4a"
         },
         {
-          "part": "Bass",
-          "file": "audio/give-me-jesus/bass.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/give-me-jesus/demo.mp3"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/give-me-jesus/bass.m4a"
         }
       ],
       "sheetMusic": [],
