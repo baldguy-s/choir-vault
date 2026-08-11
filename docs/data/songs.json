@@ -907,7 +907,12 @@
       "preRelease": true,
       "tracks": [],
       "sheetMusic": [],
-      "links": []
+      "links": [
+        {
+          "label": "Demo",
+          "url": "https://youtu.be/Xxy5HH0AtKs?si=bNgybHFue0uxe81n"
+        }
+      ]
     },
     {
       "id": "this-blood",
