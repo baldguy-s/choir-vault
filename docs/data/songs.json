@@ -470,12 +470,12 @@
           "file": "audio/the-glory-land-way/alto.m4a"
         },
         {
-          "part": "Bass",
-          "file": "audio/the-glory-land-way/bass.m4a"
-        },
-        {
           "part": "Tenor",
           "file": "audio/the-glory-land-way/tenor.m4a"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/the-glory-land-way/bass.m4a"
         }
       ],
       "sheetMusic": [],
