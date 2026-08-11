@@ -23,12 +23,12 @@
           "file": "audio/bought-by-the-blood/alto.m4a"
         },
         {
-          "part": "Bass",
-          "file": "audio/bought-by-the-blood/bass.m4a"
-        },
-        {
           "part": "Tenor",
           "file": "audio/bought-by-the-blood/tenor.m4a"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/bought-by-the-blood/bass.m4a"
         }
       ],
       "sheetMusic": [],
