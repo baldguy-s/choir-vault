@@ -983,7 +983,12 @@
           "file": "audio/start-at-the-manger/bass.m4a"
         }
       ],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "label": "Music - Start At The Manger",
+          "file": "images/start-at-the-manger/music-start-at-the-manger-1786412201421.pdf"
+        }
+      ],
       "links": [
         {
           "label": "Demo",
