@@ -370,12 +370,12 @@
           "file": "audio/oh-to-see-the-dawn/soprano.m4a"
         },
         {
-          "part": "Alto",
-          "file": "audio/oh-to-see-the-dawn/alto.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/oh-to-see-the-dawn/demo.mp3"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/oh-to-see-the-dawn/alto.m4a"
         },
         {
           "part": "Tenor",
