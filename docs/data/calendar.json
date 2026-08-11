@@ -6,9 +6,20 @@
     "updated": "2026-08-10T23:35:18.061Z"
   },
   "director": {
-    "name": "",
+    "name": "Bro. David Dendler",
     "note": "",
-    "fields": []
+    "fields": [
+      {
+        "label": "Email",
+        "value": "daviddendler2022@gmail.com",
+        "type": "email"
+      },
+      {
+        "label": "Phone Number",
+        "value": "+1 (513) 325-1766",
+        "type": "phone"
+      }
+    ]
   },
   "services": [
     {
