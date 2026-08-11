@@ -683,12 +683,12 @@
           "file": "audio/give-me-jesus/alto.m4a"
         },
         {
-          "part": "Tenor",
-          "file": "audio/give-me-jesus/tenor.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/give-me-jesus/demo.mp3"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/give-me-jesus/tenor.m4a"
         },
         {
           "part": "Bass",
