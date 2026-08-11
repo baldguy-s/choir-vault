@@ -712,12 +712,12 @@
       "preRelease": false,
       "tracks": [
         {
-          "part": "Soprano",
-          "file": "audio/great-is-his-faithfulness/soprano.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/great-is-his-faithfulness/demo.mp3"
+        },
+        {
+          "part": "Soprano",
+          "file": "audio/great-is-his-faithfulness/soprano.m4a"
         },
         {
           "part": "Alto",
