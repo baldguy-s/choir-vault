@@ -524,12 +524,12 @@
           "file": "audio/we-are-the-reason/soprano.m4a"
         },
         {
-          "part": "Bass",
-          "file": "audio/we-are-the-reason/bass.m4a"
-        },
-        {
           "part": "Alto",
           "file": "audio/we-are-the-reason/alto.m4a"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/we-are-the-reason/bass.m4a"
         },
         {
           "part": "Tenor",
