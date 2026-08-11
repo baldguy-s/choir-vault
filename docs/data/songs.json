@@ -430,12 +430,12 @@
       "preRelease": false,
       "tracks": [
         {
-          "part": "Bass",
-          "file": "audio/statue-of-liberty/bass.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/statue-of-liberty/demo.mp3"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/statue-of-liberty/bass.m4a"
         }
       ],
       "sheetMusic": [
