@@ -560,12 +560,12 @@
           "file": "audio/jesus-is-the-answer/soprano.m4a"
         },
         {
-          "part": "Alto",
-          "file": "audio/jesus-is-the-answer/alto.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/jesus-is-the-answer/demo.mp3"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/jesus-is-the-answer/alto.m4a"
         },
         {
           "part": "Tenor",
