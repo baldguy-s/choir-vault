@@ -724,12 +724,12 @@
           "file": "audio/great-is-his-faithfulness/tenor.m4a"
         },
         {
-          "part": "Bass",
-          "file": "audio/great-is-his-faithfulness/bass.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/great-is-his-faithfulness/demo.mp3"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/great-is-his-faithfulness/bass.m4a"
         }
       ],
       "sheetMusic": [
