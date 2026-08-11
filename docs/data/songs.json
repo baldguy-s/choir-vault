@@ -355,7 +355,9 @@
     {
       "id": "oh-to-see-the-dawn",
       "title": "Oh, To See The Dawn",
-      "tags": [],
+      "tags": [
+        "Slot 4"
+      ],
       "notes": "",
       "lyrics": "",
       "preRelease": false,
