@@ -17,6 +17,13 @@
   --banner-gray: #B5B5B5;
   --banner-sub: #3A3A3A;
 
+  /* The banner keeps these values in dark mode too. The church logo has dark
+     "CHURCH" lettering baked into the image, which disappears against a dark
+     banner, so the banner stays light gray in both themes. */
+  --banner-bg: #B5B5B5;
+  --banner-fg: #1A1A1A;
+  --banner-fg-soft: #3A3A3A;
+
   /* Part colors — SATB color-coding */
   --soprano: #B5432F;
   --alto: #2E6E86;
@@ -78,8 +85,8 @@ input, textarea, select { font-family: inherit; }
 /* ---------- Banner header (matches Service Schedule) ---------- */
 
 header.site {
-  background: var(--banner-gray);
-  color: var(--ink);
+  background: var(--banner-bg);
+  color: var(--banner-fg);
   padding: 20px 18px 18px;
   text-align: center;
   border-bottom: 1px solid rgba(0,0,0,0.15);
@@ -100,6 +107,15 @@ header.site h1 {
   margin: 2px 0 3px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  color: var(--banner-fg);
+}
+
+header.site p {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--banner-fg-soft);
 }
 
 /* ---------- Sticky utility bar ---------- */
@@ -263,6 +279,49 @@ header.site h1 {
 }
 .news-body a { word-break: break-word; }
 
+/* ---------- Contact The Director ---------- */
+
+.director-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  margin-bottom: 0.5rem;
+}
+
+.contact-list { list-style: none; margin: 0; padding: 0; }
+
+.contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.5rem;
+  padding: 0.28rem 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  border-bottom: 1px solid var(--paper-line);
+}
+.contact-row:last-child { border-bottom: none; }
+
+.contact-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  flex: 0 0 5.5rem;
+  padding-top: 0.15rem;
+}
+
+.contact-value { flex: 1; min-width: 0; word-break: break-word; }
+.contact-value a { color: var(--red-deep); }
+
+.director-note {
+  margin-top: 0.6rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+}
+
 /* ---------- Rolling calendar (plain list, no boxes) ---------- */
 
 .cal-service { margin-bottom: 1.05rem; }
@@ -373,6 +432,15 @@ header.site h1 {
 }
 
 .tag-chip.active { background: var(--red); border-color: var(--red-deep); color: #fff; }
+
+/* "Upcoming" is a different kind of filter from a tag, so it reads differently. */
+.tag-chip.upcoming-chip {
+  font-family: var(--font-body);
+  font-weight: 700;
+  border-color: var(--red);
+  color: var(--red-deep);
+}
+.tag-chip.upcoming-chip.active { color: #fff; }
 
 .list-tools {
   display: flex;

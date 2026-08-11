@@ -18,6 +18,11 @@
   --red: #A3313B;
   --red-deep: #7E2530;
   --banner-gray: #B5B5B5;
+  /* Banner keeps these in dark mode: the logo's dark "CHURCH" lettering is part
+     of the image and vanishes against a dark banner. */
+  --banner-bg: #B5B5B5;
+  --banner-fg: #1A1A1A;
+  --banner-fg-soft: #3A3A3A;
   --ok: #2F6B3A;
   --ok-bg: #E7F3E9;
   --warn-bg: #FBEAEA;
@@ -54,8 +59,8 @@ input, textarea, select { font-family: inherit; }
 /* ---------- Banner (matches the public app + Service Schedule) ---------- */
 
 header.site {
-  background: var(--banner-gray);
-  color: var(--ink);
+  background: var(--banner-bg);
+  color: var(--banner-fg);
   padding: 18px 18px 14px;
   text-align: center;
   border-bottom: 1px solid rgba(0,0,0,0.15);
@@ -65,7 +70,9 @@ header.site h1 {
   font-family: var(--font-display);
   font-weight: 800; font-size: 1rem;
   margin: 2px 0 3px; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--banner-fg);
 }
+header.site p { margin: 0; font-size: .72rem; letter-spacing: .13em; text-transform: uppercase; color: var(--banner-fg-soft); }
 
 .sticky-bar { position: sticky; top: 0; z-index: 30; background: var(--paper); border-bottom: 1px solid var(--line); }
 .sticky-bar-inner { max-width: 900px; margin: 0 auto; padding: .45rem 1rem; display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
@@ -159,6 +166,35 @@ header.site h1 {
   border: 1px solid var(--line); color: var(--slate); padding: .25rem .6rem; border-radius: 999px;
 }
 .tag-chip.active { background: var(--red); border-color: var(--red-deep); color: #fff; }
+.tag-chip.upcoming-chip { font-family: var(--font-body); font-weight: 700; border-color: var(--red); color: var(--red-deep); }
+.tag-chip.upcoming-chip.active { color: #fff; }
+
+/* A–Z groups, matching the public app so the two lists behave the same way */
+.list-tools { display: flex; align-items: center; gap: .5rem; margin-bottom: .7rem; flex-wrap: wrap; }
+.list-tools .count { font-family: var(--font-mono); font-size: .68rem; color: var(--slate); margin-left: auto; }
+
+.mini-btn {
+  background: none; border: 1px solid var(--line); color: var(--slate);
+  font-size: .72rem; font-weight: 600; padding: .25rem .55rem; border-radius: 999px;
+}
+.mini-btn:hover { color: var(--red-deep); border-color: var(--red); }
+
+.letter-groups { display: flex; flex-direction: column; gap: .4rem; }
+
+.letter-group { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); overflow: hidden; }
+
+.letter-head {
+  width: 100%; display: flex; align-items: center; gap: .7rem;
+  background: var(--card); border: none; padding: .6rem .9rem; text-align: left; color: var(--ink);
+}
+.letter-head:hover { background: var(--paper-dim); }
+.letter-head .letter { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; line-height: 1; color: var(--red); width: 1.4rem; }
+.letter-head .letter-count { font-family: var(--font-mono); font-size: .7rem; color: var(--slate); flex: 1; }
+.letter-head .twisty { font-family: var(--font-mono); font-size: .9rem; color: var(--slate); line-height: 1; }
+
+.letter-group.collapsed .letter-body { display: none; }
+.letter-body { border-top: 1px solid var(--line); padding: .4rem; }
+.letter-body .song-row:last-child { margin-bottom: 0; }
 
 .song-row {
   background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--banner-gray);
@@ -181,8 +217,28 @@ header.site h1 {
 
 /* ---------- Detail ---------- */
 
-.detail-header { display: flex; align-items: center; gap: .7rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
-.detail-header h2 { font-family: var(--font-display); margin: 0; flex: 1; font-size: 1.3rem; min-width: 0; word-break: break-word; }
+/* Sticks below the tab bar so Back and the song title stay reachable while
+   scrolling a long song. --admin-bar-h is measured in JS because the tab bar
+   wraps to two rows on narrow screens. */
+.detail-header {
+  position: sticky;
+  top: var(--admin-bar-h, 3rem);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  flex-wrap: nowrap;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  margin: -1.1rem -1rem 1.1rem;   /* bleed past .wrap padding so nothing shows behind */
+  padding: .7rem 1rem;
+}
+.detail-header h2 {
+  font-family: var(--font-display);
+  margin: 0; flex: 1; min-width: 0; font-size: 1.15rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.detail-header .btn { flex-shrink: 0; }
 
 /* ---------- Track / sheet / link rows ---------- */
 
@@ -201,6 +257,7 @@ header.site h1 {
   .track-row { grid-template-columns: auto minmax(0,1fr) minmax(0,1.1fr) auto; }
   .sheet-row { grid-template-columns: auto minmax(0,1fr) minmax(0,1fr) auto; }
   .link-row  { grid-template-columns: minmax(0,1fr) minmax(0,1.3fr) auto; }
+  .dir-row   { grid-template-columns: auto minmax(0,1fr) minmax(0,1.4fr) 6.5rem auto; }
   .cal-song-row { grid-template-columns: auto minmax(0,1fr) 6rem minmax(0,1fr) auto; }
 }
 
@@ -332,18 +389,39 @@ const SERVICE_TYPES = {
 
 const SLOT_OPTIONS = ['', '1', '4'];
 
+/* Must match CALENDAR_DAYS_AHEAD in js/app.js so "Upcoming" means the same
+   thing in both places: the current service plus the next two weeks. */
+const CALENDAR_DAYS_AHEAD = 20;
+const UPCOMING_FILTER = '__upcoming';
+
+/* Contact field kinds — decide whether the public app makes the value tappable. */
+const CONTACT_TYPES = [
+  { value: 'text',  label: 'Text' },
+  { value: 'email', label: 'Email' },
+  { value: 'phone', label: 'Phone' },
+  { value: 'link',  label: 'Link' },
+];
+
 const GH_PLACEHOLDERS = (GH_OWNER === 'owner' || GH_REPO === 'repo');
 const THEME_KEY = 'choir_admin_theme';
 
 let STATE = {
   songs: [],
   songsSha: null,
-  calendar: { news: { subject: '', date: '', html: '', updated: '' }, services: [] },
+  calendar: {
+    news: { subject: '', date: '', html: '', updated: '' },
+    director: { name: '', note: '', fields: [] },
+    services: [],
+  },
   calSha: null,
   tab: 'songs',
   activeTag: null,
   searchQuery: '',
 };
+
+/* Which A–Z groups are open. Starts empty so the list opens collapsed, same as
+   the public app. Survives re-renders within the session. */
+let expandedLetters = new Set();
 
 const root = document.getElementById('app-root');
 const connPill = document.getElementById('conn-pill');
@@ -356,6 +434,9 @@ async function init() {
 
   applyStoredTheme();
   themeBtn.addEventListener('click', toggleTheme);
+
+  syncBarHeight();
+  window.addEventListener('resize', syncBarHeight);
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -559,9 +640,23 @@ async function loadCalendar() {
   const parsed = JSON.parse(file.content);
   STATE.calendar = {
     news: parsed.news || { subject: '', date: '', html: '', updated: '' },
+    director: normaliseDirector(parsed.director),
     services: parsed.services || [],
   };
   STATE.calSha = file.sha;
+}
+
+function normaliseDirector(d) {
+  const src = d || {};
+  return {
+    name: src.name || '',
+    note: src.note || '',
+    fields: Array.isArray(src.fields) ? src.fields.map(f => ({
+      label: (f && f.label) || '',
+      value: (f && f.value) || '',
+      type: (f && f.type) || 'text',
+    })) : [],
+  };
 }
 
 /* Retries once on 409/422, which means the file changed since we loaded it
@@ -619,44 +714,79 @@ function renderTab() {
    Songs tab
    ================================================================ */
 
+function matchingAdminSongs() {
+  const q = (STATE.searchQuery || '').trim().toLowerCase();
+  const keys = STATE.activeTag === UPCOMING_FILTER ? upcomingSongKeys() : null;
+
+  return STATE.songs.filter(s => {
+    if (STATE.activeTag === UPCOMING_FILTER) {
+      if (!isUpcomingSong(s, keys)) return false;
+    } else if (STATE.activeTag && !(s.tags || []).includes(STATE.activeTag)) {
+      return false;
+    }
+    if (!q) return true;
+    return s.title.toLowerCase().includes(q)
+      || (s.tags || []).some(t => t.toLowerCase().includes(q))
+      || (s.notes || '').toLowerCase().includes(q)
+      || (s.lyrics || '').toLowerCase().includes(q);
+  });
+}
+
 function renderSongList() {
   const allTags = Array.from(new Set(STATE.songs.flatMap(s => s.tags || []))).sort();
-
-  let filtered = STATE.songs;
-  if (STATE.activeTag) filtered = filtered.filter(s => (s.tags || []).includes(STATE.activeTag));
-  if (STATE.searchQuery) {
-    const q = STATE.searchQuery.toLowerCase();
-    filtered = filtered.filter(s =>
-      s.title.toLowerCase().includes(q) ||
-      (s.tags || []).some(t => t.toLowerCase().includes(q)) ||
-      (s.notes || '').toLowerCase().includes(q));
-  }
-  filtered = filtered.slice().sort((a, b) => a.title.localeCompare(b.title));
+  const filtered = matchingAdminSongs();
+  const groups = groupByLetter(filtered);
+  const searching = !!(STATE.searchQuery || '').trim();
+  const upcomingCount = STATE.songs.filter(s => isUpcomingSong(s)).length;
 
   let html = `
     <div class="toolbar">
-      <input type="search" id="search-input" placeholder="Search songs, tags or notes…" value="${escapeAttr(STATE.searchQuery)}">
+      <input type="search" id="search-input" placeholder="Search songs, tags, notes or lyrics…" value="${escapeAttr(STATE.searchQuery)}">
       <button class="btn" id="add-song-btn">+ Add song</button>
-    </div>`;
-
-  if (allTags.length) {
-    html += `<div class="tag-row">
+    </div>
+    <div class="tag-row">
       <button class="tag-chip ${!STATE.activeTag ? 'active' : ''}" data-tag="">All</button>
+      <button class="tag-chip upcoming-chip ${STATE.activeTag === UPCOMING_FILTER ? 'active' : ''}" data-tag="${UPCOMING_FILTER}">&#9834; Upcoming${upcomingCount ? ` (${upcomingCount})` : ''}</button>
       ${allTags.map(t => `<button class="tag-chip ${STATE.activeTag === t ? 'active' : ''}" data-tag="${escapeAttr(t)}">${escapeHtml(t)}</button>`).join('')}
+    </div>
+    <div class="list-tools">
+      <button class="mini-btn" id="expand-all-btn">Expand all</button>
+      <button class="mini-btn" id="collapse-all-btn">Collapse all</button>
+      <span class="count">${filtered.length} of ${STATE.songs.length} song${STATE.songs.length === 1 ? '' : 's'}</span>
     </div>`;
-  }
 
-  if (!filtered.length) {
-    html += `<div class="empty-state"><div class="big">No songs</div><div>Add one to get started.</div></div>`;
+  if (!groups.length) {
+    let msg;
+    if (!STATE.songs.length) {
+      msg = `<div class="big">No songs</div><div>Add one to get started.</div>`;
+    } else if (STATE.activeTag === UPCOMING_FILTER && !searching) {
+      msg = `<div class="big">Nothing scheduled yet</div><div>Songs you add to the calendar for the next three weeks show up here.</div>`;
+    } else {
+      msg = `<div class="big">No matches</div><div>Try a different search or filter.</div>`;
+    }
+    html += `<div class="empty-state">${msg}</div>`;
   } else {
-    html += filtered.map(song => `
-      <div class="song-row" data-id="${escapeAttr(song.id)}">
-        <div class="info">
-          <div class="title">${escapeHtml(song.title)}${song.preRelease ? '<span class="pre-badge">Pre-release</span>' : ''}</div>
-          <div class="counts">${(song.tracks || []).length} track(s) &middot; ${(song.sheetMusic || []).length} file(s) &middot; ${(song.links || []).length} link(s)</div>
-        </div>
-        <div class="chev">&rsaquo;</div>
-      </div>`).join('');
+    html += `<div class="letter-groups">` + groups.map(([letter, list]) => {
+      const open = searching || STATE.activeTag === UPCOMING_FILTER || expandedLetters.has(letter);
+      return `
+        <div class="letter-group ${open ? '' : 'collapsed'}" data-letter="${escapeAttr(letter)}">
+          <button class="letter-head" type="button">
+            <span class="letter">${escapeHtml(letter)}</span>
+            <span class="letter-count">${list.length} song${list.length === 1 ? '' : 's'}</span>
+            <span class="twisty">${open ? '&ndash;' : '+'}</span>
+          </button>
+          <div class="letter-body">
+            ${list.map(song => `
+              <div class="song-row" data-id="${escapeAttr(song.id)}">
+                <div class="info">
+                  <div class="title">${escapeHtml(song.title)}${song.preRelease ? '<span class="pre-badge">Pre-release</span>' : ''}</div>
+                  <div class="counts">${(song.tracks || []).length} track(s) &middot; ${(song.sheetMusic || []).length} file(s) &middot; ${(song.links || []).length} link(s)</div>
+                </div>
+                <div class="chev">&rsaquo;</div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }).join('') + `</div>`;
   }
 
   root.innerHTML = html;
@@ -671,12 +801,79 @@ function renderSongList() {
   });
 
   document.getElementById('add-song-btn').addEventListener('click', () => renderAddSongForm());
+  document.getElementById('expand-all-btn').addEventListener('click', () => {
+    groupByLetter(matchingAdminSongs()).forEach(([l]) => expandedLetters.add(l));
+    renderSongList();
+  });
+  document.getElementById('collapse-all-btn').addEventListener('click', () => {
+    expandedLetters.clear();
+    renderSongList();
+  });
+
   document.querySelectorAll('.tag-chip').forEach(chip => {
     chip.addEventListener('click', () => { STATE.activeTag = chip.dataset.tag || null; renderSongList(); });
   });
+
+  document.querySelectorAll('.letter-group').forEach(group => {
+    group.querySelector('.letter-head').addEventListener('click', () => {
+      const letter = group.dataset.letter;
+      const nowCollapsed = !group.classList.contains('collapsed');
+      group.classList.toggle('collapsed', nowCollapsed);
+      group.querySelector('.twisty').innerHTML = nowCollapsed ? '+' : '&ndash;';
+      if (nowCollapsed) expandedLetters.delete(letter);
+      else expandedLetters.add(letter);
+    });
+  });
+
   document.querySelectorAll('.song-row').forEach(row => {
     row.addEventListener('click', () => renderSongDetail(row.dataset.id));
   });
+}
+
+/* ---- Letter grouping + Upcoming, mirroring the public app ---- */
+
+function groupByLetter(songs) {
+  const groups = new Map();
+  songs.slice().sort((a, b) => a.title.localeCompare(b.title)).forEach(song => {
+    const letter = letterFor(song.title);
+    if (!groups.has(letter)) groups.set(letter, []);
+    groups.get(letter).push(song);
+  });
+  return Array.from(groups.keys())
+    .sort((a, b) => (a === '#' ? 1 : b === '#' ? -1 : a.localeCompare(b)))
+    .map(k => [k, groups.get(k)]);
+}
+
+function letterFor(title) {
+  const ch = String(title || '').trim().charAt(0).toUpperCase();
+  return /[A-Z]/.test(ch) ? ch : '#';
+}
+
+/* The same rolling window the public calendar uses, so "Upcoming" rotates with it. */
+function upcomingServices() {
+  const today = todayStr();
+  const cutoff = addDays(today, CALENDAR_DAYS_AHEAD);
+  return (STATE.calendar.services || []).filter(s => s && s.date && s.date >= today && s.date <= cutoff);
+}
+
+function upcomingSongKeys() {
+  const ids = new Set();
+  const titles = new Set();
+  upcomingServices().forEach(svc => {
+    (svc.songs || []).forEach(entry => {
+      if (!entry) return;
+      if (entry.songId) ids.add(entry.songId);
+      else if (entry.title) titles.add(String(entry.title).trim().toLowerCase());
+    });
+  });
+  return { ids, titles };
+}
+
+/* keys is an optional precomputed cache. Guard its shape: passing this straight
+   to Array.filter would hand us the element index as the second argument. */
+function isUpcomingSong(song, keys) {
+  const k = keys && keys.ids ? keys : upcomingSongKeys();
+  return k.ids.has(song.id) || k.titles.has(String(song.title).trim().toLowerCase());
 }
 
 function renderAddSongForm() {
@@ -751,7 +948,7 @@ function renderSongDetail(id) {
   root.innerHTML = `
     <div class="detail-header">
       <button class="btn plain" id="back-btn">&larr; Back</button>
-      <h2>${escapeHtml(song.title)}</h2>
+      <h2 title="${escapeAttr(song.title)}">${escapeHtml(song.title)}</h2>
     </div>
 
     <div class="section-card">
@@ -1848,6 +2045,8 @@ async function syncScheduleRepo() {
 
 function renderNewsTab() {
   const news = STATE.calendar.news || { subject: '', date: '', html: '', updated: '' };
+  STATE.calendar.director = normaliseDirector(STATE.calendar.director);
+  const director = STATE.calendar.director;
 
   root.innerHTML = `
     <div class="section-card">
@@ -1875,6 +2074,29 @@ function renderNewsTab() {
         <button class="btn plain" id="clear-news-btn">Clear news</button>
       </div>
       <div class="save-status" id="news-status">${news.updated ? 'Last saved ' + escapeHtml(formatDateTime(news.updated)) : ''}</div>
+    </div>
+
+    <div class="section-card">
+      <h3>Contact The Director <span class="h3-note">Its own panel in the choir app's left column.</span></h3>
+      <div class="field-row">
+        <label for="dir-name">Name</label>
+        <input type="text" id="dir-name" value="${escapeAttr(director.name || '')}" placeholder="Bro. David Smith">
+      </div>
+      <div class="field-label">Contact fields</div>
+      <div id="dir-fields"></div>
+      <div class="add-block">
+        <button class="btn secondary small" id="dir-add-field">+ Add field</button>
+        <div class="field-hint">
+          Label and value are yours to name. The kind decides how it behaves in the app:
+          Email opens a mail app, Phone dials, Link opens in a new tab, Text just displays.
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:1rem">
+        <label for="dir-note">Note</label>
+        <textarea id="dir-note" placeholder="Best reached weekday evenings.">${escapeHtml(director.note || '')}</textarea>
+      </div>
+      <button class="btn" id="save-dir-btn">Save contact info</button>
+      <div class="save-status" id="dir-status"></div>
     </div>`;
 
   const bodyEl = document.getElementById('news-body');
@@ -1913,6 +2135,36 @@ function renderNewsTab() {
     }
   });
 
+  renderDirectorFields();
+
+  document.getElementById('dir-add-field').addEventListener('click', () => {
+    /* Keep unsaved edits when the list re-renders. */
+    readDirectorFieldsFromDom();
+    STATE.calendar.director.fields.push({ label: '', value: '', type: 'text' });
+    renderDirectorFields();
+  });
+
+  document.getElementById('save-dir-btn').addEventListener('click', async () => {
+    const statusEl = document.getElementById('dir-status');
+    const prev = JSON.parse(JSON.stringify(STATE.calendar.director));
+    readDirectorFieldsFromDom();
+    STATE.calendar.director.name = document.getElementById('dir-name').value.trim();
+    STATE.calendar.director.note = document.getElementById('dir-note').value.trim();
+    /* Drop rows left completely blank rather than saving empty clutter. */
+    STATE.calendar.director.fields = STATE.calendar.director.fields
+      .filter(f => f.label.trim() || f.value.trim());
+
+    setStatus(statusEl, 'Saving…');
+    try {
+      await saveCalendarFile('Update director contact info');
+      setStatus(statusEl, 'Saved.', 'ok');
+      renderDirectorFields();
+    } catch (err) {
+      STATE.calendar.director = prev;
+      setStatus(statusEl, err.message, 'err');
+    }
+  });
+
   document.getElementById('clear-news-btn').addEventListener('click', async () => {
     if (!confirm('Clear the Choir News panel in the app?')) return;
     const statusEl = document.getElementById('news-status');
@@ -1927,6 +2179,68 @@ function renderNewsTab() {
       STATE.calendar.news = prev;
       setStatus(statusEl, err.message, 'err');
     }
+  });
+}
+
+/* ---- Director contact fields ---- */
+
+function renderDirectorFields() {
+  const el = document.getElementById('dir-fields');
+  if (!el) return;
+  const fields = STATE.calendar.director.fields;
+
+  if (!fields.length) {
+    el.innerHTML = `<div class="tbd-note">No contact fields yet.</div>`;
+    return;
+  }
+
+  el.innerHTML = fields.map((f, i) => `
+    <div class="item-row dir-row" data-index="${i}">
+      <div class="reorder-btns">
+        <button class="btn plain tiny dir-up" ${i === 0 ? 'disabled' : ''} title="Move up">&uarr;</button>
+        <button class="btn plain tiny dir-down" ${i === fields.length - 1 ? 'disabled' : ''} title="Move down">&darr;</button>
+      </div>
+      <input type="text" class="inline-input dir-label" value="${escapeAttr(f.label)}" placeholder="Label (e.g. Email)" aria-label="Field label">
+      <input type="text" class="inline-input dir-value" value="${escapeAttr(f.value)}" placeholder="Value" aria-label="Field value">
+      <select class="inline-select dir-type" aria-label="Field kind">
+        ${CONTACT_TYPES.map(t => `<option value="${t.value}" ${f.type === t.value ? 'selected' : ''}>${escapeHtml(t.label)}</option>`).join('')}
+      </select>
+      <div class="row-actions"><button class="btn danger small dir-remove">Remove</button></div>
+    </div>`).join('');
+
+  el.querySelectorAll('.dir-row').forEach(row => {
+    const i = parseInt(row.dataset.index, 10);
+    row.querySelector('.dir-remove').addEventListener('click', () => {
+      readDirectorFieldsFromDom();
+      STATE.calendar.director.fields.splice(i, 1);
+      renderDirectorFields();
+    });
+    row.querySelector('.dir-up').addEventListener('click', () => moveDirectorField(i, i - 1));
+    row.querySelector('.dir-down').addEventListener('click', () => moveDirectorField(i, i + 1));
+  });
+}
+
+function moveDirectorField(from, to) {
+  const fields = STATE.calendar.director.fields;
+  if (to < 0 || to >= fields.length) return;
+  readDirectorFieldsFromDom();
+  const [item] = fields.splice(from, 1);
+  fields.splice(to, 0, item);
+  renderDirectorFields();
+}
+
+/* Pulls what's currently typed into STATE before any re-render, so reordering or
+   adding a row can't discard edits that haven't been saved yet. */
+function readDirectorFieldsFromDom() {
+  const rows = document.querySelectorAll('.dir-row');
+  if (!rows.length) return;
+  rows.forEach(row => {
+    const i = parseInt(row.dataset.index, 10);
+    const f = STATE.calendar.director.fields[i];
+    if (!f) return;
+    f.label = row.querySelector('.dir-label').value;
+    f.value = row.querySelector('.dir-value').value;
+    f.type = row.querySelector('.dir-type').value;
   });
 }
 
@@ -1996,6 +2310,12 @@ function pad2(n) { return String(n).padStart(2, '0'); }
 function todayStr() {
   const d = new Date();
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+function addDays(dateStr, days) {
+  const [y, m, d] = String(dateStr).split('-').map(Number);
+  const dt = new Date(y, m - 1, d + days);
+  return `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`;
 }
 
 function nextSundayStr() {
@@ -2072,6 +2392,14 @@ function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
 }
 function escapeAttr(str) { return escapeHtml(str); }
+
+/* Feeds the real tab-bar height to CSS so the sticky song header sits directly
+   below it, including when the bar wraps to two rows on a narrow screen. */
+function syncBarHeight() {
+  const bar = document.querySelector('.sticky-bar');
+  if (!bar) return;
+  document.documentElement.style.setProperty('--admin-bar-h', bar.offsetHeight + 'px');
+}
 
 /* Instant jump to the top, used when moving between views. In-place refreshes
    (a track upload, a calendar edit) deliberately don't call this, so you aren't

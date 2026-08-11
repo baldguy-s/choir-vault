@@ -18,15 +18,20 @@ const SERVICE_TYPES = {
 };
 
 const LS = {
-  theme:       'choir_theme',
-  myPart:      'choir_my_part',
-  panelNews:   'choir_panel_news',
-  panelCal:    'choir_panel_cal',
-  panelLyrics: 'choir_panel_lyrics',
+  theme:         'choir_theme',
+  myPart:        'choir_my_part',
+  panelNews:     'choir_panel_news',
+  panelCal:      'choir_panel_cal',
+  panelDirector: 'choir_panel_director',
+  panelLyrics:   'choir_panel_lyrics',
 };
 
+/* Value of the single-select filter chip row: '' = All, this = scheduled soon,
+   anything else = that tag. */
+const UPCOMING_FILTER = '__upcoming';
+
 let SONGS = [];
-let CALENDAR = { news: null, services: [] };
+let CALENDAR = { news: null, director: null, services: [] };
 let activeTag = null;
 let searchQuery = '';
 let expandedLetters = new Set();   /* starts empty — collapsed A–Z is the default view */
@@ -64,6 +69,7 @@ async function init() {
   SONGS = (songsData && songsData.songs) || [];
   CALENDAR = {
     news: (calData && calData.news) || null,
+    director: (calData && calData.director) || null,
     services: (calData && calData.services) || [],
   };
 
@@ -100,8 +106,10 @@ function applyStoredTheme() {
 function setTheme(dark) {
   document.body.classList.toggle('dark-mode', dark);
   themeBtn.innerHTML = dark ? '&#9788;' : '&#9789;';
+  /* The banner stays light gray in both themes (see --banner-bg), so the
+     browser chrome colour should match it in both themes too. */
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', dark ? '#4A4A4A' : '#B5B5B5');
+  if (meta) meta.setAttribute('content', '#B5B5B5');
 }
 
 function toggleTheme() {
@@ -187,6 +195,7 @@ function renderListView() {
       <aside class="side">
         ${newsPanelHtml()}
         ${calendarPanelHtml()}
+        ${directorPanelHtml()}
       </aside>
       <section class="main-col">
         <div id="songs-anchor"></div>
@@ -251,6 +260,57 @@ function newsPanelHtml() {
       </button>
       <div class="panel-body">${body}</div>
     </section>`;
+}
+
+/* ---------- Contact The Director panel ---------- */
+
+function directorPanelHtml() {
+  const d = CALENDAR.director || {};
+  const fields = (d.fields || []).filter(f => f && String(f.value || '').trim());
+  const collapsed = readPanelState(LS.panelDirector) ? '' : 'collapsed';
+
+  let body;
+  if (!d.name && !fields.length && !d.note) {
+    body = `<p class="panel-note">No contact information yet.</p>`;
+  } else {
+    body = `
+      ${d.name ? `<div class="director-name">${escapeHtml(d.name)}</div>` : ''}
+      ${fields.length ? `<ul class="contact-list">${fields.map(contactRowHtml).join('')}</ul>` : ''}
+      ${d.note ? `<div class="director-note">${escapeHtml(d.note)}</div>` : ''}`;
+  }
+
+  return `
+    <section class="panel ${collapsed}" data-panel-key="${LS.panelDirector}">
+      <button class="panel-head" type="button">
+        <span class="panel-title">Contact The Director</span>
+        <span class="twisty">${collapsed ? '+' : '&ndash;'}</span>
+      </button>
+      <div class="panel-body">${body}</div>
+    </section>`;
+}
+
+/* A field's type decides whether the value becomes a tappable link — worth it on
+   a phone, where an email or number you can't tap is just friction. */
+function contactRowHtml(field) {
+  const label = String(field.label || '').trim();
+  const value = String(field.value || '').trim();
+  const type = String(field.type || 'text').toLowerCase();
+
+  let valueHtml;
+  if (type === 'email') {
+    valueHtml = `<a href="mailto:${escapeAttr(value)}">${escapeHtml(value)}</a>`;
+  } else if (type === 'phone') {
+    valueHtml = `<a href="tel:${escapeAttr(value.replace(/[^\d+]/g, ''))}">${escapeHtml(value)}</a>`;
+  } else if (type === 'link' && /^https?:\/\//i.test(value)) {
+    valueHtml = `<a href="${escapeAttr(value)}" target="_blank" rel="noopener noreferrer">${escapeHtml(value)}</a>`;
+  } else {
+    valueHtml = escapeHtml(value);
+  }
+
+  return `<li class="contact-row">
+    ${label ? `<span class="contact-label">${escapeHtml(label)}</span>` : ''}
+    <span class="contact-value">${valueHtml}</span>
+  </li>`;
 }
 
 /* ---------- Rolling calendar panel ---------- */
@@ -365,10 +425,14 @@ function renderTagRow() {
   const wrap = document.getElementById('tag-row-wrap');
   if (!wrap) return;
   const allTags = Array.from(new Set(publicSongs().flatMap(s => s.tags || []))).sort();
-  if (!allTags.length) { wrap.innerHTML = ''; return; }
+  const upcomingKeys = upcomingSongKeys();
+  const upcomingCount = publicSongs().filter(s => isUpcomingSong(s, upcomingKeys)).length;
 
   wrap.innerHTML = `<div class="tag-row">
     <button class="tag-chip ${!activeTag ? 'active' : ''}" data-tag="">All</button>
+    <button class="tag-chip upcoming-chip ${activeTag === UPCOMING_FILTER ? 'active' : ''}" data-tag="${UPCOMING_FILTER}">
+      &#9834; Upcoming${upcomingCount ? ` (${upcomingCount})` : ''}
+    </button>
     ${allTags.map(t => `<button class="tag-chip ${activeTag === t ? 'active' : ''}" data-tag="${escapeAttr(t)}">${escapeHtml(t)}</button>`).join('')}
   </div>`;
 
@@ -381,10 +445,39 @@ function renderTagRow() {
   });
 }
 
+/* Songs scheduled in the rolling calendar window. Rotates with the calendar
+   automatically, since it reads the same upcomingServices(). */
+function upcomingSongKeys() {
+  const ids = new Set();
+  const titles = new Set();
+  upcomingServices().forEach(svc => {
+    (svc.songs || []).forEach(entry => {
+      if (!entry) return;
+      if (entry.songId) ids.add(entry.songId);
+      /* Entries typed in free-hand have no songId — fall back to the title. */
+      else if (entry.title) titles.add(String(entry.title).trim().toLowerCase());
+    });
+  });
+  return { ids, titles };
+}
+
+/* keys is an optional precomputed cache. Guard its shape: passing this straight
+   to Array.filter would hand us the element index as the second argument. */
+function isUpcomingSong(song, keys) {
+  const k = keys && keys.ids ? keys : upcomingSongKeys();
+  return k.ids.has(song.id) || k.titles.has(String(song.title).trim().toLowerCase());
+}
+
 function matchingSongs() {
   const q = searchQuery.trim().toLowerCase();
+  const keys = activeTag === UPCOMING_FILTER ? upcomingSongKeys() : null;
+
   return publicSongs().filter(s => {
-    if (activeTag && !(s.tags || []).includes(activeTag)) return false;
+    if (activeTag === UPCOMING_FILTER) {
+      if (!isUpcomingSong(s, keys)) return false;
+    } else if (activeTag && !(s.tags || []).includes(activeTag)) {
+      return false;
+    }
     if (!q) return true;
     return s.title.toLowerCase().includes(q)
       || (s.tags || []).some(t => t.toLowerCase().includes(q))
@@ -433,15 +526,22 @@ async function renderSongGroups() {
   }
 
   if (!groups.length) {
-    el.innerHTML = publicSongs().length
-      ? `<div class="empty-state"><div class="big">No matches</div><div>Try a different search or tag.</div></div>`
-      : `<div class="empty-state"><div class="big">No songs yet</div><div>Add songs in the admin tool to get started.</div></div>`;
+    let msg;
+    if (!publicSongs().length) {
+      msg = `<div class="big">No songs yet</div><div>Add songs in the admin tool to get started.</div>`;
+    } else if (activeTag === UPCOMING_FILTER && !searching) {
+      msg = `<div class="big">Nothing scheduled yet</div><div>Songs added to the calendar for the next three weeks show up here.</div>`;
+    } else {
+      msg = `<div class="big">No matches</div><div>Try a different search or filter.</div>`;
+    }
+    el.innerHTML = `<div class="empty-state">${msg}</div>`;
     return;
   }
 
-  /* A search auto-opens its matches; otherwise honour the collapsed default. */
+  /* A search auto-opens its matches, and so does Upcoming — both are short,
+     targeted lists where collapsing would just be an extra tap. */
   const html = await Promise.all(groups.map(async ([letter, list]) => {
-    const open = searching || expandedLetters.has(letter);
+    const open = searching || activeTag === UPCOMING_FILTER || expandedLetters.has(letter);
     const rows = await Promise.all(list.map(songRowHtml));
     return `
       <div class="letter-group ${open ? '' : 'collapsed'}" data-letter="${escapeAttr(letter)}">
