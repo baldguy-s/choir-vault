@@ -15,12 +15,12 @@
           "file": "audio/bought-by-the-blood/demo.mp3"
         },
         {
-          "part": "Bass",
-          "file": "audio/bought-by-the-blood/bass.m4a"
-        },
-        {
           "part": "Soprano",
           "file": "audio/bought-by-the-blood/soprano.m4a"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/bought-by-the-blood/bass.m4a"
         },
         {
           "part": "Alto",
