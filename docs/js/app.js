@@ -104,7 +104,8 @@ function applyStoredTheme() {
 }
 
 function setTheme(dark) {
-  document.body.classList.toggle('dark-mode', dark);
+  /* On <html>, so the page canvas picks up the dark background too. */
+  document.documentElement.classList.toggle('dark-mode', dark);
   themeBtn.innerHTML = dark ? '&#9788;' : '&#9789;';
   /* The banner stays light gray in both themes (see --banner-bg), so the
      browser chrome colour should match it in both themes too. */
@@ -113,7 +114,7 @@ function setTheme(dark) {
 }
 
 function toggleTheme() {
-  const dark = !document.body.classList.contains('dark-mode');
+  const dark = !document.documentElement.classList.contains('dark-mode');
   setTheme(dark);
   try { localStorage.setItem(LS.theme, dark ? 'dark' : 'light'); } catch {}
 }
@@ -377,9 +378,12 @@ function calSongHtml(entry) {
   const slot = (e.slot || '').trim();
   const soloist = (e.soloist || '').trim();
 
+  /* A pre-release song shows its title but stays plain text — linking it would be
+     a way into a song that is deliberately hidden from the list. */
+  const linkable = song && !song.preRelease;
   const titleHtml = !title
     ? `<span class="cal-tbd">To Be Determined</span>`
-    : song
+    : linkable
       ? `<a class="cal-title" href="#/song/${encodeURIComponent(song.id)}">${escapeHtml(title)}</a>`
       : `<span class="cal-title">${escapeHtml(title)}</span>`;
 

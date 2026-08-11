@@ -39,7 +39,10 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-body.dark-mode {
+/* Declared on <html>, not <body>. `html` also paints the page canvas from
+   var(--paper), and it cannot see a variable defined on its own child — so with
+   the tokens on body, html stayed light and you got two colours down the page. */
+:root.dark-mode {
   --paper: #17181A;
   --paper-dim: #232426;
   --card: #1F2022;
@@ -66,6 +69,10 @@ html, body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
+
+/* Fills the viewport even when the page is shorter than the window, so the
+   background never stops partway down. */
+html { min-height: 100%; }
 
 /* No global smooth scrolling: it animated the reset-to-top on every navigation,
    which could be interrupted and leave a view part-way down. The one place we

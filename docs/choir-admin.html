@@ -32,7 +32,10 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-body.dark-mode {
+/* Declared on <html>, not <body>: html paints the page canvas from var(--paper)
+   and cannot see a variable defined on its own child, so tokens on body left the
+   canvas light and split the page into two colours. */
+:root.dark-mode {
   --paper: #17181A;
   --paper-dim: #232426;
   --card: #1F2022;
@@ -50,6 +53,8 @@ body.dark-mode {
 * { box-sizing: border-box; }
 html { font-size: 16px; }
 html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+/* Fills the viewport even when the page is shorter than the window. */
+html { min-height: 100%; }
 body { padding-bottom: 4rem; }
 a { color: var(--red-deep); }
 button { font-family: inherit; cursor: pointer; }
@@ -489,12 +494,13 @@ function applyStoredTheme() {
 }
 
 function setTheme(dark) {
-  document.body.classList.toggle('dark-mode', dark);
+  /* On <html>, so the page canvas picks up the dark background too. */
+  document.documentElement.classList.toggle('dark-mode', dark);
   themeBtn.innerHTML = dark ? '&#9788;' : '&#9789;';
 }
 
 function toggleTheme() {
-  const dark = !document.body.classList.contains('dark-mode');
+  const dark = !document.documentElement.classList.contains('dark-mode');
   setTheme(dark);
   try { localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light'); } catch {}
 }
@@ -1762,7 +1768,7 @@ function songEditRow(entry, i, total) {
       <div>
         <select class="inline-select cal-song-select" aria-label="Song">
           <option value="" ${!e.songId && !isCustom ? 'selected' : ''}>— To Be Determined —</option>
-          ${known.map(s => `<option value="${escapeAttr(s.id)}" ${e.songId === s.id ? 'selected' : ''}>${escapeHtml(s.title)}${s.preRelease ? ' (pre-release)' : ''}</option>`).join('')}
+          ${known.map(s => `<option value="${escapeAttr(s.id)}" ${e.songId === s.id ? 'selected' : ''}>${escapeHtml(s.title)}</option>`).join('')}
           <option value="__custom" ${isCustom ? 'selected' : ''}>— Other title… —</option>
         </select>
         <input type="text" class="inline-input cal-song-custom" style="margin-top:.35rem;${isCustom ? '' : 'display:none'}"
