@@ -374,12 +374,12 @@
           "file": "audio/oh-to-see-the-dawn/alto.m4a"
         },
         {
-          "part": "Tenor",
-          "file": "audio/oh-to-see-the-dawn/tenor.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/oh-to-see-the-dawn/demo.mp3"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/oh-to-see-the-dawn/tenor.m4a"
         }
       ],
       "sheetMusic": [
