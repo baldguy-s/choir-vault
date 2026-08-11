@@ -637,12 +637,12 @@
           "file": "audio/give-thanks-with-come-ye-thankful-people-come/soprano.m4a"
         },
         {
-          "part": "Alto",
-          "file": "audio/give-thanks-with-come-ye-thankful-people-come/alto.m4a"
-        },
-        {
           "part": "Demo",
           "file": "audio/give-thanks-with-come-ye-thankful-people-come/demo.mp3"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/give-thanks-with-come-ye-thankful-people-come/alto.m4a"
         },
         {
           "part": "Tenor",
