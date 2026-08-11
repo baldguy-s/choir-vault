@@ -60,7 +60,10 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-html { font-size: 16px; scroll-behavior: smooth; }
+/* No global smooth scrolling: it animated the reset-to-top on every navigation,
+   which could be interrupted and leave a view part-way down. The one place we
+   want easing — the "Jump to songs" button — asks for it explicitly. */
+html { font-size: 16px; }
 
 body { min-height: 100vh; padding-bottom: 2.5rem; }
 

@@ -352,6 +352,8 @@ const themeBtn = document.getElementById('theme-btn');
 init();
 
 async function init() {
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
   applyStoredTheme();
   themeBtn.addEventListener('click', toggleTheme);
 
@@ -359,6 +361,7 @@ async function init() {
     btn.addEventListener('click', () => {
       STATE.tab = btn.dataset.tab;
       renderTab();
+      scrollToTop();
     });
   });
 
@@ -423,6 +426,7 @@ function getToken() {
 
 function renderPatGate(errorMsg) {
   syncTabButtons();
+  scrollToTop();
   root.innerHTML = `
     <div class="gate-card">
       <h2>Connect to GitHub</h2>
@@ -666,7 +670,7 @@ function renderSongList() {
     el.selectionStart = el.selectionEnd = el.value.length;
   });
 
-  document.getElementById('add-song-btn').addEventListener('click', renderAddSongForm);
+  document.getElementById('add-song-btn').addEventListener('click', () => renderAddSongForm());
   document.querySelectorAll('.tag-chip').forEach(chip => {
     chip.addEventListener('click', () => { STATE.activeTag = chip.dataset.tag || null; renderSongList(); });
   });
@@ -695,7 +699,9 @@ function renderAddSongForm() {
       <div class="save-status" id="create-status"></div>
     </div>`;
 
-  document.getElementById('back-btn').addEventListener('click', renderSongList);
+  scrollToTop();
+
+  document.getElementById('back-btn').addEventListener('click', () => { renderSongList(); scrollToTop(); });
   document.getElementById('create-song-btn').addEventListener('click', async () => {
     const statusEl = document.getElementById('create-status');
     const title = document.getElementById('new-title').value.trim();
@@ -842,12 +848,13 @@ function renderSongDetail(id) {
       <div class="save-status" id="delete-status"></div>
     </div>`;
 
-  document.getElementById('back-btn').addEventListener('click', renderSongList);
+  document.getElementById('back-btn').addEventListener('click', () => { renderSongList(); scrollToTop(); });
   wireInfoSave(song);
   renderTracks(song);
   renderSheets(song);
   renderLinks(song);
   wireDeleteSong(song);
+  scrollToTop();
 }
 
 function wireInfoSave(song) {
@@ -1395,6 +1402,7 @@ function wireDeleteSong(song) {
       ? `Song deleted, but ${failed} file(s) could not be removed — check the repo.`
       : 'Song and all of its files deleted.', !!failed);
     renderSongList();
+    scrollToTop();
   });
 }
 
@@ -2064,6 +2072,23 @@ function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
 }
 function escapeAttr(str) { return escapeHtml(str); }
+
+/* Instant jump to the top, used when moving between views. In-place refreshes
+   (a track upload, a calendar edit) deliberately don't call this, so you aren't
+   yanked away from the row you're working on. */
+function scrollToTop() {
+  const jump = () => {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  };
+  jump();
+  requestAnimationFrame(jump);
+}
 
 function setStatus(el, msg, cls) {
   if (!el) return;

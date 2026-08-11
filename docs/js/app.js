@@ -42,6 +42,10 @@ const themeBtn = document.getElementById('theme-btn');
 init();
 
 async function init() {
+  /* Never let the browser put us back where we were on reload or back/forward —
+     every view opens at the top, without exception. */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
   applyStoredTheme();
   updateOnlinePill();
   window.addEventListener('online', updateOnlinePill);
@@ -49,10 +53,7 @@ async function init() {
 
   themeBtn.addEventListener('click', toggleTheme);
   backBtn.addEventListener('click', () => { window.location.hash = '#/'; });
-  jumpBtn.addEventListener('click', () => {
-    const anchor = document.getElementById('songs-anchor');
-    if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
+  jumpBtn.addEventListener('click', scrollToSongs);
 
   document.addEventListener('keydown', onGlobalKey);
 
@@ -123,15 +124,54 @@ function route() {
   const match = hash.match(/^#\/song\/(.+)$/);
   stopCurrentAudio();
   activePlayer = null;
-  if (match) {
-    const song = SONGS.find(s => s.id === decodeURIComponent(match[1]));
-    if (song) {
-      renderSongDetail(song);
-      window.scrollTo({ top: 0 });
-      return;
-    }
+
+  const song = match ? SONGS.find(s => s.id === decodeURIComponent(match[1])) : null;
+  if (song) renderSongDetail(song);
+  else renderListView();
+
+  /* One exit point, so no branch can ever forget to reset the scroll. */
+  scrollToTop();
+}
+
+/* "Jump to songs". Offsets by the sticky bar so the search box isn't left hidden
+   underneath it, which plain scrollIntoView({block:'start'}) does. */
+function scrollToSongs() {
+  const anchor = document.getElementById('songs-anchor');
+  if (!anchor) return;
+  const bar = document.querySelector('.sticky-bar');
+  const barH = bar ? bar.offsetHeight : 0;
+  const top = Math.max(0, anchor.getBoundingClientRect().top + window.scrollY - barH);
+  const reduceMotion = window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  try {
+    window.scrollTo({ top, behavior: reduceMotion ? 'instant' : 'smooth' });
+  } catch {
+    window.scrollTo(0, top);
   }
-  renderListView();
+}
+
+/* Jumps to the top instantly. Deliberately not smooth: an animated scroll can be
+   cut short by the next render, or by the browser restoring a saved position,
+   which is how views used to open part-way down the page. */
+function scrollToTop() {
+  const jump = () => {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch {
+      window.scrollTo(0, 0);   /* older browsers reject behavior:'instant' */
+    }
+    /* Belt and braces for iOS Safari, where the scrolling element varies. */
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+    /* The desktop sidebar is its own scroll container. */
+    const side = document.querySelector('.side');
+    if (side) side.scrollTop = 0;
+  };
+
+  jump();
+  /* Again next frame: on first load the browser can restore its saved offset
+     after our synchronous call, and async content can still be settling. */
+  requestAnimationFrame(jump);
 }
 
 /* ================================================================
