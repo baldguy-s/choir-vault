@@ -538,12 +538,7 @@
       "notes": "",
       "lyrics": "",
       "preRelease": false,
-      "tracks": [
-        {
-          "part": "Demo",
-          "file": "audio/jesus-is-the-answer/demo.mp3"
-        }
-      ],
+      "tracks": [],
       "sheetMusic": [
         {
           "file": "images/jesus-is-the-answer/Music - Jesus Is The Answer.pdf"
