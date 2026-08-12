@@ -140,12 +140,15 @@ header.site p {
   margin: 0 auto;
   padding: 0.45rem 1rem;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
   min-height: var(--bar-h);
 }
 
 .bar-spacer { flex: 1; }
+
+.text-size-group { display: flex; gap: 0.4rem; }
 
 .bar-btn {
   background: var(--card);
@@ -159,6 +162,8 @@ header.site p {
 }
 
 .bar-btn:hover { border-color: var(--red); color: var(--red-deep); }
+
+.bar-btn.active { background: var(--ink); color: var(--card); border-color: var(--ink); }
 
 .bar-btn[hidden] { display: none; }
 

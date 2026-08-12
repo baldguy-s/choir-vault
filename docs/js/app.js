@@ -19,12 +19,15 @@ const SERVICE_TYPES = {
 
 const LS = {
   theme:         'choir_theme',
+  textSize:      'choir_text_size',
   myPart:        'choir_my_part',
   panelNews:     'choir_panel_news',
   panelCal:      'choir_panel_cal',
   panelDirector: 'choir_panel_director',
   panelLyrics:   'choir_panel_lyrics',
 };
+
+const TEXT_SIZES = { normal: '16px', large: '19px', largest: '23px' };
 
 /* Value of the single-select filter chip row: '' = All, this = scheduled soon,
    anything else = that tag. */
@@ -43,6 +46,11 @@ const backBtn = document.getElementById('back-btn');
 const jumpBtn = document.getElementById('jump-songs-btn');
 const onlinePill = document.getElementById('online-pill');
 const themeBtn = document.getElementById('theme-btn');
+const sizeBtns = {
+  normal:  document.getElementById('size-normal-btn'),
+  large:   document.getElementById('size-large-btn'),
+  largest: document.getElementById('size-largest-btn'),
+};
 
 init();
 
@@ -52,11 +60,13 @@ async function init() {
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
   applyStoredTheme();
+  applyStoredTextSize();
   updateOnlinePill();
   window.addEventListener('online', updateOnlinePill);
   window.addEventListener('offline', updateOnlinePill);
 
   themeBtn.addEventListener('click', toggleTheme);
+  Object.keys(sizeBtns).forEach(size => sizeBtns[size].addEventListener('click', () => setTextSize(size)));
   backBtn.addEventListener('click', () => { window.location.hash = '#/'; });
   jumpBtn.addEventListener('click', scrollToSongs);
 
@@ -117,6 +127,18 @@ function toggleTheme() {
   const dark = !document.documentElement.classList.contains('dark-mode');
   setTheme(dark);
   try { localStorage.setItem(LS.theme, dark ? 'dark' : 'light'); } catch {}
+}
+
+function applyStoredTextSize() {
+  let size = null;
+  try { size = localStorage.getItem(LS.textSize); } catch {}
+  setTextSize(TEXT_SIZES[size] ? size : 'normal');
+}
+
+function setTextSize(size) {
+  document.documentElement.style.fontSize = TEXT_SIZES[size];
+  Object.keys(sizeBtns).forEach(key => sizeBtns[key].classList.toggle('active', key === size));
+  try { localStorage.setItem(LS.textSize, size); } catch {}
 }
 
 function updateOnlinePill() {
