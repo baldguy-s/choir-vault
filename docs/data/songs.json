@@ -538,7 +538,28 @@
       "notes": "",
       "lyrics": "",
       "preRelease": false,
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Demo",
+          "file": "audio/jesus-is-the-answer/demo.mp3"
+        },
+        {
+          "part": "Soprano",
+          "file": "audio/jesus-is-the-answer/soprano.mp3"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/jesus-is-the-answer/alto.mp3"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/jesus-is-the-answer/tenor.mp3"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/jesus-is-the-answer/bass.mp3"
+        }
+      ],
       "sheetMusic": [
         {
           "file": "images/jesus-is-the-answer/Music - Jesus Is The Answer.pdf"
