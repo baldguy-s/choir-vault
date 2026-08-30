@@ -67,8 +67,8 @@
       "type": "sunday_pm",
       "songs": [
         {
-          "songId": "",
-          "title": "",
+          "songId": "my-tribute",
+          "title": "My Tribute",
           "slot": "",
           "soloist": ""
         }
