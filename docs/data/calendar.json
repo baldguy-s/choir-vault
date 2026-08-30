@@ -47,6 +47,12 @@
           "soloist": "Phil VanWinkle"
         }
       ]
+    },
+    {
+      "id": "2026-09-06-sunday_am",
+      "date": "2026-09-06",
+      "type": "sunday_am",
+      "songs": []
     }
   ]
 }
