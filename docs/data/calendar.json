@@ -52,14 +52,7 @@
       "id": "2026-09-06-sunday_am",
       "date": "2026-09-06",
       "type": "sunday_am",
-      "songs": [
-        {
-          "songId": "the-glory-land-way",
-          "title": "The Glory Land Way",
-          "slot": "1",
-          "soloist": ""
-        }
-      ]
+      "songs": []
     }
   ]
 }
