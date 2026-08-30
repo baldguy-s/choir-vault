@@ -23,19 +23,6 @@
   },
   "services": [
     {
-      "id": "2026-08-16-sunday_pm",
-      "date": "2026-08-16",
-      "type": "sunday_pm",
-      "songs": [
-        {
-          "songId": "jesus-hold-my-hand",
-          "title": "Jesus Hold My Hand",
-          "slot": "1",
-          "soloist": ""
-        }
-      ]
-    },
-    {
       "id": "2026-08-23-sunday_am",
       "date": "2026-08-23",
       "type": "sunday_am",
