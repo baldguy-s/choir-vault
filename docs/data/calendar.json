@@ -23,19 +23,6 @@
   },
   "services": [
     {
-      "id": "2026-08-16-sunday_am",
-      "date": "2026-08-16",
-      "type": "sunday_am",
-      "songs": [
-        {
-          "songId": "my-tribute",
-          "title": "My Tribute",
-          "slot": "4",
-          "soloist": ""
-        }
-      ]
-    },
-    {
       "id": "2026-08-16-sunday_pm",
       "date": "2026-08-16",
       "type": "sunday_pm",
