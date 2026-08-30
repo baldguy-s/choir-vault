@@ -60,6 +60,12 @@
           "soloist": ""
         }
       ]
+    },
+    {
+      "id": "2026-09-06-sunday_pm",
+      "date": "2026-09-06",
+      "type": "sunday_pm",
+      "songs": []
     }
   ]
 }
