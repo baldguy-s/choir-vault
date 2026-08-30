@@ -71,6 +71,12 @@
           "title": "My Tribute",
           "slot": "4",
           "soloist": ""
+        },
+        {
+          "songId": "",
+          "title": "",
+          "slot": "",
+          "soloist": ""
         }
       ]
     }
