@@ -65,7 +65,14 @@
       "id": "2026-09-13-sunday_pm",
       "date": "2026-09-13",
       "type": "sunday_pm",
-      "songs": []
+      "songs": [
+        {
+          "songId": "",
+          "title": "",
+          "slot": "",
+          "soloist": ""
+        }
+      ]
     }
   ]
 }
