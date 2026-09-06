@@ -23,19 +23,6 @@
   },
   "services": [
     {
-      "id": "2026-08-30-sunday_pm",
-      "date": "2026-08-30",
-      "type": "sunday_pm",
-      "songs": [
-        {
-          "songId": "oh-what-a-moment",
-          "title": "Oh, What A Moment",
-          "slot": "4",
-          "soloist": "Phil VanWinkle"
-        }
-      ]
-    },
-    {
       "id": "2026-09-06-sunday_am",
       "date": "2026-09-06",
       "type": "sunday_am",
