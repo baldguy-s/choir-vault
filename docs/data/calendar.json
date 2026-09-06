@@ -53,6 +53,12 @@
       "date": "2026-09-13",
       "type": "sunday_am",
       "songs": []
+    },
+    {
+      "id": "2026-09-13-sunday_pm",
+      "date": "2026-09-13",
+      "type": "sunday_pm",
+      "songs": []
     }
   ]
 }
