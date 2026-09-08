@@ -52,7 +52,14 @@
       "id": "2026-09-20-sunday_am",
       "date": "2026-09-20",
       "type": "sunday_am",
-      "songs": []
+      "songs": [
+        {
+          "songId": "",
+          "title": "",
+          "slot": "",
+          "soloist": ""
+        }
+      ]
     }
   ]
 }
