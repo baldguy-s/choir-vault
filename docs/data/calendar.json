@@ -52,6 +52,12 @@
       "date": "2026-10-04",
       "type": "sunday_am",
       "songs": []
+    },
+    {
+      "id": "2026-10-04-sunday_pm",
+      "date": "2026-10-04",
+      "type": "sunday_pm",
+      "songs": []
     }
   ]
 }
