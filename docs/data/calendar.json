@@ -65,7 +65,14 @@
       "id": "2026-10-04-sunday_am",
       "date": "2026-10-04",
       "type": "sunday_am",
-      "songs": []
+      "songs": [
+        {
+          "songId": "",
+          "title": "",
+          "slot": "",
+          "soloist": ""
+        }
+      ]
     },
     {
       "id": "2026-10-04-sunday_pm",
