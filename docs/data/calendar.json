@@ -23,19 +23,6 @@
   },
   "services": [
     {
-      "id": "2026-09-13-sunday_am",
-      "date": "2026-09-13",
-      "type": "sunday_am",
-      "songs": [
-        {
-          "songId": "hallelujah-for-the-cross",
-          "title": "Hallelujah For The Cross",
-          "slot": "4",
-          "soloist": ""
-        }
-      ]
-    },
-    {
       "id": "2026-09-13-sunday_pm",
       "date": "2026-09-13",
       "type": "sunday_pm",
