@@ -34,6 +34,12 @@
           "soloist": ""
         }
       ]
+    },
+    {
+      "id": "2026-09-27-sunday_am",
+      "date": "2026-09-27",
+      "type": "sunday_am",
+      "songs": []
     }
   ]
 }
