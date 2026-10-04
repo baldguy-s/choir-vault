@@ -58,14 +58,7 @@
       "id": "2026-10-04-sunday_pm",
       "date": "2026-10-04",
       "type": "sunday_pm",
-      "songs": [
-        {
-          "songId": "he-looked-beyond-my-fault",
-          "title": "He Looked Beyond My Fault",
-          "slot": "4",
-          "soloist": "Phil VanWinkle"
-        }
-      ]
+      "songs": []
     },
     {
       "id": "2026-10-11-sunday_am",
