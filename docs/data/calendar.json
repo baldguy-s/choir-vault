@@ -21,19 +21,5 @@
       }
     ]
   },
-  "services": [
-    {
-      "id": "2026-10-11-sunday_pm",
-      "date": "2026-10-11",
-      "type": "sunday_pm",
-      "songs": [
-        {
-          "songId": "heaven-will-surely-be-worth-it-all",
-          "title": "Heaven Will Surely Be Worth It All",
-          "slot": "4",
-          "soloist": ""
-        }
-      ]
-    }
-  ]
+  "services": []
 }
