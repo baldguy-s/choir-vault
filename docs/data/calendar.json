@@ -23,12 +23,6 @@
   },
   "services": [
     {
-      "id": "2026-09-27-sunday_am",
-      "date": "2026-09-27",
-      "type": "sunday_am",
-      "songs": []
-    },
-    {
       "id": "2026-09-27-sunday_pm",
       "date": "2026-09-27",
       "type": "sunday_pm",
