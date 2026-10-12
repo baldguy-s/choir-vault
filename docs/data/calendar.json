@@ -23,19 +23,6 @@
   },
   "services": [
     {
-      "id": "2026-10-04-sunday_am",
-      "date": "2026-10-04",
-      "type": "sunday_am",
-      "songs": [
-        {
-          "songId": "heaven-will-surely-be-worth-it-all",
-          "title": "Heaven Will Surely Be Worth It All",
-          "slot": "4",
-          "soloist": ""
-        }
-      ]
-    },
-    {
       "id": "2026-10-04-sunday_pm",
       "date": "2026-10-04",
       "type": "sunday_pm",
