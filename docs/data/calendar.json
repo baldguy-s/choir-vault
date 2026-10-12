@@ -34,6 +34,12 @@
           "soloist": ""
         }
       ]
+    },
+    {
+      "id": "2026-10-18-sunday_pm",
+      "date": "2026-10-18",
+      "type": "sunday_pm",
+      "songs": []
     }
   ]
 }
