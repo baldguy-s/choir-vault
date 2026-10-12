@@ -21,5 +21,12 @@
       }
     ]
   },
-  "services": []
+  "services": [
+    {
+      "id": "2026-10-18-sunday_am",
+      "date": "2026-10-18",
+      "type": "sunday_am",
+      "songs": []
+    }
+  ]
 }
