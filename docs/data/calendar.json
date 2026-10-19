@@ -23,19 +23,6 @@
   },
   "services": [
     {
-      "id": "2026-10-18-sunday_pm",
-      "date": "2026-10-18",
-      "type": "sunday_pm",
-      "songs": [
-        {
-          "songId": "bought-by-the-blood",
-          "title": "Bought By The Blood",
-          "slot": "4",
-          "soloist": ""
-        }
-      ]
-    },
-    {
       "id": "2026-10-25-sunday_am",
       "date": "2026-10-25",
       "type": "sunday_am",
