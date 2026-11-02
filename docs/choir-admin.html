@@ -986,7 +986,7 @@ function renderSongDetail(id) {
       <div class="add-block">
         <div class="field-label">Add several at once</div>
         <div class="field-row">
-          <input type="file" id="multi-track-input" accept="audio/*" multiple>
+          <input type="file" id="multi-track-input" accept="audio/*,.mp3,.wav,.m4a,.flac,.aac,.ogg,.oga,.aiff,.wma" multiple>
           <div class="field-hint">
             Pick all the parts together. Voice parts are read from the file names
             (<code>BASS - Song.m4a</code> &rarr; Bass) and you can correct any of them before uploading.
@@ -1007,7 +1007,7 @@ function renderSongDetail(id) {
         </div>
         <div class="field-row">
           <label for="new-track-file">Audio file</label>
-          <input type="file" id="new-track-file" accept="audio/*">
+          <input type="file" id="new-track-file" accept="audio/*,.mp3,.wav,.m4a,.flac,.aac,.ogg,.oga,.aiff,.wma">
         </div>
         <button class="btn secondary small" id="add-track-btn">Upload track</button>
         <div class="save-status" id="track-add-status"></div>
@@ -1104,7 +1104,7 @@ function renderTracks(song) {
           <div class="row-meta">${escapeHtml(baseName(t.file))}</div>
         </div>
         <div>
-          <input type="file" class="replace-input track-replace" accept="audio/*" aria-label="Replace audio file">
+          <input type="file" class="replace-input track-replace" accept="audio/*,.mp3,.wav,.m4a,.flac,.aac,.ogg,.oga,.aiff,.wma" aria-label="Replace audio file">
         </div>
         <div class="row-actions">
           <button class="btn danger small track-remove">Remove</button>
