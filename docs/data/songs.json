@@ -1030,7 +1030,28 @@
       "notes": "",
       "lyrics": "",
       "preRelease": true,
-      "tracks": [],
+      "tracks": [
+        {
+          "part": "Demo",
+          "file": "audio/his-life-for-mine/demo.mp3"
+        },
+        {
+          "part": "Soprano",
+          "file": "audio/his-life-for-mine/soprano.mp3"
+        },
+        {
+          "part": "Alto",
+          "file": "audio/his-life-for-mine/alto.mp3"
+        },
+        {
+          "part": "Tenor",
+          "file": "audio/his-life-for-mine/tenor.mp3"
+        },
+        {
+          "part": "Bass",
+          "file": "audio/his-life-for-mine/bass.mp3"
+        }
+      ],
       "sheetMusic": [
         {
           "file": "images/his-life-for-mine/Music - His Life for Mine.pdf"
