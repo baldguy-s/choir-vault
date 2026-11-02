@@ -1029,7 +1029,7 @@
       ],
       "notes": "",
       "lyrics": "",
-      "preRelease": true,
+      "preRelease": false,
       "tracks": [
         {
           "part": "Demo",
