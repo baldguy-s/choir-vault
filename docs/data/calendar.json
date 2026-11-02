@@ -21,19 +21,5 @@
       }
     ]
   },
-  "services": [
-    {
-      "id": "2026-11-01-sunday_pm",
-      "date": "2026-11-01",
-      "type": "sunday_pm",
-      "songs": [
-        {
-          "songId": "great-is-his-faithfulness",
-          "title": "Great Is His Faithfulness",
-          "slot": "4",
-          "soloist": "Robin Young"
-        }
-      ]
-    }
-  ]
+  "services": []
 }
