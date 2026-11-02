@@ -23,19 +23,6 @@
   },
   "services": [
     {
-      "id": "2026-10-25-sunday_pm",
-      "date": "2026-10-25",
-      "type": "sunday_pm",
-      "songs": [
-        {
-          "songId": "i-ve-seen-the-light",
-          "title": "I've Seen The Light",
-          "slot": "1",
-          "soloist": ""
-        }
-      ]
-    },
-    {
       "id": "2026-11-01-sunday_am",
       "date": "2026-11-01",
       "type": "sunday_am",
