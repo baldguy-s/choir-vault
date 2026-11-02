@@ -1033,6 +1033,19 @@
       "tracks": [],
       "sheetMusic": [],
       "links": []
+    },
+    {
+      "id": "thanks",
+      "title": "Thanks",
+      "tags": [
+        "Solo"
+      ],
+      "notes": "",
+      "lyrics": "",
+      "preRelease": true,
+      "tracks": [],
+      "sheetMusic": [],
+      "links": []
     }
   ]
 }
