@@ -1031,7 +1031,11 @@
       "lyrics": "",
       "preRelease": true,
       "tracks": [],
-      "sheetMusic": [],
+      "sheetMusic": [
+        {
+          "file": "images/his-life-for-mine/Music - His Life for Mine.pdf"
+        }
+      ],
       "links": []
     },
     {
