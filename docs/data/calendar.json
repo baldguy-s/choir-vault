@@ -52,7 +52,14 @@
       "id": "2026-11-15-sunday_am",
       "date": "2026-11-15",
       "type": "sunday_am",
-      "songs": []
+      "songs": [
+        {
+          "songId": "",
+          "title": "",
+          "slot": "",
+          "soloist": ""
+        }
+      ]
     },
     {
       "id": "2026-11-15-sunday_pm",
