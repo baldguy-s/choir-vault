@@ -33,6 +33,12 @@
       "date": "2026-11-08",
       "type": "sunday_pm",
       "songs": []
+    },
+    {
+      "id": "2026-11-15-sunday_am",
+      "date": "2026-11-15",
+      "type": "sunday_am",
+      "songs": []
     }
   ]
 }
