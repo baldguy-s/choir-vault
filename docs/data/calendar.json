@@ -26,14 +26,7 @@
       "id": "2026-11-08-sunday_am",
       "date": "2026-11-08",
       "type": "sunday_am",
-      "songs": [
-        {
-          "songId": "his-life-for-mine",
-          "title": "His Life for Mine",
-          "slot": "4",
-          "soloist": "Beth Dendler"
-        }
-      ]
+      "songs": []
     },
     {
       "id": "2026-11-08-sunday_pm",
