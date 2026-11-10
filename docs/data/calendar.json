@@ -23,19 +23,6 @@
   },
   "services": [
     {
-      "id": "2026-11-08-sunday_pm",
-      "date": "2026-11-08",
-      "type": "sunday_pm",
-      "songs": [
-        {
-          "songId": "when-he-calls-i-ll-fly-away",
-          "title": "When He Calls I'll Fly Away",
-          "slot": "4",
-          "soloist": ""
-        }
-      ]
-    },
-    {
       "id": "2026-11-15-sunday_am",
       "date": "2026-11-15",
       "type": "sunday_am",
